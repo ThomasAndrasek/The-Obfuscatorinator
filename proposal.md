@@ -17,6 +17,7 @@ Java
 | Thomas Andrasek | ThomasAndrasek | andrat@rpi.edu | 
 | Mindy Yip | mindyyip | mindyyip81@gmail.com | 
 | Nathan Whitney | nathanWhitney | nmwhitney.cs@gmail.com | 
+| Carter Del Ciello | CDelc | delcic@rpi.edu |
 
 
 ## Milestones
