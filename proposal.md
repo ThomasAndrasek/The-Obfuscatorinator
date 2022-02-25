@@ -14,6 +14,10 @@ With the amount of obfuscation being variable the "end point" of the project doe
 
 This project will primarily use Java due to code being obfuscated also being written in **Java**. This will make it easier understand  the obfuscated code beforehand as we would already be working in that language. Overall the plan is to set up the Java Project using eclipse.
 
+## Graph Construction of Java Projects
+
+A graph of a Java project will represent the dependence of a Class on another Class. Whether that be methods, constructors, variables, interfaces, etc. A node or vertex in the graph will be a Class. Edges in the graph will be the dependence of a Class on another Class. Edges will be directional, going from one Class to another but not necessarily vice versa. The edge will also contain the data pertaining to the dependence. So if Class A uses method getID() from class B, then in the graph there will be an edge going from Class A to Class B with the data "Method, getID()."
+
 ## Team
 | **Name** | **GitHub Handle** | **Email** |
 |:------:|:-------:|:------:|
@@ -27,7 +31,7 @@ This project will primarily use Java due to code being obfuscated also being wri
 
 - By Week 1 : Set up the project and make it buildable with maven. Get everyone on the team set up on the working project and decide the weekly organization.
 - By Week 2 : Read in Java Projects and copy and duplicate them to the desired directory. Create a "project" that can be used for testing.
-- By Week 3 : Build a graph of the project
+- By Week 3 : Be able to construct a graph of an inputted Java project from a user. 
 - By Week 4 : Remove all unused code, comments, and whitespace and add dummy comments.
 - By Week 5 : Rename all variables, methods, classes, and etc
 - By Week 6: Add the string and variable encryption feature
