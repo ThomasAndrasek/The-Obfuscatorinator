@@ -8,11 +8,11 @@ This project is a Java Obfuscator called The Obfuscatorinator. The main goal of 
 
 ## Semester Plan
 
-The plan is to set up the Java Project using eclipse and get the project to be able to read in. The overall plan is to create a program that can create graphs and obfuscate it. If time permits, then a GUI will be created as well.
+With the amount of obfuscation being variable the "end point" of the project doesn't need to be set in stone. The plan for this semester is to finish the first 7 or so levels of obfuscation and have them be able to be applied to any Java program. Another goal is for the program to be able to create graphs. If time permits, then a GUI will be created as well.
 
 ## Technology
 
-This project will primarily use Java due to code being obfuscated also being written in **Java**. This will make it easier understand  the obfuscated code beforehand as we would already be working in that language.
+This project will primarily use Java due to code being obfuscated also being written in **Java**. This will make it easier understand  the obfuscated code beforehand as we would already be working in that language. Overall the plan is to set up the Java Project using eclipse.
 
 ## Team
 | **Name** | **GitHub Handle** | **Email** |
