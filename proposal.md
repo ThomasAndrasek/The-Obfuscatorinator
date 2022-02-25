@@ -3,13 +3,14 @@
 
 ## Overview
 
+This project is 
 
 ## Semester Plan
 
 
 ## Technology
 
-Java
+This project will primarily use Java due to code being obfuscated also being written in Java. This will make it easier understand  the obfuscated code beforehand as we would already be working in that language.
 
 ## Team
 | **Name** | **GitHub Handle** | **Email** |
