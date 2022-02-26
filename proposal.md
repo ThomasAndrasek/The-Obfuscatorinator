@@ -29,13 +29,15 @@ A graph of a Java project will represent the dependence of a Class on another Cl
 
 ## Milestones
 
+To be done by the week number.
+
 - By Week 1 : Set up the project and make it buildable with maven. Get everyone on the team set up on the working project and decide the weekly organization.
 - By Week 2 : Read in Java Projects and copy and duplicate them to the desired directory. Create a "project" that can be used for testing.
 - By Week 3 : Be able to construct a graph of an inputted Java project from a user. 
 - By Week 4 : Remove all unused code, comments, and whitespace and add dummy comments.
-- By Week 5 : Rename all variables, methods, classes, and etc
-- By Week 6: Add the string and variable encryption feature
-- By Week 7 : Insert dummy code
-- By Week 8 : Reorder and spaghettify the code
-- By Week 9: Insert Opaque Predicate
-- By Week 10 : Add finishing touches / finish any unfinished objectives
+- By Week 5 : Rename all variables, methods, classes, and etc.
+- By Week 6: Add the string and variable encryption feature.
+- By Week 7 : Insert dummy code.
+- By Week 8 : Reorder and spaghettify the code.
+- By Week 9: Insert Opaque Predicate.
+- By Week 10 : Add finishing touches / finish any unfinished objectives.
