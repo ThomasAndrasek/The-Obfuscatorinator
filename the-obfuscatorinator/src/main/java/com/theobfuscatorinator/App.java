@@ -10,7 +10,7 @@ import java.util.Vector;
  */
 public class App 
 {
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) {
         /* Try/Catch Block for custom error message.*/
         try{
             if(args.length == 0) throw new IllegalArgumentException("Not enough arguments");
@@ -30,6 +30,7 @@ public class App
                 }
             }
             if(inputFiles.size() == 0) throw new IllegalArgumentException("No Source Files Provided");
+
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
 
         }
