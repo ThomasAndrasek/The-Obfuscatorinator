@@ -16,3 +16,8 @@ To build
 To run
 
     java -cp "./target/the-obfuscatorinator-1.0.0.jar" com.theobfuscatorinator.App
+    
+    
+    
+    
+Find our code of conduct at: https://github.com/ThomasAndrasek/The-Obfuscatorinator/blob/main/CODE_OF_CONDUCT.md
