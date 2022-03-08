@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.theobfuscatorinator.AppTest" time="0.038" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" name="com.theobfuscatorinator.GraphTest" time="0" tests="9" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -56,5 +56,13 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="shouldAnswerWithTrue" classname="com.theobfuscatorinator.AppTest" time="0.002"/>
+  <testcase name="testAddMultipleEdges" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testAddEdge" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testAddEdgeToItself" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testMultipleNodesAdded" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testNodesSorted" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testAddMultipleEdgesToSameNode" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testUniqueAdaded" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testNodeAdded" classname="com.theobfuscatorinator.GraphTest" time="0"/>
+  <testcase name="testAddUniqueEdges" classname="com.theobfuscatorinator.GraphTest" time="0"/>
 </testsuite>
