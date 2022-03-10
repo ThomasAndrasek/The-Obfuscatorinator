@@ -3,3 +3,4 @@ com\theobfuscatorinator\FileManager.class
 com\theobfuscatorinator\graph\Node.class
 com\theobfuscatorinator\graph\Edge.class
 com\theobfuscatorinator\graph\Graph.class
+com\theobfuscatorinator\codegraph\CodeGraph.class
