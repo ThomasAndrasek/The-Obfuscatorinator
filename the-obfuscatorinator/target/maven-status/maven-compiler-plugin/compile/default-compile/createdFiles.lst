@@ -1,6 +1,7 @@
-com\theobfuscatorinator\App.class
 com\theobfuscatorinator\FileManager.class
+com\theobfuscatorinator\graph\Graph.class
+com\theobfuscatorinator\App.class
+com\theobfuscatorinator\practice_code\testing1.class
 com\theobfuscatorinator\graph\Node.class
 com\theobfuscatorinator\graph\Edge.class
-com\theobfuscatorinator\graph\Graph.class
 com\theobfuscatorinator\codegraph\CodeGraph.class
