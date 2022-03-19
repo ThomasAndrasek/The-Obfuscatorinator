@@ -2,7 +2,9 @@ package com.theobfuscatorinator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Vector;
+import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
 /**
  * Hello world!
@@ -32,6 +34,12 @@ public class App
             if(inputFiles.size() == 0) throw new IllegalArgumentException("No Source Files Provided");
 
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
+
+            HashSet<CodeStructure> codeStructures = new HashSet<CodeStructure>();
+            HashSet<File> fileSet = FileManager.getAllFilesFromDirectory(targetDirectory);
+            for(File f : fileSet){
+                codeStructures.add(new CodeStructure(f));
+            }
 
         }
         catch(Exception e){
