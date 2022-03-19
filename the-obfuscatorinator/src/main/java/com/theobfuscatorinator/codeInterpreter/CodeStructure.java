@@ -18,7 +18,6 @@ public class CodeStructure {
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
-            System.out.println(unCommentedCode);
         }
         else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
     }
