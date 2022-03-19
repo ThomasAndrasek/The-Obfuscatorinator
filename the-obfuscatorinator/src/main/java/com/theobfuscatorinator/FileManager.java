@@ -3,7 +3,14 @@ package com.theobfuscatorinator;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.Vector;
+
+/**
+ * This class implements a library of static methods useful for managing project files.
+ *
+ * @author Carter Del Ciello
+ */
 
 public class FileManager {
 
@@ -63,6 +70,22 @@ public class FileManager {
 
         }
         return target;
+    }
+
+    /**
+     * Returns all non-directory files in a directory tree that stems from the given root
+     * @param directory - Root of the target directory tree
+     * @return - Set of all non-directory files in the tree
+     */
+    public static HashSet<File> getAllFilesFromDirectory(File directory){
+        HashSet<File> output = new HashSet<File>();
+        if(directory.isDirectory()){
+            for(File child : directory.listFiles()) {
+                output.addAll(getAllFilesFromDirectory(child));
+            }
+        }
+        else output.add(directory);
+        return output;
     }
 
 }
