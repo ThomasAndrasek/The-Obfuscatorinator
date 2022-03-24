@@ -62,3 +62,9 @@ hs_err_pid*
 
 # Bin files
 the-obfuscatorinator/bin/
+
+# Eclipse files
+.metadata
+.project
+.classpath
+.settings
