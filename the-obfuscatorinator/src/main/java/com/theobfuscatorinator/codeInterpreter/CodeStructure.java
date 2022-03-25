@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 /**
  * This class will take a java code file and will find important characteristics in that file which can be
@@ -57,11 +56,67 @@ public class CodeStructure {
         return output;
     }
 
+    /**
+     * Takes some java code as a string and identifies all of the string literals that are in the
+     * code. Remove all of the string literals from the code and returns the code without the
+     * string literals.
+     * 
+     * @param code Code to have the string literals removed from
+     * @return Copy of code without any string literals
+     */
+    private String removeStrings(String code) {
+        String copy = code.substring(0);
+        String output = "";
+        
+        int j = 0;
+        // Loop through the code and find all of the string literals.
+        // Only keep the code that is not a string literal.
+        while (j < copy.length()) {
+            // If the current character is a double quote, then we are in a string literal.
+            if (copy.charAt(j) == '"') {
+                j++;
+
+                boolean foundEnd = false;
+
+                // Loop until we find the end of the string literal.
+                while (!foundEnd) {
+                    // If we find a double quote, then we have found the end of the string literal.
+                    // Only if we find a double quote that is not escaped by a backslash.
+                    if (copy.charAt(j) == '"') {
+                        if (copy.charAt(j-1) != '\\') {
+                            foundEnd = true;
+                        }
+                    } else {
+                        j++;
+                    }
+                }
+                
+                j++;
+            }
+            // If the current character is not a double quote, then we are not in a string literal.
+            else {
+                output += copy.charAt(j);
+                j++;
+            }
+        }
+
+        return output;
+    }
+
+    /**
+     * Takes some java code as a string and identifies all of the class names that are in the
+     * code.
+     * 
+     * @param code Code to have the class names identified.
+     * @return ArrayList of all of the class names in the code.
+     */
     private ArrayList<String> identifyClasses(String code) {
-
         ArrayList<String> classes = new ArrayList<>();
-        String[] codeBlocks = code.split("\\s+class\\s+");
+        String removedStringsCode = removeStrings(code);
+        System.out.println(removedStringsCode);
+        String[] codeBlocks = removedStringsCode.split("\\s+class\\s+");
 
+        // Loop through the code blocks and find all of the class names.
         for(String codeBlock : codeBlocks){
             if(codeBlock.contains("{")){
                 String classString = codeBlock.substring(0, codeBlock.indexOf("{"));
@@ -71,7 +126,6 @@ public class CodeStructure {
         }
 
         return classes;
-
     }
 
     public String getUnCommentedCode(){
