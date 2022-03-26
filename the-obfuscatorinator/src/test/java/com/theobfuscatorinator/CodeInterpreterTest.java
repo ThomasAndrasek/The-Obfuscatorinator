@@ -36,19 +36,20 @@ public class CodeInterpreterTest {
                 assertTrue("IOException Thrown in constructor", false);
             }
 
-            ArrayList<String> classes = t.getClasses();
+            ArrayList<ClassStructure> classes = t.getClasses();
             assertTrue("Classes should not be empty", classes.size() > 0);
 
             ArrayList<String> expected = new ArrayList<>();
             expected.add("TestClassIdentifying");
-            expected.add("InnerClass");
-            expected.add("DeepInnerClass");
-            expected.add("SecondInnerClass");
-            expected.add("TestFormat");
-            expected.add("TestFormat2");
+//            expected.add("InnerClass");
+//            expected.add("DeepInnerClass");
+//            expected.add("SecondInnerClass");
+//            expected.add("TestFormat");
+//            expected.add("TestFormat2");
 
             int counter = 0;
-            for (String classStr : classes) {
+            for (ClassStructure classobj : classes) {
+                String classStr = classobj.getClassName();
                 assertTrue("Classes should not contain " + classStr, expected.contains(classStr));
                 counter++;
             }
