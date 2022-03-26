@@ -107,11 +107,11 @@ public class CodeStructure {
     }
 
     /**
-     * Takes some java code as a string and identifies all of the class names that are in the
+     * Takes some java code as a string and identifies all of the classes that are in the
      * code.
      * 
-     * @param code Code to have the class names identified.
-     * @return ArrayList of all of the class names in the code.
+     * @param code Code to have the classes identified.
+     * @return ArrayList of all of the classes in the code as ClassStructure objects
      */
     private ArrayList<ClassStructure> identifyClasses(String code) {
         ArrayList<ClassStructure> classes = new ArrayList<>();
@@ -130,6 +130,17 @@ public class CodeStructure {
         return classes;
     }
 
+    /**
+     * Finds the next set of brackets in a string of code and gets the code that exists between these brackets. This method is static and is intended to be used
+     * in other parts of the CodeStructure class library
+     * @param code Code to be searched
+     * @param startIndex Index in the string to start at, the next opening bracket in the code after this index will be the starting point
+     * @param beginBracket Definition of which character an opening bracket is
+     * @param endBracket Definition of which character a closing bracket is
+     * @return A custom Pair object containing the code in the first position, and the index of the final closing bracket in the second position
+     * @throws IllegalArgumentException when the opening and closing brackets are the same or the starting index is negative/greater than the string length
+     * @throws RuntimeException when the starting bracket is never found or a sufficient number of closing brackets to have a complete container is never found
+     */
     public static Pair<String, Integer> getCodeBetweenBrackets(String code, int startIndex, char beginBracket, char endBracket){
         int index = startIndex;
         if(beginBracket == endBracket) throw new IllegalArgumentException("Starting and Ending brackets cannot be defined as the same character.");
@@ -172,6 +183,11 @@ public class CodeStructure {
         return classes;
     }
 
+    /**
+     * Templated custom pair class, because there does not seem to be a reasonable way to do this with this version of the JDK
+     * @param <K> Type of the first element in the pair
+     * @param <V> Type of the second element in the pair
+     */
     static class Pair<K,V>{
         public K first;
         public V second;
