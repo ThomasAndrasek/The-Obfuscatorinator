@@ -123,7 +123,7 @@ public class CodeStructure {
             int classStart = classMatcher.end();
             String className = removedStringsCode.substring(classStart, removedStringsCode.indexOf("{", classStart)).trim();
             Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode, classStart, '{', '}');
-            classes.add(new ClassStructure(currentClass.first, className, fileName));
+            classes.add(new ClassStructure(currentClass.first, className, fileName, new ArrayList<ClassStructure>()));
             index = currentClass.second;
         }
 
