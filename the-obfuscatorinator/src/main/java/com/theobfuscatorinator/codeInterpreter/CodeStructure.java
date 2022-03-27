@@ -175,29 +175,6 @@ public class CodeStructure {
         }
         
         return copy;
-        
-        
-        //earlier attempt
-        /**
-        String output = "";
-        char[] symbol_list = new char['|', '&', '=', '+', '.', '-', '*', '/', '%', '!', '>', '<', ];
-        HashMap<Integer,Character> symbols=new HashMap<Integer,Character>();
-        for (int x = 0; x < symbol_list.length(); x++) {
-        	symbols.put(x, symbol_list[x]);
-        }
-        int j = 0;
-        int start = 0
-        // Loop through the code until a space or an operator is found
-        while (j < copy.length()) {
-            //Once a space/operator is found recover the whole word (by looping until another space or operator is found) then change it
-            j++;
-            if (copy.charAt(j) == ' ' || ) {
-            	start = j+1;
-            	
-            }
-            
-        }
-        */
     }
 
     /**
