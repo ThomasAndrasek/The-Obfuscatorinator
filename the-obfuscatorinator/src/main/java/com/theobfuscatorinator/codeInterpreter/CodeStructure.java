@@ -1,9 +1,11 @@
 package com.theobfuscatorinator.codeInterpreter;
 
 
+import java.lang.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,6 +106,98 @@ public class CodeStructure {
         }
 
         return output;
+    }
+    
+    /**
+     * Takes some java code as a string and removes all the spaces that need to be removed
+     * 
+     * @order MUST take place after comments and string literals are removed
+     * @param code Code to have the spaces removed from
+     * @return Copy of code without any extra spaces and newlines
+     */
+    private String removeSpaces(String code) {
+        String copy = code.substring(0).replace("\n", "");
+        String output = "";
+        
+        int j = 0;
+        // Loop through the code and delete any space that isn't required for the code to run
+        while (j < copy.length()) {
+            //if a space is found check if the next character is another word if it's not remove the space
+            if (copy.charAt(j) == ' ') {
+            	j++;
+            	if (Character.isLetter(copy.charAt(j))) {
+            		j--;
+            		output += copy.charAt(j);
+            		j++;
+                }
+            }else {
+            	output += copy.charAt(j);
+                j++;
+            }
+            
+        }
+
+        return output;
+    }
+    
+    /**
+     * Takes some java code and changes all variables in it
+     * 
+     * @order MUST take place after extra spaces, comments and string literals are removed
+     * @param code Code the will have its variables changed
+     * @return Copy of code with changed variables
+     */
+    private String changeVar(String code) {
+        String copy = code.substring(0);
+        int j = 0;
+        int start = 0;
+        ArrayList<String> variables = new ArrayList<String>();
+        boolean check = false;
+        // Loop through the code until a space is found
+        while (j < copy.length()) {
+        	if (copy.charAt(j) == ' ') {
+            	start = j+1;
+            	check = true;
+        	}
+        	// Loop until a equals sign is found and collect the word at that point
+        	if (copy.charAt(j) == '=' && check){
+        		variables.add(copy.substring(start,j));
+        		check = false;
+        	}
+        	// sort the variables ArrayList by length
+        	variables.sort((var1,var2) -> Integer.compare(var1.length(),var2.length()));
+        	//replace all instances of those variables in the code with a random value
+        	for (int x = 0; x < variables.size(); x++) {
+        		//STILL TO ADD: Regex and random value generator
+        		//copy = copy.replaceAll(regex, replacement);
+        	}
+        	j++;
+        }
+        
+        return copy;
+        
+        
+        //earlier attempt
+        /**
+        String output = "";
+        char[] symbol_list = new char['|', '&', '=', '+', '.', '-', '*', '/', '%', '!', '>', '<', ];
+        HashMap<Integer,Character> symbols=new HashMap<Integer,Character>();
+        for (int x = 0; x < symbol_list.length(); x++) {
+        	symbols.put(x, symbol_list[x]);
+        }
+        int j = 0;
+        int start = 0
+        // Loop through the code until a space or an operator is found
+        while (j < copy.length()) {
+            //Once a space/operator is found recover the whole word (by looping until another space or operator is found) then change it
+            j++;
+            if (copy.charAt(j) == ' ' || ) {
+            	start = j+1;
+            	
+            }
+            
+        }
+        */
     }
 
     /**
