@@ -6,7 +6,7 @@ Please read our [Code of Conduct](https://github.com/ThomasAndrasek/The-Obfuscat
 
 ## Getting Started
 
-To gain an complete understanding of The Obfuscatorinator, please feel free to go through our [codebase](https://github.com/ThomasAndrasek/The-Obfuscatorinator) as well as our [README](https://github.com/ThomasAndrasek/The-Obfuscatorinator/blob/main/README.md). These explain the overall goals and features of The Obfuscatorinator.
+To gain a complete understanding of The Obfuscatorinator, please feel free to go through our [codebase](https://github.com/ThomasAndrasek/The-Obfuscatorinator) as well as our [README](https://github.com/ThomasAndrasek/The-Obfuscatorinator/blob/main/README.md). These explain the overall goals and features of The Obfuscatorinator.
 
 ## Making Changes to the Codebase
 

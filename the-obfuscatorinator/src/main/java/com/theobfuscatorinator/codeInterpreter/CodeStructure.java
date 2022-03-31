@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.theobfuscatorinator.stringencryption.StringEncryption;
+
 /**
  * This class will take a java code file and will find important characteristics in that file which can be
  * accessed by a user of this class.
@@ -39,7 +41,9 @@ public class CodeStructure {
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
 
-            classes = identifyClasses(unCommentedCode);
+            // classes = identifyClasses(unCommentedCode);
+
+            unCommentedCode = StringEncryption.encryptStrings(this);
         }
         else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
     }
@@ -122,7 +126,8 @@ public class CodeStructure {
         int j = 0;
         // Loop through the code and delete any space that isn't required for the code to run
         while (j < copy.length()) {
-            //if a space is found check if the next character is another word if it's not remove the space
+            // If a space is found check if the next character is another word if it's not remove
+            // the space
             if (copy.charAt(j) == ' ') {
             	j++;
             	if (Character.isLetter(copy.charAt(j))) {
@@ -192,9 +197,12 @@ public class CodeStructure {
         int index = 0;
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
-            String className = removedStringsCode.substring(classStart, removedStringsCode.indexOf("{", classStart)).trim();
-            Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode, classStart, '{', '}');
-            classes.add(new ClassStructure(currentClass.first, className, fileName, new ArrayList<ClassStructure>()));
+            String className = removedStringsCode.substring(classStart, removedStringsCode
+                                                 .indexOf("{", classStart)).trim();
+            Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode,
+                                                                        classStart, '{', '}');
+            classes.add(new ClassStructure(currentClass.first, className, fileName,
+                                           new ArrayList<ClassStructure>()));
             index = currentClass.second;
         }
 
@@ -202,24 +210,39 @@ public class CodeStructure {
     }
 
     /**
-     * Finds the next set of brackets in a string of code and gets the code that exists between these brackets. This method is static and is intended to be used
-     * in other parts of the CodeStructure class library
+     * Finds the next set of brackets in a string of code and gets the code that exists between
+     * these brackets. This method is static and is intended to be used in other parts of the 
+     * CodeStructure class library.
+     * 
      * @param code Code to be searched
-     * @param startIndex Index in the string to start at, the next opening bracket in the code after this index will be the starting point
-     * @param beginBracket Definition of which character an opening bracket is
-     * @param endBracket Definition of which character a closing bracket is
-     * @return A custom Pair object containing the code in the first position, and the index of the final closing bracket in the second position
-     * @throws IllegalArgumentException when the opening and closing brackets are the same or the starting index is negative/greater than the string length
-     * @throws RuntimeException when the starting bracket is never found or a sufficient number of closing brackets to have a complete container is never found
+     * @param startIndex Index in the string to start at, the next opening bracket in the code
+     *                   after this index will be the starting point.
+     * @param beginBracket Definition of which character an opening bracket is.
+     * @param endBracket Definition of which character a closing bracket is.
+     * @return A custom Pair object containing the code in the first position, and the index of 
+     *         the final closing bracket in the second position.
+     * @throws IllegalArgumentException when the opening and closing brackets are the same or the
+     *                                  starting index is negative/greater than the string length.
+     * @throws RuntimeException when the starting bracket is never found or a sufficient number of
+     *                          closing brackets to have a complete container is never found.
      */
-    public static Pair<String, Integer> getCodeBetweenBrackets(String code, int startIndex, char beginBracket, char endBracket){
+    public static Pair<String, Integer> getCodeBetweenBrackets(String code, int startIndex,
+                                                               char beginBracket, char endBracket){
         int index = startIndex;
-        if(beginBracket == endBracket) throw new IllegalArgumentException("Starting and Ending brackets cannot be defined as the same character.");
-        if(index >= code.length() || index < 0) throw new IllegalArgumentException("Given starting point out of bounds.");
+        if(beginBracket == endBracket) {
+            throw new IllegalArgumentException(
+                "Starting and Ending brackets cannot be defined as the same character.");
+        }
+
+        if(index >= code.length() || index < 0) {
+            throw new IllegalArgumentException("Given starting point out of bounds.");
+        }
+
         while(code.charAt(index) != beginBracket){
              index++;
              if(index >= code.length()) throw new RuntimeException("Starting Bracket never found");
         }
+
         index++;
         int start = index;
         int nestedBrackets = 1;
@@ -255,7 +278,8 @@ public class CodeStructure {
     }
 
     /**
-     * Templated custom pair class, because there does not seem to be a reasonable way to do this with this version of the JDK
+     * Templated custom pair class, because there does not seem to be a reasonable way to do this 
+     * with this version of the JDK.
      * @param <K> Type of the first element in the pair
      * @param <V> Type of the second element in the pair
      */
@@ -268,7 +292,6 @@ public class CodeStructure {
             second = snd;
         }
     }
-
 }
 
 
