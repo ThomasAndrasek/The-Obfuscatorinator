@@ -152,7 +152,7 @@ public class CodeStructure {
      * @param code Code the will have its variables changed
      * @return Copy of code with changed variables
      */
-    private String changeVar(String code) {
+    private static String changeVar(String code) {
         String copy = code.substring(0);
         int j = 0;
         int start = 0;
