@@ -145,13 +145,7 @@ public class CodeStructure {
         return output;
     }
     
-    /**
-     * Takes some java code and changes all variables in it
-     * 
-     * @order MUST take place after extra spaces, comments and string literals are removed
-     * @param code Code the will have its variables changed
-     * @return Copy of code with changed variables
-     */
+    
     private static String changeVar(String code) {
         String copy = code.substring(0);
         int j = 0;
