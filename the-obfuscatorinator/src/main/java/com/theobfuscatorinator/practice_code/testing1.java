@@ -7,7 +7,7 @@ public class testing1 {
 		int not_gross = 23;
 		int grossest = 15;
 		double never = 5;
-		//checking that printing still works
+		//checking that printing still works gross
 		if (gross + not_gross > 15) {
 			System.out.println("I am NOT gross");
 		}
