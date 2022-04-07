@@ -1,6 +1,7 @@
 package com.theobfuscatorinator.stringencryption;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
@@ -33,7 +34,7 @@ public class StringEncryption {
                 while (j < code.length() && (code.charAt(j) != '"' || code.charAt(j) == '\\')) {
                     j++;
                 }
-                if (j < code.length()) {
+                if (j < code.length() && j != i + 1) {
                     strings.add(new Pair<String, Integer>(code.substring(i + 1, j), i));
                     i = j + 1;
                 }
@@ -48,6 +49,9 @@ public class StringEncryption {
         
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
         String code = codeStructure.getUnCommentedCode();
+
+        Random random = new Random();
+        
         for (int i = strings.size() - 1; i >= 0; i--) {
             String string = strings.get(i).first;
             int index = strings.get(i).second;
@@ -55,7 +59,16 @@ public class StringEncryption {
             byte[] byteArrray = string.getBytes();
             String byteString = "";
             for (byte b : byteArrray) {
-                int num = b * 42 - 27000;
+                int num = b * 42 + 27000;
+
+                int attached = random.nextInt(100) + 1;
+
+                num *= attached;
+
+                num *= 100;
+
+                num += attached;
+
                 byteString += num + ", ";
             }
             byteString = byteString.substring(0, byteString.length() - 2);
@@ -67,7 +80,11 @@ public class StringEncryption {
         String decryptMethod = "public static String werturtgfhbhxcvghwertyhs(int[] zrtsafgsdfgds3453) { " +
                 "String wertufghbdfghgwertyrityjkfafdgaduhys = \"\"; " +
                 "for (int yuiiortyhfbnartydfghsdfgsd = 0; yuiiortyhfbnartydfghsdfgsd < zrtsafgsdfgds3453.length; yuiiortyhfbnartydfghsdfgsd++) { " +
-                "int xcfvhktyertgsdfgsdffgsd = zrtsafgsdfgds3453[yuiiortyhfbnartydfghsdfgsd] + 27000; " +
+                "int adfafasdfasdfasdfasdfasf = zrtsafgsdfgds3453[yuiiortyhfbnartydfghsdfgsd] % 100; " +
+                "int adfafasdfasdfasdfasdfasf2 = zrtsafgsdfgds3453[yuiiortyhfbnartydfghsdfgsd] - adfafasdfasdfasdfasdfasf;" +
+                "adfafasdfasdfasdfasdfasf2 /= 100; " +
+                "adfafasdfasdfasdfasdfasf2 /= adfafasdfasdfasdfasdfasf; " +
+                "int xcfvhktyertgsdfgsdffgsd = adfafasdfasdfasdfasdfasf2 - 27000; " +
                 "xcfvhktyertgsdfgsdffgsd /= 42; " +
                 "wertufghbdfghgwertyrityjkfafdgaduhys += (char) xcfvhktyertgsdfgsdffgsd; " +
                 "} " +
