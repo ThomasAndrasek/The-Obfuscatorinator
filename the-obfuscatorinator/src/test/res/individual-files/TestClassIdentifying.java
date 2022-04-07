@@ -100,7 +100,7 @@ public class TestClassIdentifying<G,HK,L> {
             }
 
             @Override
-            public boolean equals(Object o) {
+            public <T, V> boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
                 DeepInnerClass that = (DeepInnerClass) o;
@@ -161,6 +161,10 @@ public class TestClassIdentifying<G,HK,L> {
         @Override
         public int hashCode() {
             return Objects.hash(name, code);
+        }
+
+        public <V,M> String test_template_method_detection123(double gll, Integer forty_five){
+            return null;
         }
     }
 }

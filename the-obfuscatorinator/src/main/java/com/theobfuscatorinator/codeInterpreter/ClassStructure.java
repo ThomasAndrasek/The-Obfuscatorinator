@@ -86,14 +86,18 @@ public class ClassStructure {
     private ArrayList<MethodStructure> identifyMethods(){
         String code = ignoreNestedClasses();
         ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
-        Pattern methodFinder = Pattern.compile("\\s*(\\w*)\\s+(\\w*)\\s*\\((.*)\\)\\s*\\{");
+        Pattern methodFinder = Pattern.compile("\\s*(\\<(.*)\\>\\s*)?(\\w*)\\s+(\\w*)\\s*\\((.*)\\)\\s*\\{");
         Matcher methodMatcher = methodFinder.matcher(code);
         int index = 0;
         while(methodMatcher.find(index)){
             ArrayList<String> templates = new ArrayList<String>();
-            String rType = methodMatcher.group(1);
-            String methodName = methodMatcher.group(2);
-            String args = methodMatcher.group(3);
+            String rType = methodMatcher.group(3);
+            String methodName = methodMatcher.group(4);
+            String args = methodMatcher.group(5);
+
+            if(methodMatcher.group(2) != null){
+                for(String s : CodeStructure.getCommaSeparatedValues(methodMatcher.group(2))) templates.add(s.trim());
+            }
 
             CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;

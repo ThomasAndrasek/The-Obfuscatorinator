@@ -36,6 +36,10 @@ public class MethodStructure {
             args.add(argumentMatcher.group(1).trim());
         }
 
+        System.out.println(name);
+        System.out.println(rType);
+        for(String s : templates) System.out.println(s);
+        System.out.println("-------------");
     }
 
 }
