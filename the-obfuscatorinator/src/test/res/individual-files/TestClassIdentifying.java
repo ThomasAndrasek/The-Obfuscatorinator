@@ -1,4 +1,4 @@
-public class TestClassIdentifying {
+public class TestClassIdentifying<G,HK,L> {
     
     private String testString;
     private String testString2;
@@ -36,7 +36,7 @@ public class TestClassIdentifying {
             return code;
         }
 
-        public void setName(String name) {
+        public void setName(String name, Integer secondArgument) {
             this.name = name;
         }
 
@@ -66,7 +66,7 @@ public class TestClassIdentifying {
             return Objects.hash(name, code);
         }
 
-        class DeepInnerClass {
+        class DeepInnerClass<LOL> {
             private String name;
             private String code;
 
@@ -100,7 +100,7 @@ public class TestClassIdentifying {
             }
 
             @Override
-            public boolean equals(Object o) {
+            public <T, V> boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
                 DeepInnerClass that = (DeepInnerClass) o;
@@ -161,6 +161,10 @@ public class TestClassIdentifying {
         @Override
         public int hashCode() {
             return Objects.hash(name, code);
+        }
+
+        public <V,M> String test_template_method_detection123(double gll, Integer forty_five){
+            return null;
         }
     }
 }
