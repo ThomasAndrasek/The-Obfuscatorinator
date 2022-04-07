@@ -25,6 +25,8 @@ public class ClassStructure {
         containers = containerClasses;
         classes = identifyClasses(sourceCode);
         templateClasses = templates;
+        System.out.println(name);
+        System.out.println(ignoreNestedClasses());
     }
 
 
@@ -59,6 +61,23 @@ public class ClassStructure {
         }
 
         return classes;
+    }
+
+    private String ignoreNestedClasses(){
+        String out = "";
+        Pattern classFinder = Pattern.compile("\\s+class\\s+");
+        Matcher classMatcher = classFinder.matcher(sourceCode);
+        int index = 0;
+        while(classMatcher.find(index)){
+            int bodyStart = sourceCode.indexOf('{', classMatcher.end());
+            out += sourceCode.substring(index, bodyStart);
+            CodeStructure.Pair<String, Integer> currentClass = CodeStructure.getCodeBetweenBrackets(sourceCode, classMatcher.end(), '{', '}');
+            index = currentClass.second;
+            if(index + 1 < sourceCode.length()) index++;
+        }
+        out += sourceCode.substring(index);
+
+        return out;
     }
 
 }
