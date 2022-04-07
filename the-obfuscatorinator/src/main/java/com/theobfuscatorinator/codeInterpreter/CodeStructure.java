@@ -273,6 +273,12 @@ public class CodeStructure {
         return new Pair<String, Integer>(output, index);
     }
 
+    /**
+     * Gets a list of values separated by commas. Useful for quickly getting comma-separated arguments. This method is static
+     * and is intended to be used as a utility.
+     * @param s String of values to be separated
+     * @return List of strings separated by commas in the input string
+     */
     public static ArrayList<String> getCommaSeparatedValues(String s){
         Pattern comma = Pattern.compile(",");
         Matcher commaFinder = comma.matcher(s);

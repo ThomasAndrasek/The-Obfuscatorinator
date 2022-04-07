@@ -14,7 +14,7 @@ public class MethodStructure {
 
     private ArrayList<String> args;
 
-    public MethodStructure(String name, String code, String filename, ArrayList<ClassStructure> classStructure){
+    protected MethodStructure(String name, String code, String filename, ArrayList<ClassStructure> classStructure){
         methodName = name;
         sourceCode = code;
         sourceFile = filename;
