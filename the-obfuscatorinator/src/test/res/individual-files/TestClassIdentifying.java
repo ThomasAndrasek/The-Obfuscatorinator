@@ -1,4 +1,4 @@
-public class TestClassIdentifying {
+public class TestClassIdentifying<G,HK,L> {
     
     private String testString;
     private String testString2;
@@ -66,7 +66,7 @@ public class TestClassIdentifying {
             return Objects.hash(name, code);
         }
 
-        class DeepInnerClass {
+        class DeepInnerClass<LOL> {
             private String name;
             private String code;
 

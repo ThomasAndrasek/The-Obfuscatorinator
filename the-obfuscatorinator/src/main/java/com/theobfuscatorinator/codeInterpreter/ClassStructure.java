@@ -16,13 +16,17 @@ public class ClassStructure {
 
     private ArrayList<ClassStructure> classes;
     private ArrayList<MethodStructure> methods;
+    private ArrayList<String> templateClasses;
 
-    ClassStructure(String code, String name, String filename, ArrayList<ClassStructure> containerClasses){
+    ClassStructure(String code, String name, String filename, ArrayList<ClassStructure> containerClasses, ArrayList<String> templates){
         sourceCode = code;
         className = name;
         sourceFile = filename;
+        containers = containerClasses;
         classes = identifyClasses(sourceCode);
+        templateClasses = templates;
     }
+
 
     public String getClassName(){
         return className;
@@ -36,10 +40,21 @@ public class ClassStructure {
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
             String className = code.substring(classStart, code.indexOf("{", classStart)).trim();
+
+            ArrayList<String> templates = new ArrayList<String>();
+            //Handle template arguments
+            if(className.contains("<")){
+                className = code.substring(classStart, code
+                        .indexOf("<", classStart)).trim();
+                CodeStructure.Pair<String, Integer> templateContents = CodeStructure.getCodeBetweenBrackets(code, classStart, '<', '>');
+                String arguments = templateContents.first;
+                templates = CodeStructure.getCommaSeparatedValues(arguments);
+            }
+
             CodeStructure.Pair<String, Integer> currentClass = CodeStructure.getCodeBetweenBrackets(code, classStart, '{', '}');
-            ArrayList<ClassStructure> newContainerList = new ArrayList<>(containers);
+            ArrayList<ClassStructure> newContainerList = new ArrayList<ClassStructure>(containers);
             newContainerList.add(this);
-            classes.add(new ClassStructure(currentClass.first, className, sourceFile, newContainerList));
+            classes.add(new ClassStructure(currentClass.first, className, sourceFile, newContainerList, templates));
             index = currentClass.second;
         }
 

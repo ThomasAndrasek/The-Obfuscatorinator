@@ -41,7 +41,7 @@ public class CodeStructure {
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
 
-            // classes = identifyClasses(unCommentedCode);
+            classes = identifyClasses(unCommentedCode);
 
             unCommentedCode = StringEncryption.encryptStrings(this);
         }
@@ -199,10 +199,19 @@ public class CodeStructure {
             int classStart = classMatcher.end();
             String className = removedStringsCode.substring(classStart, removedStringsCode
                                                  .indexOf("{", classStart)).trim();
+            ArrayList<String> templates = new ArrayList<String>();
+            //Handle template arguments
+            if(className.contains("<")){
+                className = removedStringsCode.substring(classStart, removedStringsCode
+                        .indexOf("<", classStart)).trim();
+                Pair<String, Integer> templateContents = getCodeBetweenBrackets(removedStringsCode, classStart, '<', '>');
+                String arguments = templateContents.first;
+                templates = getCommaSeparatedValues(arguments);
+            }
             Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode,
                                                                         classStart, '{', '}');
             classes.add(new ClassStructure(currentClass.first, className, fileName,
-                                           new ArrayList<ClassStructure>()));
+                                           new ArrayList<ClassStructure>(), templates));
             index = currentClass.second;
         }
 
@@ -262,6 +271,21 @@ public class CodeStructure {
         String output = code.substring(start, end);
 
         return new Pair<String, Integer>(output, index);
+    }
+
+    public static ArrayList<String> getCommaSeparatedValues(String s){
+        Pattern comma = Pattern.compile(",");
+        Matcher commaFinder = comma.matcher(s);
+        ArrayList<String> output = new ArrayList<String>();
+        int index = 0;
+        while(commaFinder.find(index)){
+            int commaIndex = commaFinder.start();
+            output.add(s.substring(index, commaIndex));
+            index = commaFinder.end();
+        }
+        output.add(s.substring(index));
+
+        return output;
     }
 
 
