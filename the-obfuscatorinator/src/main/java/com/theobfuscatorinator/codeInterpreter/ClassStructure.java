@@ -37,7 +37,6 @@ public class ClassStructure {
         containers = containerClasses;
         classes = identifyClasses();
         templateClasses = templates;
-        System.out.println(name);
         methods = identifyMethods();
     }
 
