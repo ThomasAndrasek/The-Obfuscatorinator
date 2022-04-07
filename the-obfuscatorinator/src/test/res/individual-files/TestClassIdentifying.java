@@ -36,7 +36,7 @@ public class TestClassIdentifying<G,HK,L> {
             return code;
         }
 
-        public void setName(String name) {
+        public void setName(String name, Integer secondArgument) {
             this.name = name;
         }
 

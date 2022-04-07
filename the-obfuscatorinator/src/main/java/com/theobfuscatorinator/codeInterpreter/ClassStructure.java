@@ -35,10 +35,10 @@ public class ClassStructure {
         className = name;
         sourceFile = filename;
         containers = containerClasses;
-        classes = identifyClasses(sourceCode);
+        classes = identifyClasses();
         templateClasses = templates;
         System.out.println(name);
-        System.out.println(ignoreNestedClasses());
+        methods = identifyMethods();
     }
 
     /**
@@ -51,10 +51,10 @@ public class ClassStructure {
 
     /**
      *
-     * @param code Generally this should be the sourceCode. Should already have comments and string literals removed or false positives are possible.
      * @return ArrayList of ClassStructures that represents classes found in the code.
      */
-    private ArrayList<ClassStructure> identifyClasses(String code) {
+    private ArrayList<ClassStructure> identifyClasses() {
+        String code = sourceCode;
         ArrayList<ClassStructure> classes = new ArrayList<>();
         Pattern classFinder = Pattern.compile("\\s+class\\s+");
         Matcher classMatcher = classFinder.matcher(code);
@@ -81,6 +81,30 @@ public class ClassStructure {
         }
 
         return classes;
+    }
+
+    private ArrayList<MethodStructure> identifyMethods(){
+        String code = ignoreNestedClasses();
+        ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
+        Pattern methodFinder = Pattern.compile("\\s*(\\w*)\\s+(\\w*)\\s*\\((.*)\\)\\s*\\{");
+        Matcher methodMatcher = methodFinder.matcher(code);
+        int index = 0;
+        while(methodMatcher.find(index)){
+            ArrayList<String> templates = new ArrayList<String>();
+            String rType = methodMatcher.group(1);
+            String methodName = methodMatcher.group(2);
+            String args = methodMatcher.group(3);
+
+            CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
+            index = detectBody.second;
+
+            //Check for constructors
+            if(methodName.trim().equals(className)) continue;
+
+            output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
+        }
+
+        return output;
     }
 
     /**
