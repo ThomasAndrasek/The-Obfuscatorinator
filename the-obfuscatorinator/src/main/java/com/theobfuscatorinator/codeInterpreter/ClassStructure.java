@@ -103,6 +103,7 @@ public class ClassStructure {
 
             //Check for constructors
             if(methodName.trim().equals(className)) continue;
+            if(methodMatcher.group().contains(" new ")) continue;
 
             output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
         }
