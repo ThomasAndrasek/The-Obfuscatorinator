@@ -4,6 +4,7 @@ package com.theobfuscatorinator.codeInterpreter;
 import java.lang.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.ArrayList;
@@ -40,8 +41,9 @@ public class CodeStructure {
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
-
+            
             classes = identifyClasses(unCommentedCode);
+            
 
             unCommentedCode = StringEncryption.encryptStrings(this);
         }
@@ -119,22 +121,33 @@ public class CodeStructure {
      * @param code Code to have the spaces removed from
      * @return Copy of code without any extra spaces and newlines
      */
-    private String removeSpaces(String code) {
+    public static String removeSpaces(String code) {
         String copy = code.substring(0).replace("\n", "");
         String output = "";
         
         int j = 0;
+        Boolean equ = false;
         // Loop through the code and delete any space that isn't required for the code to run
         while (j < copy.length()) {
+            //checks if there is an equals sign and ignores the next space based on that
+            if (copy.charAt(j) == '=') {
+                equ = true;
+            }
             // If a space is found check if the next character is another word if it's not remove
             // the space
             if (copy.charAt(j) == ' ') {
             	j++;
+                if (equ == true){
+                    equ = false;
+                    continue;
+                }
+                //copies the next character into the new string
             	if (Character.isLetter(copy.charAt(j))) {
             		j--;
             		output += copy.charAt(j);
             		j++;
                 }
+            //copies the character into the new string
             }else {
             	output += copy.charAt(j);
                 j++;
@@ -152,7 +165,7 @@ public class CodeStructure {
      * @param code Code the will have its variables changed
      * @return Copy of code with changed variables
      */
-    private static String changeVar(String code) {
+    public static String changeVar(String code) {
         String copy = code.substring(0);
         int j = 0;
         int start = 0;
@@ -173,13 +186,36 @@ public class CodeStructure {
         	variables.sort((var1,var2) -> Integer.compare(var1.length(),var2.length()));
         	//replace all instances of those variables in the code with a random value
         	for (int x = 0; x < variables.size(); x++) {
-        		//STILL TO ADD: Regex and random value generator
-        		//copy = copy.replaceAll(regex, replacement);
+        		copy = copy.replaceAll(variables.get(variables.size()-x-1), replacement(variables.get(variables.size()-x-1)));
         	}
         	j++;
         }
         
         return copy;
+    }
+    
+    /**
+     * Creates a random string of characters
+     * 
+     * @param String name
+     * @return random string of characters
+     */
+    private static String replacement(String name) {
+    	//counts bytes
+        byte[] creation = new byte[7];
+        //changes the bytes randomly
+        new Random().nextBytes(creation);
+        //creates a string
+        String who = new String(creation, Charset.forName("UTF-8"));
+        //increases string length to increase chance of strange variables
+        if (name.length() > who.length()) {
+        	new Random().nextBytes(creation);
+            who = who + new String(creation, Charset.forName("UTF-8"));
+        }
+        //removes problematic characters
+        who = who.replace("?", "");
+        who = who.replace("\\", "");
+        return who;
     }
 
     /**
