@@ -41,6 +41,20 @@ public class InsertCode {
     public static String generateCode() {
     	String className = "DummyCode";
     	String startClassCode = "public class" + className + " {";
+    	String emptyString = "";
+    	String dummyPrint = "";
+    	String dummyLine = "";
+    	int maxLines = 100;
+    	for (int i = 1; i <= maxLines; i++) {
+    		dummyPrint = "System.out.println(\"ij43otj8reiodfgj48gfsnlfkngldkfngrj4jt4\");";
+    		dummyLine += "\t" + "\t" + dummyPrint + "\n";
+    	}
+    	
+    	String allDummyCode = className + "\n" + "\n";
+    	allDummyCode += "public static void main(String[] args) {";
+    	allDummyCode += "\n" + "\n" + dummyLine + "\n" + "\t" + "}";
+    	allDummyCode += "\n" + "}" + "\n"; 
+    	
     }
     
     public static String insertCode(CodeStructure codeStructure) {
