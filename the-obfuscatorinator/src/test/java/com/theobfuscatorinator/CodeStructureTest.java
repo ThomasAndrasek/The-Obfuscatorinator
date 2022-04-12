@@ -17,5 +17,26 @@ public class CodeStructureTest {
     public void testRemoveComments() {
         //assertTrue();
     }
+    @Test
+    public void testRemoveStrings() {
+        //assertTrue();
+    }
+    @Test
+    public void testRemoveSpaces() {
+        //assertTrue();
+    }
+    @Test
+    public void testChangeVar() {
+        //assertTrue();
+    }
+    @Test
+    public void testGetCodeBetweenBrackets() {
+        //assertTrue();
+    }
+    @Test
+    public void testGetCommaSeparatedValues() {
+        //assertTrue();
+    }
+    
 
 }
