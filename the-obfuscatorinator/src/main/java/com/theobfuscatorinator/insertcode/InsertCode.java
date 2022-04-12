@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 //import com.theobfuscatorinator.stringencryption.StringEncryption.Pair;
 
-public class InsertCode{
+public class InsertCode {
 	
 	static class Pair<K,V>{
 		public K first;
@@ -37,5 +37,17 @@ public class InsertCode{
         System.out.println(strings);
         return strings;
     }
-
+    
+    public static String generateCode() {
+    	String className = "DummyCode";
+    	String startClassCode = "public class" + className + " {";
+    }
+    
+    public static String insertCode(CodeStructure codeStructure) {
+    	ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
+    	String code = codeStructure.getUnCommentedCode();
+    	return code;
+    }
+    
+    
 }
