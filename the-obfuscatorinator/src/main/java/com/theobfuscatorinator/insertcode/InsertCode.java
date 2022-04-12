@@ -5,7 +5,6 @@ import java.util.Random;
 
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
-//import com.theobfuscatorinator.stringencryption.StringEncryption.Pair;
 
 public class InsertCode {
 	
@@ -79,6 +78,7 @@ public class InsertCode {
     public static String insertCode(CodeStructure codeStructure) {
     	ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
     	String code = codeStructure.getUnCommentedCode();
+    	System.out.println(code);
     	return code;
     }
     
