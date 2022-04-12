@@ -1,6 +1,8 @@
 package com.theobfuscatorinator.insertcode;
 
 import java.util.ArrayList;
+import java.util.Random;
+
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 //import com.theobfuscatorinator.stringencryption.StringEncryption.Pair;
@@ -38,23 +40,40 @@ public class InsertCode {
         return strings;
     }
     
-    public static String generateCode() {
+    public static String generateDummyClass() {
     	String className = "DummyCode";
     	String startClassCode = "public class" + className + " {";
-    	String emptyString = "";
     	String dummyPrint = "";
-    	String dummyLine = "";
+    	String dummyLine = "\t" + "\t" + "int dummyVar = 0";
+    	String tempLine = "";
     	int maxLines = 100;
     	for (int i = 1; i <= maxLines; i++) {
     		dummyPrint = "System.out.println(\"ij43otj8reiodfgj48gfsnlfkngldkfngrj4jt4\");";
     		dummyLine += "\t" + "\t" + dummyPrint + "\n";
+    		tempLine = String.format("dummyVar = %6d", i);
+    		dummyLine += "\t" + "\t" + tempLine + "\n";
     	}
     	
-    	String allDummyCode = className + "\n" + "\n";
+    	String allDummyCode = startClassCode + "\n" + "\n";
     	allDummyCode += "public static void main(String[] args) {";
     	allDummyCode += "\n" + "\n" + dummyLine + "\n" + "\t" + "}";
     	allDummyCode += "\n" + "}" + "\n"; 
     	
+    	return allDummyCode;
+    }
+    
+    public static String getRandomString() {
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder str = new StringBuilder();
+        Random rnd = new Random();
+        while (str.length() < 25) {
+            int index = (int) (rnd.nextFloat() * alphabet.length());
+            str.append(alphabet.charAt(index));
+        }
+        String randomString = str.toString();
+        String finalString = String.format("System.out.println(\"%s\"", randomString);
+        return finalString;
+
     }
     
     public static String insertCode(CodeStructure codeStructure) {
