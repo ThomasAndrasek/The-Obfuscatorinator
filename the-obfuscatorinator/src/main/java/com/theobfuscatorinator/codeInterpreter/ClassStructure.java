@@ -85,27 +85,32 @@ public class ClassStructure {
     private ArrayList<MethodStructure> identifyMethods(){
         String code = ignoreNestedClasses();
         ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
-        Pattern methodFinder = Pattern.compile("\\s*(\\<(.*)\\>\\s*)?(\\w*)\\s+(\\w*)\\s*\\((.*)\\)\\s*\\{");
+        Pattern methodFinder = Pattern.compile("[\\S]{1}(.)*[\\S]*[\\s]*[(]{1}(.)*[)]{1}[\\s]*[{]{1}");
         Matcher methodMatcher = methodFinder.matcher(code);
         int index = 0;
         while(methodMatcher.find(index)){
             ArrayList<String> templates = new ArrayList<String>();
-            String rType = methodMatcher.group(3);
-            String methodName = methodMatcher.group(4);
-            String args = methodMatcher.group(5);
-
-            if(methodMatcher.group(2) != null){
-                for(String s : CodeStructure.getCommaSeparatedValues(methodMatcher.group(2))) templates.add(s.trim());
+            for (int i = 0; i < methodMatcher.groupCount(); i++) {
+                if(methodMatcher.group(i) != null){
+                    System.out.println(methodMatcher.group(i));
+                }
             }
+            // String rType = methodMatcher.group(3);
+            // String methodName = methodMatcher.group(4);
+            // String args = methodMatcher.group(5);
+
+            // if(methodMatcher.group(2) != null){
+            //     for(String s : CodeStructure.getCommaSeparatedValues(methodMatcher.group(2))) templates.add(s.trim());
+            // }
 
             CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;
 
             //Check for constructors
-            if(methodName.trim().equals(className)) continue;
-            if(methodMatcher.group().contains(" new ")) continue;
+            // if(methodName.trim().equals(className)) continue;
+            // if(methodMatcher.group().contains(" new ")) continue;
 
-            output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
+            // output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
         }
 
         return output;
