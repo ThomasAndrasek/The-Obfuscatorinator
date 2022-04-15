@@ -82,6 +82,11 @@ public class ClassStructure {
         return classes;
     }
 
+    /**
+     * Finds all methods defined in this class. Does not include methods defined in other classes nested within this class.
+     * This will not include constructors.
+     * @return An arraylist of MethodStructures that represents every method that was found.
+     */
     private ArrayList<MethodStructure> identifyMethods(){
         String code = ignoreNestedClasses();
         ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
@@ -197,4 +202,17 @@ public class ClassStructure {
         return out;
     }
 
+    /**
+     * Checks if this class, or any nested classes, contains a main method.
+     * @return True if this class contains the main method or contains another class for which this function returns true.
+     */
+    protected boolean containsMainMethod(){
+        for(ClassStructure c : classes){
+            if(c.containsMainMethod()) return true;
+        }
+        for(MethodStructure m : methods){
+            if(m.methodName.equals("main") && m.returnType.equals("void")) return true;
+        }
+        return false;
+    }
 }

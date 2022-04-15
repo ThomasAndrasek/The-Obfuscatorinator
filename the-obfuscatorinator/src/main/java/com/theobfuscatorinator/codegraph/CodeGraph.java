@@ -1,10 +1,13 @@
 package com.theobfuscatorinator.codegraph;
 
+import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * This class represents a directed graph of the file structure of a java project.
@@ -13,14 +16,16 @@ import java.util.ArrayList;
  */
 public class CodeGraph {
     private String mainMethodFilePath;
+    private CodeStructure mainMethodFileCodeStructure;
 
     /**
      * Construct a new graph from the given file path.
      * 
      * The start of the graph will be from the first file found with a main method.
      */
-    public CodeGraph(String sourceDirectory) {
+    public CodeGraph(String sourceDirectory, HashSet<CodeStructure> projectStructure) {
         this.mainMethodFilePath = findMainMethodFileLocation(sourceDirectory);
+        this.mainMethodFileCodeStructure = findMainMethod(projectStructure);
     }
 
     /**
@@ -84,5 +89,17 @@ public class CodeGraph {
         }
 
         return mainMethodFileLocation;
+    }
+
+    /**
+     * Finds the CodeStructure object of a project that contains the main method, if one exists.
+     * @param code Set of codestructures that represents a project's source code
+     * @return The CodeStructure object in the HashSet that contains the main method. Null if no main method exists.
+     */
+    private CodeStructure findMainMethod(HashSet<CodeStructure> code){
+        for(CodeStructure file : code){
+            if(file.containsMainMethod()) return file;
+        }
+        return null;
     }
 }
