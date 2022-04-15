@@ -73,9 +73,10 @@ public class FileManager {
     }
 
     /**
-     * Returns all non-directory files in a directory tree that stems from the given root
+     * Returns all non-directory files in a directory tree that stems from the given root.
+     * Files that do not end in .java will not be included.
      * @param directory - Root of the target directory tree
-     * @return - Set of all non-directory files in the tree
+     * @return - Set of all non-directory code files in the tree
      */
     public static HashSet<File> getAllFilesFromDirectory(File directory){
         HashSet<File> output = new HashSet<File>();
@@ -84,7 +85,7 @@ public class FileManager {
                 output.addAll(getAllFilesFromDirectory(child));
             }
         }
-        else output.add(directory);
+        else if(directory.getPath().endsWith(".java")) output.add(directory);
         return output;
     }
 
