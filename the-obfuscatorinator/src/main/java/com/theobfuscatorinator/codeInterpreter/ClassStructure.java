@@ -90,11 +90,70 @@ public class ClassStructure {
         int index = 0;
         while(methodMatcher.find(index)){
             ArrayList<String> templates = new ArrayList<String>();
-            for (int i = 0; i < methodMatcher.groupCount(); i++) {
-                if(methodMatcher.group(i) != null){
-                    System.out.println(methodMatcher.group(i));
-                }
+            String method = "";
+            if(methodMatcher.group(0) != null){
+                method = methodMatcher.group(0);
             }
+
+            method = method.replaceAll("\\s+", " ");
+
+            if (method == "") {
+                break;
+            }
+
+            String scope = "";
+            if (method.startsWith("public")) {
+                scope = "public";
+                method = method.substring(7);
+            } else if (method.startsWith("private")) {
+                scope = "private";
+                method = method.substring(8);
+            } else if (method.startsWith("protected")) {
+                scope = "protected";
+                method = method.substring(9);
+            }
+
+            String staticStatus = "";
+            if (method.startsWith("static")) {
+                staticStatus = "static";
+                method = method.substring(7);
+            }
+
+            String name = "";
+            if (method.contains("(")) {
+                int indexC = method.indexOf("(");
+                int extraSpace = 0;
+                if (method.charAt(indexC - 1) == ' ') {
+                    extraSpace = 1;
+                    indexC -= 2;
+                }
+                while (indexC != -1 && method.charAt(indexC) != ' ') {
+                    indexC--;
+                }
+                name = method.substring(indexC+1, method.indexOf("(") - extraSpace);
+                method = method.substring(0, indexC+1) + method.substring(method.indexOf("("));
+            }
+
+            String arguments = "";
+            if (method.contains("(")) {
+                arguments = method.substring(method.indexOf("(") + 1, method.indexOf(")"));
+                method = method.substring(0, method.indexOf("("));
+            }
+
+            String template = "";
+            if (method.startsWith("<")) {
+                template = method.substring(0, method.indexOf(">") + 1);
+                method = method.substring(method.indexOf(">") + 2);
+            }
+
+            String returnType = method;
+
+            System.out.println(scope + "\n\t" + staticStatus + "\n\t" + template + "\n\t" + returnType + "\n\t" + name + "\n\t" + arguments);
+
+            if (returnType.equals("")) {
+                System.out.println("\t" + "INVALID");
+            }
+            
             // String rType = methodMatcher.group(3);
             // String methodName = methodMatcher.group(4);
             // String args = methodMatcher.group(5);
