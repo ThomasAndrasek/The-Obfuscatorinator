@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This class tracks basic information about a method. Intended for protected initialization by ClassStructure objects.
+ * @author Carter Del Ciello
+ */
 public class MethodStructure {
 
-    String methodName;
+    protected String methodName;
     String sourceCode;
     String sourceFile;
 
@@ -15,7 +19,7 @@ public class MethodStructure {
     private ArrayList<ClassStructure> containers;
 
     private ArrayList<String> templateClasses;
-    String returnType;
+    protected String returnType;
     private ArrayList<String> args;
 
     protected MethodStructure(String name, String code, String filename, ArrayList<ClassStructure> containerStack,

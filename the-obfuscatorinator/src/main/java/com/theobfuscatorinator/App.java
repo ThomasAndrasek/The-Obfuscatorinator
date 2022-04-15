@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Vector;
+
+import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+import com.theobfuscatorinator.codegraph.CodeGraph;
 
 /**
  * Hello world!
@@ -40,6 +43,8 @@ public class App
             for(File f : fileSet){
                 codeStructures.add(new CodeStructure(f));
             }
+
+            CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
 
         }
         catch(Exception e){
