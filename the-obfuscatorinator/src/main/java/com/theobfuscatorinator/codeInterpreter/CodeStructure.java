@@ -330,6 +330,13 @@ public class CodeStructure {
         return output;
     }
 
+    public boolean containsMainMethod(){
+        for(ClassStructure c : classes){
+            if(c.containsMainMethod()) return true;
+        }
+        return false;
+    }
+
 
     public String getUnCommentedCode(){
         return unCommentedCode;

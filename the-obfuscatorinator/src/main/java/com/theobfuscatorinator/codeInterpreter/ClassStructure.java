@@ -105,7 +105,7 @@ public class ClassStructure {
             if(methodName.trim().equals(className)) continue;
             if(methodMatcher.group().contains(" new ")) continue;
 
-            output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
+            output.add(new MethodStructure(methodName.trim(), detectBody.first, sourceFile, containers, args, templates, rType.trim()));
         }
 
         return output;
@@ -133,4 +133,13 @@ public class ClassStructure {
         return out;
     }
 
+    protected boolean containsMainMethod(){
+        for(ClassStructure c : classes){
+            if(c.containsMainMethod()) return true;
+        }
+        for(MethodStructure m : methods){
+            if(m.methodName.equals("main") && m.returnType.equals("void")) return true;
+        }
+        return false;
+    }
 }
