@@ -91,6 +91,11 @@ public class CodeGraph {
         return mainMethodFileLocation;
     }
 
+    /**
+     * Finds the CodeStructure object of a project that contains the main method, if one exists.
+     * @param code Set of codestructures that represents a project's source code
+     * @return The CodeStructure object in the HashSet that contains the main method. Null if no main method exists.
+     */
     private CodeStructure findMainMethod(HashSet<CodeStructure> code){
         for(CodeStructure file : code){
             if(file.containsMainMethod()) return file;

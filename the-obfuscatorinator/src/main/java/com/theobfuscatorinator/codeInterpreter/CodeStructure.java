@@ -330,6 +330,10 @@ public class CodeStructure {
         return output;
     }
 
+    /**
+     * Returns true if the main method exists anywhere within this code structure.
+     * @return True if the main method exists anywhere within this code structure.
+     */
     public boolean containsMainMethod(){
         for(ClassStructure c : classes){
             if(c.containsMainMethod()) return true;
