@@ -13,20 +13,6 @@ import org.junit.Test;
 public class InsertCodeTest {
     
     @Test
-    public void testInsertCode()
-    {
-    	File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
-    	if (f.exists()) {
-    		CodeStructure t = null;
-    		try{
-                t = new CodeStructure(f);
-            }catch(IOException e){
-                assertTrue("IOException Thrown in constructor", false);
-            }
-    	}
-    }
-    
-    @Test
     public void testPrint() throws IllegalArgumentException, IOException {
         File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
     	if (f.exists()) {
@@ -38,7 +24,7 @@ public class InsertCodeTest {
             }
     	}
         CodeStructure t = new CodeStructure(f);
-        InsertCode.insertCode(t);
+        InsertCode.insertCode(f, t);
     }
 
     

@@ -3,6 +3,8 @@ package com.theobfuscatorinator.insertcode;
 import java.util.ArrayList;
 import java.util.Random;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.*;
 
 
@@ -48,15 +50,15 @@ public class InsertCode {
     
     public static String generateDummyClass() {
     	String className = "DummyCode";
-    	String startClassCode = "public class" + className + " {";
+    	String startClassCode = "public static class " + className + " {";
     	String dummyPrint = "";
-    	String dummyLine = "\t\t\t" + "int dummyVar = 0\n";
+    	String dummyLine = "\t\t\t" + "int dummyVar = 0;\n";
     	String tempLine = "";
-    	int maxLines = 20;
+    	int maxLines = 10;
     	for (int i = 1; i <= maxLines; i++) {
     		dummyPrint = "System.out.println(\"ij43otj8reiodfgj48gfsnlfkngldkfngrj4jt4\");";
     		dummyLine += "\t\t\t" + dummyPrint + "\n";
-    		tempLine = String.format("dummyVar = %d", i);
+    		tempLine = String.format("dummyVar = %d;", i);
     		dummyLine += "\t\t\t" + tempLine + "\n";
     	}
     	
@@ -82,15 +84,21 @@ public class InsertCode {
 
     }
     
-    public static String insertCode(CodeStructure codeStructure) {
-    	ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
+    public static String insertCode(File file, CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
         int index = code.indexOf('{');
         String dummyCode = generateDummyClass();
-    	// System.out.println(code);
         String newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
         System.out.println(newCode);
-    	return code;
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file, false);
+            writer.write(newCode);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    	return newCode;
     }
     
     
