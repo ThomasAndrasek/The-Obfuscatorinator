@@ -5,7 +5,6 @@ import java.util.Random;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.*;
 
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
@@ -15,6 +14,11 @@ public class InsertCode {
     private File file;
     private String fileName;
     private String originalCode;
+
+    public class Pair<T1, T2> {
+        public T1 first;
+        public T2 second;
+    }
 
     public static String generateDummyClass() {
     	String className = "DummyCode";
@@ -47,25 +51,38 @@ public class InsertCode {
             str.append(alphabet.charAt(index));
         }
         String randomString = str.toString();
-        String finalString = String.format("System.out.println(\"%s\"", randomString);
+        String finalString = String.format("\nSystem.out.println(\"%s\");\n", randomString);
         return finalString;
 
     }
     
     public static String insertCode(File file, CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
-        int index = code.indexOf('{');
-        String dummyCode = generateDummyClass();
-        String newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
-        System.out.println(newCode);
-        FileWriter writer;
-        try {
-            writer = new FileWriter(file, false);
-            writer.write(newCode);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        
+        //Inserting dummy strings throughout the code
+        int startIndex = 0;
+        String newCode = code;
+        while (code.indexOf('{', startIndex) != -1) {
+            int tempIndex = newCode.indexOf('{', startIndex);
+            String tempString = getRandomString();
+            newCode = newCode.substring(0, tempIndex+1) + tempString + newCode.substring(tempIndex+1);
+            startIndex = tempIndex + 1;        
         }
+        System.out.println(newCode);
+        // Inserting Dummy Class
+        int index = code.indexOf("{\n");
+        String dummyCode = generateDummyClass();
+        newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
+
+        // //Modify File
+        // FileWriter writer;
+        // try {
+        //     writer = new FileWriter(file, false);
+        //     writer.write(newCode);
+        //     writer.close();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     	return newCode;
     }
     
