@@ -51,7 +51,7 @@ public class InsertCode {
             str.append(alphabet.charAt(index));
         }
         String randomString = str.toString();
-        String finalString = String.format("\nSystem.out.println(\"%s\");\n", randomString);
+        String finalString = String.format("\nSystem.out.println(\"%s\");", randomString);
         return finalString;
 
     }
@@ -60,15 +60,17 @@ public class InsertCode {
     	String code = codeStructure.getUnCommentedCode();
         
         //Inserting dummy strings throughout the code
-        int startIndex = 0;
         String newCode = code;
-        while (code.indexOf('{', startIndex) != -1) {
-            int tempIndex = newCode.indexOf('{', startIndex);
-            String tempString = getRandomString();
-            newCode = newCode.substring(0, tempIndex+1) + tempString + newCode.substring(tempIndex+1);
-            startIndex = tempIndex + 1;        
+        String[] codeByLines = code.split("\r\n");
+        for (int i = 0; i < codeByLines.length; i++) {
+            if (codeByLines[i].contains("public") && codeByLines[i].contains("{")) {
+                codeByLines[i] = codeByLines[i] + getRandomString();
+            }
         }
-        System.out.println(newCode);
+        for (String line:codeByLines) {
+            System.out.println(line);
+        }
+        
         // Inserting Dummy Class
         int index = code.indexOf("{\n");
         String dummyCode = generateDummyClass();
