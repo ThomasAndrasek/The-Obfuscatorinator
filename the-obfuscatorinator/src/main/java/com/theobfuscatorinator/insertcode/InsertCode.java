@@ -62,9 +62,21 @@ public class InsertCode {
         //Inserting dummy strings throughout the code
         String newCode = code;
         String[] codeByLines = code.split("\r\n");
+        int nestedCount = 0;
         for (int i = 0; i < codeByLines.length; i++) {
+            // if (codeByLines[i].contains("{")) {
+            //     nestedCount += (codeByLines[i].length() - codeByLines[i].replace("{", "").length());
+            // }
+            // if (codeByLines[i].contains("}")) {
+            //     nestedCount -= (codeByLines[i].length() - codeByLines[i].replace("}", "").length());
+            // }
+            // System.out.println(nestedCount);
             if (codeByLines[i].contains("public") && codeByLines[i].contains("{")) {
-                codeByLines[i] = codeByLines[i] + getRandomString();
+                System.out.print(codeByLines[i] + "  ");
+                System.out.print(codeByLines[i].indexOf("public"));
+                System.out.print("   ");
+                System.out.println(codeByLines[i].length());
+                codeByLines[i] = codeByLines[i] + "\t".repeat(nestedCount) + getRandomString();
             }
         }
         for (String line:codeByLines) {
