@@ -5,20 +5,17 @@ import com.theobfuscatorinator.insertcode.InsertCode;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
 
 import org.junit.Test;
 
 public class InsertCodeTest {
     
     @Test
-    public void testCodeStructure()
+    public void testInsertCode()
     {
-    	File f = new File("test.java");
+    	File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
@@ -27,6 +24,21 @@ public class InsertCodeTest {
                 assertTrue("IOException Thrown in constructor", false);
             }
     	}
+    }
+    
+    @Test
+    public void testPrint() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
+    	if (f.exists()) {
+    		CodeStructure t = null;
+    		try{
+                t = new CodeStructure(f);
+            }catch(IOException e){
+                assertTrue("IOException Thrown in constructor", false);
+            }
+    	}
+        CodeStructure t = new CodeStructure(f);
+        InsertCode.insertCode(t);
     }
 
     

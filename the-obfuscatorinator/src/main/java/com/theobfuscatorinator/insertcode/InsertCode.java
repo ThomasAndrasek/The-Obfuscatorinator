@@ -2,12 +2,18 @@ package com.theobfuscatorinator.insertcode;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.io.File;
+import java.lang.*;
 
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
 public class InsertCode {
 	
+    private File file;
+    private String fileName;
+    private String originalCode;
+
 	static class Pair<K,V>{
 		public K first;
 		public V second;
@@ -17,6 +23,7 @@ public class InsertCode {
 			second = snd;
 		}
 	}
+
     private static ArrayList<Pair<String, Integer>> findStrings(CodeStructure codeStructure) {
         ArrayList<Pair<String, Integer>> strings = new ArrayList<Pair<String, Integer>>();
         String code = codeStructure.getUnCommentedCode();
@@ -43,20 +50,20 @@ public class InsertCode {
     	String className = "DummyCode";
     	String startClassCode = "public class" + className + " {";
     	String dummyPrint = "";
-    	String dummyLine = "\t" + "\t" + "int dummyVar = 0";
+    	String dummyLine = "\t\t\t" + "int dummyVar = 0\n";
     	String tempLine = "";
-    	int maxLines = 100;
+    	int maxLines = 20;
     	for (int i = 1; i <= maxLines; i++) {
     		dummyPrint = "System.out.println(\"ij43otj8reiodfgj48gfsnlfkngldkfngrj4jt4\");";
-    		dummyLine += "\t" + "\t" + dummyPrint + "\n";
-    		tempLine = String.format("dummyVar = %6d", i);
-    		dummyLine += "\t" + "\t" + tempLine + "\n";
+    		dummyLine += "\t\t\t" + dummyPrint + "\n";
+    		tempLine = String.format("dummyVar = %d", i);
+    		dummyLine += "\t\t\t" + tempLine + "\n";
     	}
     	
-    	String allDummyCode = startClassCode + "\n" + "\n";
-    	allDummyCode += "public static void main(String[] args) {";
-    	allDummyCode += "\n" + "\n" + dummyLine + "\n" + "\t" + "}";
-    	allDummyCode += "\n" + "}" + "\n"; 
+    	String allDummyCode = "\n\t" + startClassCode + "\n" + "\n";
+    	allDummyCode += "\t\tpublic static void main(String[] args) {";
+    	allDummyCode += "\n" + "\n" + dummyLine + "\n" + "\t" + "\t}";
+    	allDummyCode += "\n" + "\t}" + "\n"; 
     	
     	return allDummyCode;
     }
@@ -78,7 +85,11 @@ public class InsertCode {
     public static String insertCode(CodeStructure codeStructure) {
     	ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
     	String code = codeStructure.getUnCommentedCode();
-    	System.out.println(code);
+        int index = code.indexOf('{');
+        String dummyCode = generateDummyClass();
+    	// System.out.println(code);
+        String newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
+        System.out.println(newCode);
     	return code;
     }
     
