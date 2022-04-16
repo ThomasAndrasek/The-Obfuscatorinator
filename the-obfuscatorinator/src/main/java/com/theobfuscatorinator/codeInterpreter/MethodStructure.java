@@ -21,24 +21,24 @@ public class MethodStructure {
     private ArrayList<String> templateClasses;
     protected String returnType;
     private ArrayList<String> args;
+    private String isStatic;
+    private String scope;
+    private String template;
 
-    protected MethodStructure(String name, String code, String filename, ArrayList<ClassStructure> containerStack,
-                              String argumentsString, ArrayList<String> templates, String rType){
-        methodName = name;
-        sourceCode = code;
-        sourceFile = filename;
-        containers = containerStack;
-        templateClasses = templates;
-        returnType = rType;
-        args = new ArrayList<String>();
+    protected MethodStructure(String methodName, String scope, String isStatic, String template,
+                              String arguments, String returnType, String code,
+                              ArrayList<ClassStructure> containerStack, String sourceFile) {
+        this.methodName = methodName;
+        this.sourceCode = code;
+        this.sourceFile = sourceFile;
+        this.containers = containerStack;
+        this.returnType = returnType;
+        this.isStatic = isStatic;
+        this.scope = scope;
+        this.template = template;
+        this.args = new ArrayList<String>();
 
-        ArrayList<String> argStrings = CodeStructure.getCommaSeparatedValues(argumentsString);
-        Pattern variableName = Pattern.compile("(\\w*)\\z");
-        for(String arg : argStrings){
-            Matcher argumentMatcher = variableName.matcher(arg);
-            argumentMatcher.find(0);
-            args.add(argumentMatcher.group(1).trim());
-        }
+        ArrayList<String> argStrings = CodeStructure.getCommaSeparatedValues(arguments);
     }
 
 }

@@ -94,7 +94,6 @@ public class ClassStructure {
         Matcher methodMatcher = methodFinder.matcher(code);
         int index = 0;
         while(methodMatcher.find(index)){
-            ArrayList<String> templates = new ArrayList<String>();
             String method = "";
             if(methodMatcher.group(0) != null){
                 method = methodMatcher.group(0);
@@ -153,28 +152,13 @@ public class ClassStructure {
 
             String returnType = method;
 
-            System.out.println(scope + "\n\t" + staticStatus + "\n\t" + template + "\n\t" + returnType + "\n\t" + name + "\n\t" + arguments);
-
-            if (returnType.equals("")) {
-                System.out.println("\t" + "INVALID");
-            }
-            
-            // String rType = methodMatcher.group(3);
-            // String methodName = methodMatcher.group(4);
-            // String args = methodMatcher.group(5);
-
-            // if(methodMatcher.group(2) != null){
-            //     for(String s : CodeStructure.getCommaSeparatedValues(methodMatcher.group(2))) templates.add(s.trim());
-            // }
-
             CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;
 
-            //Check for constructors
-            // if(methodName.trim().equals(className)) continue;
-            // if(methodMatcher.group().contains(" new ")) continue;
-
-            // output.add(new MethodStructure(methodName, detectBody.first, sourceFile, containers, args, templates, rType));
+            if (!returnType.equals("")) {
+                // System.out.println(scope + "\n\t" + staticStatus + "\n\t" + template + "\n\t" + returnType + "\n\t" + name + "\n\t" + arguments);
+                output.add(new MethodStructure(name, scope, staticStatus, template, arguments, returnType, code, containers, sourceFile));
+            } 
         }
 
         return output;
