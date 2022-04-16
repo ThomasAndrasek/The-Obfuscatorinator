@@ -2,11 +2,13 @@ package com.theobfuscatorinator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
 
 import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codegraph.CodeGraph;
 
 /**
@@ -38,13 +40,15 @@ public class App
 
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
 
-            HashSet<CodeStructure> codeStructures = new HashSet<CodeStructure>();
+            ArrayList<CodeStructure> codeStructures = new ArrayList<CodeStructure>();
             HashSet<File> fileSet = FileManager.getAllFilesFromDirectory(targetDirectory);
             for(File f : fileSet){
                 codeStructures.add(new CodeStructure(f));
             }
 
-            CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
+            // CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
+
+            Renamer.renameClasses(codeStructures);
 
         }
         catch(Exception e){

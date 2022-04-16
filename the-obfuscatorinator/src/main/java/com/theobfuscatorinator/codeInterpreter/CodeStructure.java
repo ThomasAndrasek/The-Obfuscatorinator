@@ -369,6 +369,16 @@ public class CodeStructure {
             second = snd;
         }
     }
+
+    public ArrayList<ClassStructure> getClassStructures() {
+        return classes;
+    }
+
+    public void setUnCommentedCode(String newCode) {
+        unCommentedCode = newCode;
+    }
 }
+
+    
 
 

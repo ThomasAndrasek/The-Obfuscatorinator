@@ -199,4 +199,12 @@ public class ClassStructure {
         }
         return false;
     }
+
+    public void setName(String newName) {
+        className = newName;
+    }
+
+    public String getName() {
+        return className;
+    }
 }
