@@ -1,6 +1,5 @@
 package com.theobfuscatorinator.insertcode;
 
-import java.util.ArrayList;
 import java.util.Random;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,10 +10,6 @@ import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
 public class InsertCode {
 	
-    private File file;
-    private String fileName;
-    private String originalCode;
-
     public class Pair<T1, T2> {
         public T1 first;
         public T2 second;
@@ -51,52 +46,40 @@ public class InsertCode {
             str.append(alphabet.charAt(index));
         }
         String randomString = str.toString();
-        String finalString = String.format("\nSystem.out.println(\"%s\");", randomString);
+        String finalString = String.format("System.out.println(\"%s\");", randomString);
         return finalString;
 
     }
     
     public static String insertCode(File file, CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
-        
+
         //Inserting dummy strings throughout the code
-        String newCode = code;
         String[] codeByLines = code.split("\r\n");
-        int nestedCount = 0;
         for (int i = 0; i < codeByLines.length; i++) {
-            // if (codeByLines[i].contains("{")) {
-            //     nestedCount += (codeByLines[i].length() - codeByLines[i].replace("{", "").length());
-            // }
-            // if (codeByLines[i].contains("}")) {
-            //     nestedCount -= (codeByLines[i].length() - codeByLines[i].replace("}", "").length());
-            // }
-            // System.out.println(nestedCount);
             if (codeByLines[i].contains("public") && codeByLines[i].contains("{")) {
-                System.out.print(codeByLines[i] + "  ");
-                System.out.print(codeByLines[i].indexOf("public"));
-                System.out.print("   ");
-                System.out.println(codeByLines[i].length());
-                codeByLines[i] = codeByLines[i] + "\t".repeat(nestedCount) + getRandomString();
+                codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("public") + 4) + getRandomString();
             }
         }
+        String newCode = new String();
         for (String line:codeByLines) {
-            System.out.println(line);
+            newCode += line + "\n";
         }
-        
+        System.out.println(newCode);
         // Inserting Dummy Class
         int index = code.indexOf("{\n");
         String dummyCode = generateDummyClass();
         newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
 
-        // //Modify File
-        // FileWriter writer;
-        // try {
-        //     writer = new FileWriter(file, false);
-        //     writer.write(newCode);
-        //     writer.close();
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        // }
+        //Modify File
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file, false);
+            writer.write(newCode);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     	return newCode;
     }
     
