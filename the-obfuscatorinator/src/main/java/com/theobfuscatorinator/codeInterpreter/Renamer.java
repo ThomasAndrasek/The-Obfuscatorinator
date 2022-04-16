@@ -1,6 +1,8 @@
 package com.theobfuscatorinator.codeInterpreter;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Renamer {
     
@@ -26,9 +28,35 @@ public class Renamer {
             int index = structure.getUnCommentedCode().indexOf(og);
             while (index != -1) {
                 String codeToUpdate = structure.getUnCommentedCode();
-                String newCode = codeToUpdate.substring(0, index) + classStruct.getName() + codeToUpdate.substring(index + og.length());
-                structure.setUnCommentedCode(newCode);
-                index = structure.getUnCommentedCode().indexOf(og);
+                boolean validBefore = false;
+                if (index - 1 >= 0) {
+                    char charBefore = codeToUpdate.charAt(index - 1);
+                    String before = String.valueOf(charBefore);
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%\\^&*0-9]*");
+                    Matcher matcher = methodFinder.matcher(before);
+                    if (matcher.matches()) {
+                        validBefore = true;
+                    }
+                }
+
+                boolean validAfter = false;
+                if (index + og.length() < codeToUpdate.length()) {
+                    char charAfter = codeToUpdate.charAt(index + og.length());
+                    String after = String.valueOf(charAfter);
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%^&*0-9]*");
+                    Matcher matcher = methodFinder.matcher(after);
+                    if (matcher.matches()) {
+                        validAfter = true;
+                    }
+                }
+
+                if (validBefore && validAfter) {
+                    String newName = classStruct.getName();
+                    String code = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + og.length());
+                    structure.setUnCommentedCode(code);
+                }
+
+                index = structure.getUnCommentedCode().indexOf(og, index + og.length());
             }
         }
     }
