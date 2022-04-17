@@ -10,6 +10,7 @@ import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codegraph.CodeGraph;
+import com.theobfuscatorinator.stringencryption.StringEncryption;
 
 /**
  * Hello world!
@@ -49,6 +50,12 @@ public class App
             // CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
 
             Renamer.renameClasses(codeStructures);
+
+            Renamer.renameMethods(codeStructures);
+
+            Renamer.renameVariables(codeStructures);
+
+            StringEncryption.addDecryptionMethod(codeStructures);
 
         }
         catch(Exception e){

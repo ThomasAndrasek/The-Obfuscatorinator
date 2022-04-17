@@ -207,4 +207,8 @@ public class ClassStructure {
     public String getName() {
         return className;
     }
+
+    public ArrayList<MethodStructure> getMethodStructures() {
+        return methods;
+    }
 }

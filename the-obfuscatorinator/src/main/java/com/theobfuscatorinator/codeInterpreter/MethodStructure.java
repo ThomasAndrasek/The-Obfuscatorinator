@@ -41,4 +41,12 @@ public class MethodStructure {
         ArrayList<String> argStrings = CodeStructure.getCommaSeparatedValues(arguments);
     }
 
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
 }

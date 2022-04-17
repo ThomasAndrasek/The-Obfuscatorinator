@@ -29,6 +29,8 @@ public class CodeStructure {
 
     private ArrayList<ClassStructure> classes;
 
+    private String decryptionMethodName;
+
     /**
      * Constructor will build all of the structure for you
      * @param input File to be searched for code elements
@@ -43,9 +45,10 @@ public class CodeStructure {
             unCommentedCode = removeComments(originalCode);
             
             classes = identifyClasses(unCommentedCode);
-            
 
-            unCommentedCode = StringEncryption.encryptStrings(this);
+            this.decryptionMethodName = Renamer.generateClassName();
+            
+            unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
         }
         else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
     }
@@ -352,6 +355,10 @@ public class CodeStructure {
 
     public ArrayList<ClassStructure> getClasses(){
         return classes;
+    }
+
+    public String getDecryptionMethodName() {
+        return decryptionMethodName;
     }
 
     /**

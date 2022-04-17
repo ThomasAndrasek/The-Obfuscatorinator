@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+import com.theobfuscatorinator.codeInterpreter.Renamer;
 
 public class StringEncryption {
 
@@ -45,7 +46,7 @@ public class StringEncryption {
         return strings;
     }
 
-    public static String encryptStrings(CodeStructure codeStructure) {
+    public static String encryptStrings(CodeStructure codeStructure, String decryptionMethodName) {
         
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
         String code = codeStructure.getUnCommentedCode();
@@ -72,28 +73,49 @@ public class StringEncryption {
                 byteString += num + ", ";
             }
             byteString = byteString.substring(0, byteString.length() - 2);
-            String encrypted = "werturtgfhbhxcvghwertyhs(new int[]{" + byteString + "})";
+            String encrypted = decryptionMethodName + "(new int[]{" + byteString + "})";
 
             code = code.substring(0, index) + encrypted + code.substring(index + string.length() + 2);
         }
 
-        String decryptMethod = "public static String werturtgfhbhxcvghwertyhs(int[] zrtsafgsdfgds3453) { " +
-                "String wertufghbdfghgwertyrityjkfafdgaduhys = \"\"; " +
-                "for (int yuiiortyhfbnartydfghsdfgsd = 0; yuiiortyhfbnartydfghsdfgsd < zrtsafgsdfgds3453.length; yuiiortyhfbnartydfghsdfgsd++) { " +
-                "int adfafasdfasdfasdfasdfasf = zrtsafgsdfgds3453[yuiiortyhfbnartydfghsdfgsd] % 100; " +
-                "int adfafasdfasdfasdfasdfasf2 = zrtsafgsdfgds3453[yuiiortyhfbnartydfghsdfgsd] - adfafasdfasdfasdfasdfasf;" +
-                "adfafasdfasdfasdfasdfasf2 /= 100; " +
-                "adfafasdfasdfasdfasdfasf2 /= adfafasdfasdfasdfasdfasf; " +
-                "int xcfvhktyertgsdfgsdffgsd = adfafasdfasdfasdfasdfasf2 - 27000; " +
-                "xcfvhktyertgsdfgsdffgsd /= 42; " +
-                "wertufghbdfghgwertyrityjkfafdgaduhys += (char) xcfvhktyertgsdfgsdffgsd; " +
+        
+
+        return code;
+    }
+
+    public static void addDecryptionMethod(ArrayList<CodeStructure> codeStructures) {
+        String param = Renamer.generateClassName();
+        String decrypted = Renamer.generateClassName();
+        String iVar = Renamer.generateClassName();
+        String second = Renamer.generateClassName();
+        String first = Renamer.generateClassName();
+        String completed = Renamer.generateClassName();
+        String decryptMethodBody = param + ") { " +
+                "String " + decrypted + " = \"\"; " +
+                "for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { " +
+                "int " + first + " = " + param + "[" + iVar + "] % 100; " +
+                "int " + second + " = " + param + "[" + iVar + "] - " + first + ";" +
+                "" + second + " /= 100; " +
+                "" + second + " /= " + first + "; " +
+                "int " + completed + " = " + second + " - 27000; " +
+                "" + completed + " /= 42; " +
+                "" + decrypted + " += (char) " + completed + "; " +
                 "} " +
-                "return wertufghbdfghgwertyrityjkfafdgaduhys; " +
+                "return " + decrypted + "; " +
                 "}";
 
-        int end = code.lastIndexOf("}");
 
-        return code.substring(0, end) + "\n" + decryptMethod + "\n" + code.substring(end);
+        for (CodeStructure codeStructure : codeStructures) {
+            int end = codeStructure.getUnCommentedCode().lastIndexOf("}");
+            String code = codeStructure.getUnCommentedCode();
+            String decryptMethod = "public static String " + codeStructure.getDecryptionMethodName() + "(int[] " + decryptMethodBody;
+            code = code.substring(0, end) + decryptMethod + code.substring(end);
+            codeStructure.setUnCommentedCode(code);
+        }
+
+        for (CodeStructure struct : codeStructures) {
+            System.out.println(struct.getUnCommentedCode() + "\n\n");
+        }
     }
 
 }
