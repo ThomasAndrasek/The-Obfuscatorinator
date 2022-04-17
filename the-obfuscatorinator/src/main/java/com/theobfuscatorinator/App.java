@@ -9,6 +9,7 @@ import java.util.Vector;
 import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
+import com.theobfuscatorinator.codeInterpreter.Unicoder;
 import com.theobfuscatorinator.codegraph.CodeGraph;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 
@@ -56,6 +57,8 @@ public class App
             Renamer.renameVariables(codeStructures);
 
             StringEncryption.addDecryptionMethod(codeStructures);
+
+            Unicoder.swapForUnicode(codeStructures);
 
         }
         catch(Exception e){

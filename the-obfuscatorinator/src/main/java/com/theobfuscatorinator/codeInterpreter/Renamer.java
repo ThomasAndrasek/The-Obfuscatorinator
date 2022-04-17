@@ -23,8 +23,11 @@ public class Renamer {
 
     public static String generateName() {
         String charactersToChooseFrom = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        String basicLetters = "abcdefghijklmnopqrstuvwxyz";
 
         StringBuilder className = new StringBuilder();
+
+        className.append(basicLetters.charAt((int) (Math.random() * basicLetters.length())));
 
         int numberOfLetters = (int) (Math.random() * 100) + 10;
         for (int i = 0; i < numberOfLetters; i++) {

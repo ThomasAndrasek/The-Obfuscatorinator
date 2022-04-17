@@ -112,10 +112,6 @@ public class StringEncryption {
             code = code.substring(0, end) + decryptMethod + code.substring(end);
             codeStructure.setUnCommentedCode(code);
         }
-
-        for (CodeStructure struct : codeStructures) {
-            System.out.println(struct.getUnCommentedCode() + "\n\n");
-        }
     }
 
 }
