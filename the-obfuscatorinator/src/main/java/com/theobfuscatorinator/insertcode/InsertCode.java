@@ -41,7 +41,7 @@ public class InsertCode {
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder str = new StringBuilder();
         Random rnd = new Random();
-        while (str.length() < 25) {
+        while (str.length() < 50) {
             int index = (int) (rnd.nextFloat() * alphabet.length());
             str.append(alphabet.charAt(index));
         }
@@ -57,7 +57,10 @@ public class InsertCode {
         //Inserting dummy strings throughout the code
         String[] codeByLines = code.split("\r\n");
         for (int i = 0; i < codeByLines.length; i++) {
-            if (codeByLines[i].contains("public") && codeByLines[i].contains("{")) {
+            if (codeByLines[i].endsWith("}")){
+                continue;
+            }
+            if (codeByLines[i].contains("public") && codeByLines[i].contains("{") && codeByLines[i].indexOf("public") != 0) {
                 codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("public") + 4) + getRandomString();
             }
         }
@@ -65,11 +68,10 @@ public class InsertCode {
         for (String line:codeByLines) {
             newCode += line + "\n";
         }
-        System.out.println(newCode);
         // Inserting Dummy Class
-        int index = code.indexOf("{\n");
+        int index = newCode.indexOf("{\n");
         String dummyCode = generateDummyClass();
-        newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
+        newCode = newCode.substring(0, index + 1) + dummyCode + newCode.substring(index + 1);
 
         //Modify File
         FileWriter writer;
