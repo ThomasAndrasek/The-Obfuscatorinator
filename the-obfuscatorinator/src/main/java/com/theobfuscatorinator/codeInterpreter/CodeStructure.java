@@ -117,7 +117,7 @@ public class CodeStructure {
     /**
      * Takes some java code as a string and removes all the spaces that need to be removed
      * 
-     * @order MUST take place after comments and string literals are removed
+     * @order MUST take place after comments are removed
      * @param code Code to have the spaces removed from
      * @return Copy of code without any extra spaces and newlines
      */
@@ -129,6 +129,12 @@ public class CodeStructure {
         Boolean equ = false;
         // Loop through the code and delete any space that isn't required for the code to run
         while (j < copy.length()) {
+        	//ignores comments
+        	if (copy.charAt(j) == '"') {
+            	while (copy.charAt(j) != '"') {
+            		j++;
+            	}
+            }
             //checks if there is an equals sign and ignores the next space based on that
             if (copy.charAt(j) == '=') {
                 equ = true;
