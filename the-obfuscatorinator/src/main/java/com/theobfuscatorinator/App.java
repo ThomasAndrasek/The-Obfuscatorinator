@@ -56,10 +56,17 @@ public class App
 
             Renamer.renameVariables(codeStructures);
 
+            Renamer.renameParameters(codeStructures);
+
+            Renamer.renameParameters(codeStructures);
+
             StringEncryption.addDecryptionMethod(codeStructures);
 
             Unicoder.swapForUnicode(codeStructures);
 
+            for (CodeStructure codeStructure : codeStructures) {
+                System.out.println(codeStructure.getUnCommentedCode() + "\n\n\nwow " + codeStructure.getClasses().get(0).getClassName() + "\n\n\n");
+            }
         }
         catch(Exception e){
             System.err.println("Exception thrown: " + e.getMessage());

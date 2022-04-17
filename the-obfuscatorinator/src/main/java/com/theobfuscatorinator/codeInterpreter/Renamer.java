@@ -186,4 +186,68 @@ public class Renamer {
             }
         }
     }
+
+
+    private static void renameParametersFromClass(ClassStructure classStructure, CodeStructure codeStructure) {
+        for (MethodStructure methodStructure : classStructure.getMethodStructures()) {
+            ArrayList<String> args = methodStructure.getArguments();
+
+            if (args.size() == 0) {
+                continue;
+            }
+
+            String code = codeStructure.getUnCommentedCode();
+
+            ArrayList<String> argNames = new ArrayList<>();
+            for (String arg : args) {
+                String[] split = arg.split(" ");
+                argNames.add(split[split.length - 1]);
+            }
+
+            for (String argName : argNames) {
+                int index = code.indexOf(argName);
+                String newName = generateName();
+                while (index != -1) {
+                    String codeToUpdate = codeStructure.getUnCommentedCode();
+                    boolean validBefore = false;
+                    if (index - 1 >= 0) {
+                        char charBefore = codeToUpdate.charAt(index - 1);
+                        String before = String.valueOf(charBefore);
+                        Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%\\^&*0-9]*");
+                        Matcher matcher = methodFinder.matcher(before);
+                        if (matcher.matches()) {
+                            validBefore = true;
+                        }
+                    }
+
+                    boolean validAfter = false;
+                    if (index + argName.length() < codeToUpdate.length()) {
+                        char charAfter = codeToUpdate.charAt(index + argName.length());
+                        String after = String.valueOf(charAfter);
+                        Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%^&*0-9]*");
+                        Matcher matcher = methodFinder.matcher(after);
+                        if (matcher.matches()) {
+                            validAfter = true;
+                        }
+                    }
+
+                    if (validBefore && validAfter) {
+                        String code2 = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + argName.length());
+                        codeStructure.setUnCommentedCode(code2);
+                    }
+
+                    index = codeStructure.getUnCommentedCode().indexOf(argName, index + argName.length());
+                }
+            }
+        }
+    }
+
+
+    public static void renameParameters(ArrayList<CodeStructure> structures) {
+        for (CodeStructure codeStructure : structures) {
+            for (ClassStructure classStructure : codeStructure.getClasses()) {
+                renameParametersFromClass(classStructure, codeStructure);
+            }
+        }
+    }
 }

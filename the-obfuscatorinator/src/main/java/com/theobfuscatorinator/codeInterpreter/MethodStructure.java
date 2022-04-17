@@ -24,6 +24,7 @@ public class MethodStructure {
     private String isStatic;
     private String scope;
     private String template;
+    private String code;
 
     protected MethodStructure(String methodName, String scope, String isStatic, String template,
                               String arguments, String returnType, String code,
@@ -36,9 +37,17 @@ public class MethodStructure {
         this.isStatic = isStatic;
         this.scope = scope;
         this.template = template;
+        this.code = code;
         this.args = new ArrayList<String>();
 
-        ArrayList<String> argStrings = CodeStructure.getCommaSeparatedValues(arguments);
+        args = new ArrayList<String>();
+        String[] temp = arguments.split(",");
+        for (String s : temp) {
+            if (s.equals("")) {
+                continue;
+            }
+            args.add(s.trim());
+        }
     }
 
     public String getMethodName() {
@@ -47,6 +56,18 @@ public class MethodStructure {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public String getMethodCode() {
+        return this.code;
+    }
+
+    public void setMethodCode(String sourceCode) {
+        this.code = this.sourceCode;
+    }
+
+    public ArrayList<String> getArguments() {
+        return args;
     }
 
 }
