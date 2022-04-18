@@ -1,5 +1,6 @@
 package com.theobfuscatorinator.insertcode;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.io.File;
 import java.io.FileWriter;
@@ -91,10 +92,10 @@ public class InsertCode {
      * @param file Java file to have dummy strings inserted to
      * @param codeStructure Code that represents the java code of the file
      */
-    public static void insertStrings(File f, CodeStructure codeStructure) {
+    public static String insertStrings(CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
         //Inserting dummy strings throughout the code
-        String[] codeByLines = code.split("\r\n");
+        String[] codeByLines = code.split("\n");
         for (int i = 0; i < codeByLines.length; i++) {
             if (codeByLines[i].endsWith("}")){
                 continue;
@@ -113,14 +114,15 @@ public class InsertCode {
             newCode += line + "\n";
         }
 
-        modifyFile(f, newCode);
+        codeStructure.setUnCommentedCode(newCode);
+        return newCode;
     }
     /**
      * Injects dummy class throughout an inputted java file and modifies the file
      * @param file Java file to have dummy class inserted to
      * @param codeStructure Code that represents the java code of the file
      */
-    public static void insertClass(File f, CodeStructure codeStructure) {
+    public static String insertClass(CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
         String newCode = new String();
 
@@ -129,7 +131,22 @@ public class InsertCode {
          String dummyCode = generateDummyClass();
          newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
  
-        modifyFile(f, newCode);
+        codeStructure.setUnCommentedCode(newCode);
+        return newCode;
     }
 
+    /**
+     * This function calls both insert dummy class and dummy strings function.
+     * @param codeStructures Array List of code structures that represent the java code
+     * */
+    public static void insertCode(ArrayList<CodeStructure> codeStructures) {
+        String tempClassDummy = new String();
+        String tempClassString = new String();
+        for (CodeStructure codeStructure : codeStructures) {
+            tempClassString = insertStrings(codeStructure);
+            codeStructure.setUnCommentedCode(tempClassString);
+            tempClassDummy = insertClass(codeStructure);
+            codeStructure.setUnCommentedCode(tempClassDummy);
+        }
+    }
 }

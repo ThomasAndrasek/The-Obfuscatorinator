@@ -9,7 +9,6 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -26,7 +25,8 @@ public class InsertCodeTest {
                 FileChannel fileSize = FileChannel.open(filePath);
                 Long originalSize = fileSize.size();
                 t = new CodeStructure(f);
-                InsertCode.insertStrings(f, t);
+                String code = InsertCode.insertStrings(t);
+                InsertCode.modifyFile(f, code);
                 Long newSize = fileSize.size();
                 assertTrue(null, newSize > originalSize);
             }catch(IOException e){
@@ -45,7 +45,8 @@ public class InsertCodeTest {
                 FileChannel fileSize = FileChannel.open(filePath);
                 Long originalSize = fileSize.size();
                 t = new CodeStructure(f);
-                InsertCode.insertClass(f, t);
+                String code = InsertCode.insertClass(t);
+                InsertCode.modifyFile(f, code);
                 Long newSize = fileSize.size();
                 assertTrue(null, newSize > originalSize);
             }catch(IOException e){
@@ -61,8 +62,8 @@ public class InsertCodeTest {
     		CodeStructure t = null;
     		try{
                 t = new CodeStructure(f);
-                InsertCode.insertStrings(f, t);
-                InsertCode.insertClass(f, t);
+                InsertCode.insertStrings( t);
+                InsertCode.insertClass( t);
             }catch(IOException e){
                 assertTrue("IOException Thrown in constructor", false);
             }

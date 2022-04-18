@@ -9,6 +9,7 @@ import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codeInterpreter.Unicoder;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
+import com.theobfuscatorinator.insertcode.InsertCode;
 
 /**
  * Hello world!
@@ -56,6 +57,9 @@ public class App
 
             System.out.println("Renaming Methods...");
             Renamer.renameMethods(codeStructures);
+
+            System.out.println("Inserting Dummy Code...");
+            InsertCode.insertCode(codeStructures);
 
             System.out.println("Adding Decryption Methods...");
             StringEncryption.addDecryptionMethod(codeStructures);
