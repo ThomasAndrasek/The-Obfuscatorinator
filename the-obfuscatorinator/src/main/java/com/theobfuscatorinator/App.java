@@ -1,16 +1,13 @@
 package com.theobfuscatorinator;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
 
-import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codeInterpreter.Unicoder;
-import com.theobfuscatorinator.codegraph.CodeGraph;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 
 /**
@@ -51,19 +48,11 @@ public class App
                 }
             }
 
-            // CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
-
             System.out.println("Renaming Classes...");
             Renamer.renameClasses(codeStructures);
 
             System.out.println("Renaming Methods...");
             Renamer.renameMethods(codeStructures);
-
-            // System.out.println("Renaming Variables...");
-            // Renamer.renameVariables(codeStructures);
-
-            // System.out.println("Renaming Parameters...");
-            // Renamer.renameParameters(codeStructures);
 
             System.out.println("Adding Decryption Methods...");
             StringEncryption.addDecryptionMethod(codeStructures);

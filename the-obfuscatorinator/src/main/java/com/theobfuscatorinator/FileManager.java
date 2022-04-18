@@ -94,6 +94,12 @@ public class FileManager {
     }
 
 
+    /**
+     * Writes the obfuscated code to their respect files, also renaming files to match their
+     * obfuscated class names.
+     * 
+     * @param codeStructures - Vector of code structures to be written to files
+     */
     public static void writeToFiles(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
             if (codeStructure.getClassStructures().size() == 0) {

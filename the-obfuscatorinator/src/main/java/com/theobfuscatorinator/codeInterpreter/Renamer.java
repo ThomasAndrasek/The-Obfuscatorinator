@@ -6,6 +6,16 @@ import java.util.regex.Pattern;
 
 public class Renamer {
     
+    /**
+     * Generate random class name.
+     * <br/><br/>
+     * 
+     * Class names generated with a length of random characters between 10 and 110. All generated
+     * names start with a capital letter. The rest of the name is made up of random letters, upper
+     * or lower case, and numbers between 0 and 9.
+     * 
+     * @return A random class name.
+     */
     public static String generateClassName() {
         String charactersToChooseFrom = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         char[] letters = String.valueOf("abcdefghijklmnopqrstuvwxyz").toCharArray();
@@ -21,6 +31,16 @@ public class Renamer {
         return className.toString();
     }
 
+    /**
+     * Generate random name for methods or variables.
+     * <br/><br/>
+     * 
+     * Names generated with a length of random characters between 10 and 110. All generated names
+     * start with a lower case letter. The rest of the name is made up of random letters, upper or
+     * lower case, and numbers between 0 and 9.
+     * 
+     * @return A random name.
+     */
     public static String generateName() {
         String charactersToChooseFrom = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         String basicLetters = "abcdefghijklmnopqrstuvwxyz";
@@ -37,13 +57,28 @@ public class Renamer {
         return className.toString();
     }
 
+    /**
+     * Rename class and all matching instances.
+     * <br/><br/>
+     * 
+     * Generate a random class name and replace all instances of the old class name with the new.
+     * 
+     * @param classStruct The class to rename.
+     * @param codeStructures The code structures to replace instances of the old class name with the new.
+     */
     private static void renameClass(ClassStructure classStruct, ArrayList<CodeStructure> codeStructures) {
+        // Original class name.
         String og = classStruct.getClassName().substring(0);
+        // Generate new random class name.
         classStruct.setName(generateClassName());
+        // Replace all instances of the old class name with the new.
         for (CodeStructure structure : codeStructures) {
+            // Get the index of the first instance of the old class name.
             int index = structure.getUnCommentedCode().indexOf(og);
             while (index != -1) {
                 String codeToUpdate = structure.getUnCommentedCode();
+                
+                // Check if the index is valid before the class name.
                 boolean validBefore = false;
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
@@ -55,6 +90,7 @@ public class Renamer {
                     }
                 }
 
+                // Check if the index is valid after the class name.
                 boolean validAfter = false;
                 if (index + og.length() < codeToUpdate.length()) {
                     char charAfter = codeToUpdate.charAt(index + og.length());
@@ -66,17 +102,28 @@ public class Renamer {
                     }
                 }
 
+                // If the index is valid before and after the class name, replace the class name.
                 if (validBefore && validAfter) {
                     String newName = classStruct.getName();
                     String code = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + og.length());
                     structure.setUnCommentedCode(code);
                 }
 
+                // Find the next instance of the class name.
                 index = structure.getUnCommentedCode().indexOf(og, index + 1);
             }
         }
     }
 
+    /**
+     * Rename all classes and all matching instances.
+     * <br/><br/>
+     * 
+     * For every class in the code structures, generate a random class name and replace all
+     * instances.
+     * 
+     * @param codeStructures The code structures to replace instances of the old class name with the new.
+     */
     public static void renameClasses(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
             for (ClassStructure classStructure : codeStructure.getClassStructures()) {
@@ -86,16 +133,31 @@ public class Renamer {
     }
 
 
+    /**
+     * Rename method and all matching instances.
+     * <br/><br/>
+     * 
+     * Generate a random method name and replace all instances of the old method name with the new.
+     * 
+     * @param methodStructure The method to rename.
+     * @param codeStructures The code structures to replace instances of the old method name with the new.
+     */
     private static void renameMethod(MethodStructure methodStructure, ArrayList<CodeStructure> codeStructures) {
+        // Original method name.
         String og = methodStructure.getMethodName().substring(0);
+        // Skip the main method.
         if (og.equals("main")) {
             return;
         }
+        // Generate new random method name.
         methodStructure.setMethodName(generateName());
+        // Replace all instances of the old method name with the new.
         for (CodeStructure structure : codeStructures) {
+            // Get the index of the first instance of the old method name.
             int index = structure.getUnCommentedCode().indexOf(og);
             while (index != -1) {
                 String codeToUpdate = structure.getUnCommentedCode();
+                // Check if the index is valid before the method name.
                 boolean validBefore = false;
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
@@ -107,6 +169,7 @@ public class Renamer {
                     }
                 }
 
+                // Check if the index is valid after the method name.
                 boolean validAfter = false;
                 if (index + og.length() < codeToUpdate.length()) {
                     char charAfter = codeToUpdate.charAt(index + og.length());
@@ -118,17 +181,28 @@ public class Renamer {
                     }
                 }
 
+                // If the index is valid before and after the method name, replace the method name.
                 if (validBefore && validAfter) {
                     String newName = methodStructure.getMethodName();
                     String code = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + og.length());
                     structure.setUnCommentedCode(code);
                 }
 
+                // Find the next instance of the method name.
                 index = structure.getUnCommentedCode().indexOf(og, index + 1);
             }
         }
     }
 
+    /**
+     * Rename all methods and all matching instances.
+     * <br/><br/>
+     * 
+     * For every method in the code structures, generate a random method name and replace all
+     * instances.
+     * 
+     * @param codeStructures The code structures to replace instances of the old method name with the new.
+     */ 
     public static void renameMethods(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
             for (ClassStructure classStructure : codeStructure.getClassStructures()) {
@@ -140,19 +214,33 @@ public class Renamer {
     }
 
 
+    /**
+     * Rename variable and all matching instances.
+     * <br/><br/>
+     * 
+     * Generate a random variable name and replace all instances of the old variable name with the new.
+     * 
+     * @param codeStructures The code structures to replace instances of the old variable name with the new.
+     */
     public static void renameVariables(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
             String code = codeStructure.getUnCommentedCode();
-            Pattern methodFinder = Pattern.compile("([a-zA-Z\\d])+[\\s]*[=]{1}[^=]");
-            Matcher matcher = methodFinder.matcher(code);
+            // Find all the variables.
+            Pattern varFinder = Pattern.compile("([a-zA-Z\\d])+[\\s]*[=]{1}[^=]");
+            Matcher matcher = varFinder.matcher(code);
             while (matcher.find()) {
+                // Get the variable name.
                 String og = matcher.group();
+                // Generate new random variable name.
                 String newName = generateName();
+                // Replace all instances of the old variable name with the new.
                 for (CodeStructure struct : codeStructures) {
                     String tempCode = struct.getUnCommentedCode();
+                    // Get the index of the first instance of the old variable name.
                     int index = tempCode.indexOf(og);
                     while (index != -1) {
                         String codeToUpdate = struct.getUnCommentedCode();
+                        // Check if the index is valid before the variable name.
                         boolean validBefore = false;
                         if (index - 1 >= 0) {
                             char charBefore = codeToUpdate.charAt(index - 1);
@@ -164,6 +252,7 @@ public class Renamer {
                             }
                         }
 
+                        // Check if the index is valid after the variable name.
                         boolean validAfter = false;
                         if (index + og.length() < codeToUpdate.length()) {
                             char charAfter = codeToUpdate.charAt(index + og.length());
@@ -175,11 +264,13 @@ public class Renamer {
                             }
                         }
 
+                        // If the index is valid before and after the variable name, replace the variable name.
                         if (validBefore && validAfter) {
                             String updated = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + og.length());
                             struct.setUnCommentedCode(updated);
                         }
 
+                        // Find the next instance of the variable name.
                         index = struct.getUnCommentedCode().indexOf(og, index + og.length());
                     }
                 }
@@ -188,6 +279,16 @@ public class Renamer {
     }
 
 
+    /**
+     * Rename all parameters and all matching instances.
+     * <br/><br/>
+     * 
+     * For every method in the code structures and their parameters, generate a random parameter
+     * name and replace all instances.
+     * 
+     * @param classStructure The class structure to replace instances of the old parameter name with the new. 
+     * @param codeStructure The code structure to replace instances of the old parameter name with the new.
+     */
     private static void renameParametersFromClass(ClassStructure classStructure, CodeStructure codeStructure) {
         for (MethodStructure methodStructure : classStructure.getMethodStructures()) {
             ArrayList<String> args = methodStructure.getArguments();
@@ -198,6 +299,7 @@ public class Renamer {
 
             String code = codeStructure.getUnCommentedCode();
 
+            // Find all the parameters.
             ArrayList<String> argNames = new ArrayList<>();
             for (String arg : args) {
                 String[] split = arg.split(" ");
@@ -205,10 +307,13 @@ public class Renamer {
             }
 
             for (String argName : argNames) {
-                int index = code.indexOf(argName);
+                // Generate new random parameter name.
                 String newName = generateName();
+                // Get the index of the first instance of the old parameter name.
+                int index = code.indexOf(argName);
                 while (index != -1) {
                     String codeToUpdate = codeStructure.getUnCommentedCode();
+                    // Check if the index is valid before the parameter name.
                     boolean validBefore = false;
                     if (index - 1 >= 0) {
                         char charBefore = codeToUpdate.charAt(index - 1);
@@ -220,6 +325,7 @@ public class Renamer {
                         }
                     }
 
+                    // Check if the index is valid after the parameter name.
                     boolean validAfter = false;
                     if (index + argName.length() < codeToUpdate.length()) {
                         char charAfter = codeToUpdate.charAt(index + argName.length());
@@ -231,11 +337,13 @@ public class Renamer {
                         }
                     }
 
+                    // If the index is valid before and after the parameter name, replace the parameter name.
                     if (validBefore && validAfter) {
                         String code2 = codeToUpdate.substring(0, index) + newName + codeToUpdate.substring(index + argName.length());
                         codeStructure.setUnCommentedCode(code2);
                     }
 
+                    // Find the next instance of the parameter name.
                     index = codeStructure.getUnCommentedCode().indexOf(argName, index + argName.length());
                 }
             }
@@ -243,6 +351,15 @@ public class Renamer {
     }
 
 
+    /**
+     * Rename all parameters and all matching instances.
+     * <br/><br/>
+     * 
+     * For every method in the code structures and their parameters, generate a random parameter
+     * name and replace all instances.
+     * 
+     * @param structures The code structures to replace instances of the old parameter name with the new. 
+     */
     public static void renameParameters(ArrayList<CodeStructure> structures) {
         for (CodeStructure codeStructure : structures) {
             for (ClassStructure classStructure : codeStructure.getClasses()) {
