@@ -5,12 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Intances of this class will be created by CodeStructure. These instances are used to represent java classes and contain information about them.
+ * Intances of this class will be created by CodeStructure. These instances are used to represent 
+ * java classes and contain information about them.
  * @author Carter Del Ciello
  */
 public class ClassStructure {
 
-    private String sourceCode; //This does not contain string literals or comments, they were removed
+    private String sourceCode; //This does not contain string literals or comments, they were removed.
     private String className;
     private String sourceFile;
 
@@ -18,19 +19,22 @@ public class ClassStructure {
     // The classes should be ordered largest to smallest by scope.
     private ArrayList<ClassStructure> containers;
 
-    private ArrayList<ClassStructure> classes; //For nested classes
+    private ArrayList<ClassStructure> classes; //For nested classes.
     private ArrayList<MethodStructure> methods;
-    private ArrayList<String> templateClasses; //Types passed into this class as generics
+    private ArrayList<String> templateClasses; //Types passed into this class as generics.
 
     /**
-     * This constructor is only intended to be called in controlled contexts when generating all of the information about an overall CodeStructure.
+     * This constructor is only intended to be called in controlled contexts when generating all of
+     * the information about an overall CodeStructure.
      * @param code Source code of the class
      * @param name Name of the class
      * @param filename Name of the file the class is defined in
-     * @param containerClasses List of classes this class is contained in, from largest to smallest in scope
+     * @param containerClasses List of classes this class is contained in, from largest to smallest
+     *  in scope
      * @param templates List of template arguments passed into this class. This may be empty.
      */
-    protected ClassStructure(String code, String name, String filename, ArrayList<ClassStructure> containerClasses, ArrayList<String> templates, boolean implement){
+    protected ClassStructure(String code, String name, String filename,
+     ArrayList<ClassStructure> containerClasses, ArrayList<String> templates, boolean implement){
         sourceCode = code;
         className = name;
         sourceFile = filename;
@@ -77,12 +81,14 @@ public class ClassStructure {
             if(className.contains("<")){
                 className = code.substring(classStart, code
                         .indexOf("<", classStart)).trim();
-                CodeStructure.Pair<String, Integer> templateContents = CodeStructure.getCodeBetweenBrackets(code, classStart, '<', '>');
+                CodeStructure.Pair<String, Integer> templateContents =
+                         CodeStructure.getCodeBetweenBrackets(code, classStart, '<', '>');
                 String arguments = templateContents.first;
                 templates = CodeStructure.getCommaSeparatedValues(arguments);
             }
 
-            CodeStructure.Pair<String, Integer> currentClass = CodeStructure.getCodeBetweenBrackets(code, classStart, '{', '}');
+            CodeStructure.Pair<String, Integer> currentClass =
+                 CodeStructure.getCodeBetweenBrackets(code, classStart, '{', '}');
             ArrayList<ClassStructure> newContainerList = new ArrayList<ClassStructure>(containers);
             newContainerList.add(this);
             int classEnd = className.indexOf(" ");
@@ -93,7 +99,8 @@ public class ClassStructure {
             className = className.substring(0, classEnd);
             className = className.replaceAll("\\s+", "");
             boolean implement = full.matches("(\\simplements\\s)");
-            classes.add(new ClassStructure(currentClass.first, className, sourceFile, newContainerList, templates, implement));
+            classes.add(new ClassStructure(currentClass.first, className, sourceFile, 
+                                           newContainerList, templates, implement));
             index = currentClass.second;
         }
 
@@ -101,8 +108,8 @@ public class ClassStructure {
     }
 
     /**
-     * Finds all methods defined in this class. Does not include methods defined in other classes nested within this class.
-     * This will not include constructors.
+     * Finds all methods defined in this class. Does not include methods defined in other classes 
+     * nested within this class. This will not include constructors.
      * @return An arraylist of MethodStructures that represents every method that was found.
      */
     private ArrayList<MethodStructure> identifyMethods(){
@@ -192,12 +199,14 @@ public class ClassStructure {
 
             String returnType = method;
 
-            CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
+            CodeStructure.Pair<String, Integer> detectBody =
+                 CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;
 
             if (!returnType.equals("") && valid) {
-                // System.out.println(scope + "\n\t" + staticStatus + "\n\t" + template + "\n\t" + returnType + "\n\t" + name + "\n\t" + arguments);
-                output.add(new MethodStructure(name, scope, staticStatus, template, arguments, returnType, code, containers, sourceFile));
+                output.add(
+                    new MethodStructure(name, scope, staticStatus, template, arguments, 
+                                        returnType, code, containers, sourceFile));
             } 
         }
 
@@ -206,8 +215,9 @@ public class ClassStructure {
 
     /**
      *
-     * @return Returns a version of this classes source code with all bodies of nested classes removed. This is useful for making sure methods and variables that are added
-     * to this ClassStructure belong to this class scope and not that of a nested class.
+     * @return Returns a version of this classes source code with all bodies of nested classes 
+     * removed. This is useful for making sure methods and variables that are added to this 
+     * ClassStructure belong to this class scope and not that of a nested class.
      */
     private String ignoreNestedClasses(){
         String out = "";
@@ -217,7 +227,8 @@ public class ClassStructure {
         while(classMatcher.find(index)){
             int bodyStart = sourceCode.indexOf('{', classMatcher.end());
             out += sourceCode.substring(index, bodyStart);
-            CodeStructure.Pair<String, Integer> currentClass = CodeStructure.getCodeBetweenBrackets(sourceCode, classMatcher.end(), '{', '}');
+            CodeStructure.Pair<String, Integer> currentClass =
+                 CodeStructure.getCodeBetweenBrackets(sourceCode, classMatcher.end(), '{', '}');
             index = currentClass.second;
             if(index + 1 < sourceCode.length()) index++;
         }
@@ -228,7 +239,8 @@ public class ClassStructure {
 
     /**
      * Checks if this class, or any nested classes, contains a main method.
-     * @return True if this class contains the main method or contains another class for which this function returns true.
+     * @return True if this class contains the main method or contains another class for which this
+     *  function returns true.
      */
     protected boolean containsMainMethod(){
         for(ClassStructure c : classes){

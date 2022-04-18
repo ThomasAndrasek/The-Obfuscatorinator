@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 
 /**
- * This class will take a java code file and will find important characteristics in that file which can be
- * accessed by a user of this class.
+ * This class will take a java code file and will find important characteristics in that file which
+ * can be accessed by a user of this class.
  *
  * @author Carter Del Ciello
  */
@@ -48,11 +48,14 @@ public class CodeStructure {
             
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
         }
-        else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
+        else {
+            throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
+        } 
     }
 
     /**
-     * Takes some java code as a string and removes the comments from it. Does not modify the original code.
+     * Takes some java code as a string and removes the comments from it. Does not modify the
+     * original code.
      * @param code Code to have the comments removed from
      * @return Copy of code without any comments
      */
@@ -194,7 +197,8 @@ public class CodeStructure {
         	variables.sort((var1,var2) -> Integer.compare(var1.length(),var2.length()));
         	//replace all instances of those variables in the code with a random value
         	for (int x = 0; x < variables.size(); x++) {
-        		copy = copy.replaceAll(variables.get(variables.size()-x-1), replacement(variables.get(variables.size()-x-1)));
+        		copy = copy.replaceAll(variables.get(variables.size()-x-1),
+                                         replacement(variables.get(variables.size()-x-1)));
         	}
         	j++;
         }
@@ -254,7 +258,8 @@ public class CodeStructure {
             if(className.contains("<")){
                 className = removedStringsCode.substring(classStart, removedStringsCode
                         .indexOf("<", classStart)).trim();
-                Pair<String, Integer> templateContents = getCodeBetweenBrackets(removedStringsCode, classStart, '<', '>');
+                Pair<String, Integer> templateContents =
+                     getCodeBetweenBrackets(removedStringsCode, classStart, '<', '>');
                 String arguments = templateContents.first;
                 templates = getCommaSeparatedValues(arguments);
             }
@@ -334,8 +339,8 @@ public class CodeStructure {
     }
 
     /**
-     * Gets a list of values separated by commas. Useful for quickly getting comma-separated arguments. This method is static
-     * and is intended to be used as a utility.
+     * Gets a list of values separated by commas. Useful for quickly getting comma-separated
+     * arguments. This method is static and is intended to be used as a utility.
      * @param s String of values to be separated
      * @return List of strings separated by commas in the input string
      */

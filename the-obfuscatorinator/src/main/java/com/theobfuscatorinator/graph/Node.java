@@ -69,7 +69,8 @@ public class Node {
             int mid = (low + high) / 2;
 
             int i  = mid;
-            while (i < this.edges.size() && this.edges.get(i).getTo().getName().equals(edge.getTo().getName())) {
+            while (i < this.edges.size() &&
+             this.edges.get(i).getTo().getName().equals(edge.getTo().getName())) {
                 if (this.edges.get(i).getValue().equals(edge.getValue())) {
                     return true;
                 }

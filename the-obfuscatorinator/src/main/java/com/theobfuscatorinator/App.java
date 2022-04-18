@@ -31,11 +31,14 @@ public class App
                     copyPath = args[i];
                 }
                 else{
-                    if(!(new File(args[i])).exists()) throw new IllegalArgumentException("Source File " + args[i] + " does not exist.");
+                    if(!(new File(args[i])).exists())
+                         throw new IllegalArgumentException("Source File " + args[i] +
+                                                             " does not exist.");
                     inputFiles.add(args[i]);
                 }
             }
-            if(inputFiles.size() == 0) throw new IllegalArgumentException("No Source Files Provided");
+            if(inputFiles.size() == 0)
+                 throw new IllegalArgumentException("No Source Files Provided");
 
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
 

@@ -27,7 +27,8 @@ public class Unicoder {
      * @param codeStructures Code structures to obfuscate and swap.
      */
     public static void swapForUnicode(ArrayList<CodeStructure> codeStructures) {
-        String valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>.,;:+-*/%&|^!~?_";
+        String valid =
+         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>.,;:+-*/%&|^!~?_";
         Random rand = new Random();
         
         for (CodeStructure struct : codeStructures) {

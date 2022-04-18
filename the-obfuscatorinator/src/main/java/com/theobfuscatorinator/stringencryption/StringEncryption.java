@@ -140,25 +140,27 @@ public class StringEncryption {
         String completed = Renamer.generateClassName();
         // Build decryption method body.
         String decryptMethodBody = param + ") { " +
-                "String " + decrypted + " = \"\"; " +
-                "for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { " +
-                "int " + first + " = " + param + "[" + iVar + "] % 100; " +
-                "int " + second + " = " + param + "[" + iVar + "] - " + first + ";" +
-                "" + second + " /= 100; " +
-                "" + second + " /= " + first + "; " +
-                "int " + completed + " = " + second + " - 27000; " +
-                "" + completed + " /= 42; " +
-                "" + decrypted + " += (char) " + completed + "; " +
-                "} " +
-                "return " + decrypted + "; " +
-                "}";
+            "String " + decrypted + " = \"\"; " +
+            "for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { " +
+            "int " + first + " = " + param + "[" + iVar + "] % 100; " +
+            "int " + second + " = " + param + "[" + iVar + "] - " + first + ";" +
+            "" + second + " /= 100; " +
+            "" + second + " /= " + first + "; " +
+            "int " + completed + " = " + second + " - 27000; " +
+            "" + completed + " /= 42; " +
+            "" + decrypted + " += (char) " + completed + "; " +
+            "} " +
+            "return " + decrypted + "; " +
+            "}";
 
 
         // Insert decryption method into each code structure.
         for (CodeStructure codeStructure : codeStructures) {
             int end = codeStructure.getUnCommentedCode().lastIndexOf("}");
             String code = codeStructure.getUnCommentedCode();
-            String decryptMethod = "public static String " + codeStructure.getDecryptionMethodName() + "(int[] " + decryptMethodBody;
+            String decryptMethod = "public static String " +
+                                    codeStructure.getDecryptionMethodName() + "(int[] " +
+                                    decryptMethodBody;
             code = code.substring(0, end) + decryptMethod + code.substring(end);
             codeStructure.setUnCommentedCode(code);
         }

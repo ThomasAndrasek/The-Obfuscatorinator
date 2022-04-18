@@ -3,7 +3,8 @@ package com.theobfuscatorinator.codeInterpreter;
 import java.util.ArrayList;
 
 /**
- * This class tracks basic information about a method. Intended for protected initialization by ClassStructure objects.
+ * This class tracks basic information about a method. Intended for protected initialization by
+ *  ClassStructure objects.
  * @author Carter Del Ciello
  */
 public class MethodStructure {
