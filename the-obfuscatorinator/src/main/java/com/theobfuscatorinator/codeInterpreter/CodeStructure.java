@@ -1,9 +1,8 @@
 package com.theobfuscatorinator.codeInterpreter;
 
-
-import java.lang.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.ArrayList;
@@ -13,8 +12,8 @@ import java.util.regex.Pattern;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 
 /**
- * This class will take a java code file and will find important characteristics in that file which can be
- * accessed by a user of this class.
+ * This class will take a java code file and will find important characteristics in that file which
+ * can be accessed by a user of this class.
  *
  * @author Carter Del Ciello
  */
@@ -27,6 +26,8 @@ public class CodeStructure {
     private String unCommentedCode;
 
     private ArrayList<ClassStructure> classes;
+
+    private String decryptionMethodName;
 
     /**
      * Constructor will build all of the structure for you
@@ -41,22 +42,27 @@ public class CodeStructure {
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
 
-            // classes = identifyClasses(unCommentedCode);
+            classes = identifyClasses(unCommentedCode);
 
-            unCommentedCode = StringEncryption.encryptStrings(this);
+            this.decryptionMethodName = Renamer.generateClassName();
+            
+            unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
         }
-        else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
+        else {
+            throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
+        } 
     }
 
     /**
-     * Takes some java code as a string and removes the comments from it. Does not modify the original code.
+     * Takes some java code as a string and removes the comments from it. Does not modify the
+     * original code.
      * @param code Code to have the comments removed from
      * @return Copy of code without any comments
      */
     private String removeComments(String code){
         String copy = code.trim();
         String output = "";
-        String[] remainingCode = copy.split("//.*\\n?|(/\\*[\\S\\s]*\\*/)");
+        String[] remainingCode = copy.split("\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[\\s\\S]*?[\\n]{1}");
 
         for(String codeBlock : remainingCode){
             output += codeBlock;
@@ -75,15 +81,16 @@ public class CodeStructure {
      */
     private String removeStrings(String code) {
         String copy = code.substring(0);
-        String output = "";
+        String output = copy.substring(0);
         
-        int j = 0;
+        int j = copy.length() - 1;
         // Loop through the code and find all of the string literals.
         // Only keep the code that is not a string literal.
-        while (j < copy.length()) {
+        while (j >= 0) {
             // If the current character is a double quote, then we are in a string literal.
             if (copy.charAt(j) == '"') {
-                j++;
+                int i = j;
+                i--;
 
                 boolean foundEnd = false;
 
@@ -91,21 +98,27 @@ public class CodeStructure {
                 while (!foundEnd) {
                     // If we find a double quote, then we have found the end of the string literal.
                     // Only if we find a double quote that is not escaped by a backslash.
-                    if (copy.charAt(j) == '"') {
-                        if (j > 0 && copy.charAt(j-1) != '\\') {
+                    if (copy.charAt(i) == '"') {
+                        if (i > 0 && copy.charAt(i-1) != '\\') {
                             foundEnd = true;
                         }
+                        else {
+                            i--;
+                        }
                     } else {
-                        j++;
+                        i--;
                     }
                 }
                 
-                j++;
+                // Remove the string literal from the code.
+                output = output.substring(0, i) + output.substring(j + 1);
+
+                j = i;
+                j--;
             }
             // If the current character is not a double quote, then we are not in a string literal.
             else {
-                output += copy.charAt(j);
-                j++;
+                j--;
             }
         }
 
@@ -119,22 +132,33 @@ public class CodeStructure {
      * @param code Code to have the spaces removed from
      * @return Copy of code without any extra spaces and newlines
      */
-    private String removeSpaces(String code) {
+    public static String removeSpaces(String code) {
         String copy = code.substring(0).replace("\n", "");
         String output = "";
         
         int j = 0;
+        Boolean equ = false;
         // Loop through the code and delete any space that isn't required for the code to run
         while (j < copy.length()) {
+            //checks if there is an equals sign and ignores the next space based on that
+            if (copy.charAt(j) == '=') {
+                equ = true;
+            }
             // If a space is found check if the next character is another word if it's not remove
             // the space
             if (copy.charAt(j) == ' ') {
             	j++;
+                if (equ == true){
+                    equ = false;
+                    continue;
+                }
+                //copies the next character into the new string
             	if (Character.isLetter(copy.charAt(j))) {
             		j--;
             		output += copy.charAt(j);
             		j++;
                 }
+            //copies the character into the new string
             }else {
             	output += copy.charAt(j);
                 j++;
@@ -152,7 +176,7 @@ public class CodeStructure {
      * @param code Code the will have its variables changed
      * @return Copy of code with changed variables
      */
-    private static String changeVar(String code) {
+    public static String changeVar(String code) {
         String copy = code.substring(0);
         int j = 0;
         int start = 0;
@@ -173,13 +197,37 @@ public class CodeStructure {
         	variables.sort((var1,var2) -> Integer.compare(var1.length(),var2.length()));
         	//replace all instances of those variables in the code with a random value
         	for (int x = 0; x < variables.size(); x++) {
-        		//STILL TO ADD: Regex and random value generator
-        		//copy = copy.replaceAll(regex, replacement);
+        		copy = copy.replaceAll(variables.get(variables.size()-x-1),
+                                         replacement(variables.get(variables.size()-x-1)));
         	}
         	j++;
         }
         
         return copy;
+    }
+    
+    /**
+     * Creates a random string of characters
+     * 
+     * @param String name
+     * @return random string of characters
+     */
+    private static String replacement(String name) {
+    	//counts bytes
+        byte[] creation = new byte[7];
+        //changes the bytes randomly
+        new Random().nextBytes(creation);
+        //creates a string
+        String who = new String(creation, Charset.forName("UTF-8"));
+        //increases string length to increase chance of strange variables
+        if (name.length() > who.length()) {
+        	new Random().nextBytes(creation);
+            who = who + new String(creation, Charset.forName("UTF-8"));
+        }
+        //removes problematic characters
+        who = who.replace("?", "");
+        who = who.replace("\\", "");
+        return who;
     }
 
     /**
@@ -197,12 +245,38 @@ public class CodeStructure {
         int index = 0;
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
-            String className = removedStringsCode.substring(classStart, removedStringsCode
-                                                 .indexOf("{", classStart)).trim();
+            int i = 0;
+            while (i < removedStringsCode.length() && removedStringsCode.charAt(i) != '{') {
+                i++;
+            }
+            String className = removedStringsCode.substring(classStart, i);
+                                                 
+            String full = className.substring(0);
+            
+            ArrayList<String> templates = new ArrayList<String>();
+            //Handle template arguments
+            if(className.contains("<")){
+                className = removedStringsCode.substring(classStart, removedStringsCode
+                        .indexOf("<", classStart)).trim();
+                Pair<String, Integer> templateContents =
+                     getCodeBetweenBrackets(removedStringsCode, classStart, '<', '>');
+                String arguments = templateContents.first;
+                templates = getCommaSeparatedValues(arguments);
+            }
             Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode,
                                                                         classStart, '{', '}');
+
+            int classEnd = className.indexOf(" ");
+            
+            if (classEnd == -1) {
+                classEnd = className.length();
+            }
+            className = className.substring(0, classEnd);
+            className = className.replaceAll("\\s+", "");
+            boolean implement = full.matches("(\\simplements\\s)");
             classes.add(new ClassStructure(currentClass.first, className, fileName,
-                                           new ArrayList<ClassStructure>()));
+                                           new ArrayList<ClassStructure>(), templates, implement));
+            
             index = currentClass.second;
         }
 
@@ -264,6 +338,38 @@ public class CodeStructure {
         return new Pair<String, Integer>(output, index);
     }
 
+    /**
+     * Gets a list of values separated by commas. Useful for quickly getting comma-separated
+     * arguments. This method is static and is intended to be used as a utility.
+     * @param s String of values to be separated
+     * @return List of strings separated by commas in the input string
+     */
+    public static ArrayList<String> getCommaSeparatedValues(String s){
+        Pattern comma = Pattern.compile(",");
+        Matcher commaFinder = comma.matcher(s);
+        ArrayList<String> output = new ArrayList<String>();
+        int index = 0;
+        while(commaFinder.find(index)){
+            int commaIndex = commaFinder.start();
+            output.add(s.substring(index, commaIndex));
+            index = commaFinder.end();
+        }
+        output.add(s.substring(index));
+
+        return output;
+    }
+
+    /**
+     * Returns true if the main method exists anywhere within this code structure.
+     * @return True if the main method exists anywhere within this code structure.
+     */
+    public boolean containsMainMethod(){
+        for(ClassStructure c : classes){
+            if(c.containsMainMethod()) return true;
+        }
+        return false;
+    }
+
 
     public String getUnCommentedCode(){
         return unCommentedCode;
@@ -275,6 +381,10 @@ public class CodeStructure {
 
     public ArrayList<ClassStructure> getClasses(){
         return classes;
+    }
+
+    public String getDecryptionMethodName() {
+        return decryptionMethodName;
     }
 
     /**
@@ -292,6 +402,20 @@ public class CodeStructure {
             second = snd;
         }
     }
+
+    public ArrayList<ClassStructure> getClassStructures() {
+        return classes;
+    }
+
+    public void setUnCommentedCode(String newCode) {
+        unCommentedCode = newCode;
+    }
+
+    public File getCodeFile() {
+        return this.codeFile;
+    }
 }
+
+    
 
 
