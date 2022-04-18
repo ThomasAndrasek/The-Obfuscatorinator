@@ -30,14 +30,18 @@ public class ClassStructure {
      * @param containerClasses List of classes this class is contained in, from largest to smallest in scope
      * @param templates List of template arguments passed into this class. This may be empty.
      */
-    protected ClassStructure(String code, String name, String filename, ArrayList<ClassStructure> containerClasses, ArrayList<String> templates){
+    protected ClassStructure(String code, String name, String filename, ArrayList<ClassStructure> containerClasses, ArrayList<String> templates, boolean implement){
         sourceCode = code;
         className = name;
         sourceFile = filename;
         containers = containerClasses;
         classes = identifyClasses();
         templateClasses = templates;
-        methods = identifyMethods();
+        if (implement) {
+            methods = identifyMethods();
+        } else {
+            methods = new ArrayList<MethodStructure>();
+        }
     }
 
     /**
@@ -60,7 +64,13 @@ public class ClassStructure {
         int index = 0;
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
-            String className = code.substring(classStart, code.indexOf("{", classStart)).trim();
+            int i = classStart;
+            while (i < code.length() && code.charAt(i) != '{') {
+                i++;
+            }
+            String className = code.substring(classStart, i);
+
+            String full = className.substring(0);
 
             ArrayList<String> templates = new ArrayList<String>();
             //Handle template arguments
@@ -75,7 +85,15 @@ public class ClassStructure {
             CodeStructure.Pair<String, Integer> currentClass = CodeStructure.getCodeBetweenBrackets(code, classStart, '{', '}');
             ArrayList<ClassStructure> newContainerList = new ArrayList<ClassStructure>(containers);
             newContainerList.add(this);
-            classes.add(new ClassStructure(currentClass.first, className, sourceFile, newContainerList, templates));
+            int classEnd = className.indexOf(" ");
+            
+            if (classEnd == -1) {
+                classEnd = className.length();
+            }
+            className = className.substring(0, classEnd);
+            className = className.replaceAll("\\s+", "");
+            boolean implement = full.matches("(\\simplements\\s)");
+            classes.add(new ClassStructure(currentClass.first, className, sourceFile, newContainerList, templates, implement));
             index = currentClass.second;
         }
 
@@ -90,19 +108,41 @@ public class ClassStructure {
     private ArrayList<MethodStructure> identifyMethods(){
         String code = ignoreNestedClasses();
         ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
-        Pattern methodFinder = Pattern.compile("[\\S]{1}(.)*[\\S]*[\\s]*[(]{1}(.)*[)]{1}[\\s]*[{]{1}");
+        // Regex adopted from: https://stackoverflow.com/a/16118844/5956948
+        Pattern methodFinder = Pattern.compile("(?:(?:public|private|protected|static|final|native|synchronized|abstract|transient)+\\s+)+[$_\\w<>\\[\\]\\s]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?");
         Matcher methodMatcher = methodFinder.matcher(code);
         int index = 0;
         while(methodMatcher.find(index)){
             String method = "";
-            if(methodMatcher.group(0) != null){
-                method = methodMatcher.group(0);
+            int i = 0;
+            while (i <= methodMatcher.groupCount() && methodMatcher.group(i) != null){
+                method += methodMatcher.group(i);
+                i++;
             }
+
+            String fullMethod = method.substring(0);
 
             method = method.replaceAll("\\s+", " ");
 
             if (method == "") {
                 break;
+            }
+
+            int indexB = code.indexOf(fullMethod) - 1;
+
+            String inbetween = "";
+            while (indexB >= 0) {
+                char c = code.charAt(indexB);
+                if (c == '{' || c == '}' || c == ';') {
+                    break;
+                }
+                inbetween = c + inbetween;
+                indexB--;
+            }
+
+            boolean valid = true;
+            if (inbetween.toString().contains("@Override")) {
+                valid = false;
             }
 
             String scope = "";
@@ -155,7 +195,7 @@ public class ClassStructure {
             CodeStructure.Pair<String, Integer> detectBody = CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;
 
-            if (!returnType.equals("")) {
+            if (!returnType.equals("") && valid) {
                 // System.out.println(scope + "\n\t" + staticStatus + "\n\t" + template + "\n\t" + returnType + "\n\t" + name + "\n\t" + arguments);
                 output.add(new MethodStructure(name, scope, staticStatus, template, arguments, returnType, code, containers, sourceFile));
             } 

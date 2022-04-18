@@ -45,28 +45,36 @@ public class App
             ArrayList<CodeStructure> codeStructures = new ArrayList<CodeStructure>();
             HashSet<File> fileSet = FileManager.getAllFilesFromDirectory(targetDirectory);
             for(File f : fileSet){
-                codeStructures.add(new CodeStructure(f));
+                if (f.getName().endsWith(".java")){
+                    System.out.println("Constructing Code Structure for " + f.getName() + " ...");
+                    codeStructures.add(new CodeStructure(f));
+                }
             }
 
             // CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
 
+            System.out.println("Renaming Classes...");
             Renamer.renameClasses(codeStructures);
 
+            System.out.println("Renaming Methods...");
             Renamer.renameMethods(codeStructures);
 
-            Renamer.renameVariables(codeStructures);
+            // System.out.println("Renaming Variables...");
+            // Renamer.renameVariables(codeStructures);
 
-            Renamer.renameParameters(codeStructures);
+            // System.out.println("Renaming Parameters...");
+            // Renamer.renameParameters(codeStructures);
 
-            Renamer.renameParameters(codeStructures);
-
+            System.out.println("Adding Decryption Methods...");
             StringEncryption.addDecryptionMethod(codeStructures);
 
+            System.out.println("Swapping in Unicode...");
             Unicoder.swapForUnicode(codeStructures);
 
-            for (CodeStructure codeStructure : codeStructures) {
-                System.out.println(codeStructure.getUnCommentedCode() + "\n\n\nwow " + codeStructure.getClasses().get(0).getClassName() + "\n\n\n");
-            }
+            System.out.println("Writing Files...");
+            FileManager.writeToFiles(codeStructures);
+
+            System.out.println("Done!");
         }
         catch(Exception e){
             System.err.println("Exception thrown: " + e.getMessage());

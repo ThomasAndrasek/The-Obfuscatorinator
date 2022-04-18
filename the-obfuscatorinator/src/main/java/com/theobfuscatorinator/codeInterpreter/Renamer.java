@@ -48,7 +48,7 @@ public class Renamer {
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
                     String before = String.valueOf(charBefore);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%\\^&*0-9]*");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]*");
                     Matcher matcher = methodFinder.matcher(before);
                     if (matcher.matches()) {
                         validBefore = true;
@@ -59,7 +59,7 @@ public class Renamer {
                 if (index + og.length() < codeToUpdate.length()) {
                     char charAfter = codeToUpdate.charAt(index + og.length());
                     String after = String.valueOf(charAfter);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%^&*0-9]*");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$^0-9]*");
                     Matcher matcher = methodFinder.matcher(after);
                     if (matcher.matches()) {
                         validAfter = true;
@@ -72,7 +72,7 @@ public class Renamer {
                     structure.setUnCommentedCode(code);
                 }
 
-                index = structure.getUnCommentedCode().indexOf(og, index + og.length());
+                index = structure.getUnCommentedCode().indexOf(og, index + 1);
             }
         }
     }
@@ -124,7 +124,7 @@ public class Renamer {
                     structure.setUnCommentedCode(code);
                 }
 
-                index = structure.getUnCommentedCode().indexOf(og, index + og.length());
+                index = structure.getUnCommentedCode().indexOf(og, index + 1);
             }
         }
     }

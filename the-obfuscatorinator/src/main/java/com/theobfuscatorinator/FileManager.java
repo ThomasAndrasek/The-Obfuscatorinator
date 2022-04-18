@@ -1,10 +1,14 @@
 package com.theobfuscatorinator;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
+
+import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
 /**
  * This class implements a library of static methods useful for managing project files.
@@ -89,4 +93,31 @@ public class FileManager {
         return output;
     }
 
+
+    public static void writeToFiles(ArrayList<CodeStructure> codeStructures) {
+        for (CodeStructure codeStructure : codeStructures) {
+            if (codeStructure.getClassStructures().size() == 0) {
+                continue;
+            }
+            
+            File file = new File(codeStructure.getCodeFile().getParent() + "/" + codeStructure.getClassStructures().get(0).getName() + ".java");
+
+            FileWriter fw = null;
+            try {
+                fw = new FileWriter(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                fw.write(codeStructure.getUnCommentedCode());
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            File ogFile = codeStructure.getCodeFile();
+            ogFile.delete();
+        }
+    }
 }

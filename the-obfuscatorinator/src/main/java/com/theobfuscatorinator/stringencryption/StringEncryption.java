@@ -26,19 +26,21 @@ public class StringEncryption {
 
     private static ArrayList<Pair<String, Integer>> findStrings(CodeStructure codeStructure) {
         ArrayList<Pair<String, Integer>> strings = new ArrayList<Pair<String, Integer>>();
-        String code = codeStructure.getUnCommentedCode();
+        String code = codeStructure.getUnCommentedCode().substring(0);
 
+        // Find all strings in the code
         int i = 0;
         while (i < code.length()) {
             if (code.charAt(i) == '"') {
                 int j = i + 1;
-                while (j < code.length() && (code.charAt(j) != '"' || code.charAt(j) == '\\')) {
+                while (j < code.length()) {
+                    if (code.charAt(j) == '"' && code.charAt(j - 1) != '\\') {
+                        break;
+                    }
                     j++;
                 }
-                if (j < code.length() && j != i + 1) {
-                    strings.add(new Pair<String, Integer>(code.substring(i + 1, j), i));
-                    i = j + 1;
-                }
+                strings.add(new Pair<String, Integer>(code.substring(i, j+1), i));
+                i = j + 1;
             }
             i++;
         }
@@ -49,12 +51,12 @@ public class StringEncryption {
     public static String encryptStrings(CodeStructure codeStructure, String decryptionMethodName) {
         
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
-        String code = codeStructure.getUnCommentedCode();
+        String code = codeStructure.getUnCommentedCode().substring(0);
 
         Random random = new Random();
         
         for (int i = strings.size() - 1; i >= 0; i--) {
-            String string = strings.get(i).first;
+            String string = strings.get(i).first.substring(1, strings.get(i).first.length() - 1);
             int index = strings.get(i).second;
 
             byte[] byteArrray = string.getBytes();
@@ -63,6 +65,9 @@ public class StringEncryption {
                 int num = b * 42 + 27000;
 
                 int attached = random.nextInt(100) + 1;
+                while ((num * attached + attached) % 100 == 0) {
+                    attached = random.nextInt(100) + 1;
+                }
 
                 num *= attached;
 
@@ -72,10 +77,12 @@ public class StringEncryption {
 
                 byteString += num + ", ";
             }
-            byteString = byteString.substring(0, byteString.length() - 2);
-            String encrypted = decryptionMethodName + "(new int[]{" + byteString + "})";
+            if (byteString.length() != 0) {
+                byteString = byteString.substring(0, byteString.length() - 2);
+                String encrypted = decryptionMethodName + "(new int[]{" + byteString + "})";
 
-            code = code.substring(0, index) + encrypted + code.substring(index + string.length() + 2);
+                code = code.substring(0, index) + encrypted + code.substring(index + string.length() + 2);
+            }
         }
 
         

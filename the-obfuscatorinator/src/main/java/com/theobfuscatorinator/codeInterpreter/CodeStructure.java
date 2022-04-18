@@ -43,7 +43,7 @@ public class CodeStructure {
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
             unCommentedCode = removeComments(originalCode);
-            
+
             classes = identifyClasses(unCommentedCode);
 
             this.decryptionMethodName = Renamer.generateClassName();
@@ -61,7 +61,7 @@ public class CodeStructure {
     private String removeComments(String code){
         String copy = code.trim();
         String output = "";
-        String[] remainingCode = copy.split("//.*\\n?|(/\\*[\\S\\s]*\\*/)");
+        String[] remainingCode = copy.split("\\/\\*[\\s\\S]*?\\*\\/|\\/\\/[\\s\\S]*?[\\n]{1}");
 
         for(String codeBlock : remainingCode){
             output += codeBlock;
@@ -80,15 +80,16 @@ public class CodeStructure {
      */
     private String removeStrings(String code) {
         String copy = code.substring(0);
-        String output = "";
+        String output = copy.substring(0);
         
-        int j = 0;
+        int j = copy.length() - 1;
         // Loop through the code and find all of the string literals.
         // Only keep the code that is not a string literal.
-        while (j < copy.length()) {
+        while (j >= 0) {
             // If the current character is a double quote, then we are in a string literal.
             if (copy.charAt(j) == '"') {
-                j++;
+                int i = j;
+                i--;
 
                 boolean foundEnd = false;
 
@@ -96,21 +97,27 @@ public class CodeStructure {
                 while (!foundEnd) {
                     // If we find a double quote, then we have found the end of the string literal.
                     // Only if we find a double quote that is not escaped by a backslash.
-                    if (copy.charAt(j) == '"') {
-                        if (j > 0 && copy.charAt(j-1) != '\\') {
+                    if (copy.charAt(i) == '"') {
+                        if (i > 0 && copy.charAt(i-1) != '\\') {
                             foundEnd = true;
                         }
+                        else {
+                            i--;
+                        }
                     } else {
-                        j++;
+                        i--;
                     }
                 }
                 
-                j++;
+                // Remove the string literal from the code.
+                output = output.substring(0, i) + output.substring(j + 1);
+
+                j = i;
+                j--;
             }
             // If the current character is not a double quote, then we are not in a string literal.
             else {
-                output += copy.charAt(j);
-                j++;
+                j--;
             }
         }
 
@@ -236,8 +243,14 @@ public class CodeStructure {
         int index = 0;
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
-            String className = removedStringsCode.substring(classStart, removedStringsCode
-                                                 .indexOf("{", classStart)).trim();
+            int i = 0;
+            while (i < removedStringsCode.length() && removedStringsCode.charAt(i) != '{') {
+                i++;
+            }
+            String className = removedStringsCode.substring(classStart, i);
+                                                 
+            String full = className.substring(0);
+            
             ArrayList<String> templates = new ArrayList<String>();
             //Handle template arguments
             if(className.contains("<")){
@@ -249,8 +262,18 @@ public class CodeStructure {
             }
             Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode,
                                                                         classStart, '{', '}');
+
+            int classEnd = className.indexOf(" ");
+            
+            if (classEnd == -1) {
+                classEnd = className.length();
+            }
+            className = className.substring(0, classEnd);
+            className = className.replaceAll("\\s+", "");
+            boolean implement = full.matches("(\\simplements\\s)");
             classes.add(new ClassStructure(currentClass.first, className, fileName,
-                                           new ArrayList<ClassStructure>(), templates));
+                                           new ArrayList<ClassStructure>(), templates, implement));
+            
             index = currentClass.second;
         }
 
@@ -383,6 +406,10 @@ public class CodeStructure {
 
     public void setUnCommentedCode(String newCode) {
         unCommentedCode = newCode;
+    }
+
+    public File getCodeFile() {
+        return this.codeFile;
     }
 }
 
