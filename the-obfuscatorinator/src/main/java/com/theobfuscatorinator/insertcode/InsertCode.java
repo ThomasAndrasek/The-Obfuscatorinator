@@ -4,9 +4,6 @@ import java.util.Random;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 
@@ -51,7 +48,7 @@ public class InsertCode {
      */
 
     public static String generateDummyClass() {
-    	String className = getRandomString();
+    	String className = "DummyClass";
     	String startClassCode = "public static class " + className + " {";
     	String dummyPrint = "";
     	String dummyLine = "\t\t\t" + "int dummyVar = 0;\n";
@@ -72,31 +69,30 @@ public class InsertCode {
     	return allDummyCode;
     }
     
+    /**
+     * Edits the java file to include the dummy code
+     * @param file File to have dummy code inserted into
+     * @param code String that represents all of the code 
+     */
     public static void modifyFile(File file, String code) {
         //Modify File
-            // Path filePath = Paths.get("./src/test/res/individual-files/TestClassIdentifying.java");
-            // FileChannel fileSize = FileChannel.open(filePath);
-            // System.out.println(fileSize.size());
-            FileWriter writer;
-            try {
-                writer = new FileWriter(file, false);
-                writer.write(code);
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            // System.out.println("final");
-            // System.out.println(fileSize.size());
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file, false);
+            writer.write(code);
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
-     * Injects code throughout an inputted java file and modifies the file
-     * @param file Java file to have dummy code inserted to
+     * Injects dummy strings throughout an inputted java file and modifies the file
+     * @param file Java file to have dummy strings inserted to
      * @param codeStructure Code that represents the java code of the file
      */
     public static void insertStrings(File f, CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
-
         //Inserting dummy strings throughout the code
         String[] codeByLines = code.split("\r\n");
         for (int i = 0; i < codeByLines.length; i++) {
@@ -116,26 +112,24 @@ public class InsertCode {
         for (String line:codeByLines) {
             newCode += line + "\n";
         }
-        // // Inserting Dummy Class
-        // int index = newCode.indexOf("{\n");
-        // String dummyCode = generateDummyClass();
-        // newCode = newCode.substring(0, index + 1) + dummyCode + newCode.substring(index + 1);
 
         modifyFile(f, newCode);
     }
-
-    public static int insertClass(File f, CodeStructure codeStructure) {
+    /**
+     * Injects dummy class throughout an inputted java file and modifies the file
+     * @param file Java file to have dummy class inserted to
+     * @param codeStructure Code that represents the java code of the file
+     */
+    public static void insertClass(File f, CodeStructure codeStructure) {
     	String code = codeStructure.getUnCommentedCode();
         String newCode = new String();
-        int count = 0;
 
         // Inserting Dummy Class
-         int index = code.indexOf("{\n");
+         int index = code.indexOf("{");
          String dummyCode = generateDummyClass();
          newCode = code.substring(0, index + 1) + dummyCode + code.substring(index + 1);
  
         modifyFile(f, newCode);
-        return count;
     }
 
 }

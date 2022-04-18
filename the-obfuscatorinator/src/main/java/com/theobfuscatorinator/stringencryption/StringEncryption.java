@@ -58,7 +58,9 @@ public class StringEncryption {
                 int num = b * 42 - 27000;
                 byteString += num + ", ";
             }
-            byteString = byteString.substring(0, byteString.length() - 2);
+            if (byteString.length() != 0) {
+                byteString = byteString.substring(0, byteString.length() - 2);
+            }
             String encrypted = "werturtgfhbhxcvghwertyhs(new int[]{" + byteString + "})";
 
             code = code.substring(0, index) + encrypted + code.substring(index + string.length() + 2);

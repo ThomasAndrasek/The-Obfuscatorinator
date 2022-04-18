@@ -15,10 +15,10 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class InsertCodeTest {
-    File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
 
     @Test
     public void testInsertStrings() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
@@ -37,6 +37,7 @@ public class InsertCodeTest {
 
     @Test
     public void testInsertClass() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
@@ -46,7 +47,7 @@ public class InsertCodeTest {
                 t = new CodeStructure(f);
                 InsertCode.insertClass(f, t);
                 Long newSize = fileSize.size();
-                assertEquals((newSize-originalSize), 4848);
+                assertTrue(null, newSize > originalSize);
             }catch(IOException e){
                 assertTrue("IOException Thrown in constructor", false);
             }
@@ -55,6 +56,7 @@ public class InsertCodeTest {
 
     @Test
     public void testBothInserts() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
