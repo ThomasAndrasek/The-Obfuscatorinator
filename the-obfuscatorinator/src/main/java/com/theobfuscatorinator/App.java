@@ -1,13 +1,14 @@
 package com.theobfuscatorinator;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
 
-import com.sun.tools.javac.jvm.Code;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
-import com.theobfuscatorinator.codegraph.CodeGraph;
+import com.theobfuscatorinator.codeInterpreter.Renamer;
+import com.theobfuscatorinator.codeInterpreter.Unicoder;
+import com.theobfuscatorinator.stringencryption.StringEncryption;
 
 /**
  * Hello world!
@@ -30,22 +31,42 @@ public class App
                     copyPath = args[i];
                 }
                 else{
-                    if(!(new File(args[i])).exists()) throw new IllegalArgumentException("Source File " + args[i] + " does not exist.");
+                    if(!(new File(args[i])).exists())
+                         throw new IllegalArgumentException("Source File " + args[i] +
+                                                             " does not exist.");
                     inputFiles.add(args[i]);
                 }
             }
-            if(inputFiles.size() == 0) throw new IllegalArgumentException("No Source Files Provided");
+            if(inputFiles.size() == 0)
+                 throw new IllegalArgumentException("No Source Files Provided");
 
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
 
-            HashSet<CodeStructure> codeStructures = new HashSet<CodeStructure>();
+            ArrayList<CodeStructure> codeStructures = new ArrayList<CodeStructure>();
             HashSet<File> fileSet = FileManager.getAllFilesFromDirectory(targetDirectory);
             for(File f : fileSet){
-                codeStructures.add(new CodeStructure(f));
+                if (f.getName().endsWith(".java")){
+                    System.out.println("Constructing Code Structure for " + f.getName() + " ...");
+                    codeStructures.add(new CodeStructure(f));
+                }
             }
 
-            CodeGraph projectGraph = new CodeGraph(targetDirectory.toString(), codeStructures);
+            System.out.println("Renaming Classes...");
+            Renamer.renameClasses(codeStructures);
 
+            System.out.println("Renaming Methods...");
+            Renamer.renameMethods(codeStructures);
+
+            System.out.println("Adding Decryption Methods...");
+            StringEncryption.addDecryptionMethod(codeStructures);
+
+            System.out.println("Swapping in Unicode...");
+            Unicoder.swapForUnicode(codeStructures);
+
+            System.out.println("Writing Files...");
+            FileManager.writeToFiles(codeStructures);
+
+            System.out.println("Done!");
         }
         catch(Exception e){
             System.err.println("Exception thrown: " + e.getMessage());

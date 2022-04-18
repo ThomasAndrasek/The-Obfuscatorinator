@@ -9,6 +9,9 @@ import java.util.Set;
 public class JavaClasses {
     private static Set<String> javaClasses;
 
+    /**
+     * Loads the list of Java classes.
+     */
     public static void loadJavaClasses() {
         javaClasses = new java.util.HashSet<String>();
 
@@ -45,6 +48,12 @@ public class JavaClasses {
         }
     }
 
+    /**
+     * Checks if the given class is a Java class.
+     * 
+     * @param className The name of the class to check.
+     * @return True if the class is a Java class, false otherwise.
+     */
     public static boolean isJavaClass(String className) {
         return javaClasses.contains(className);
     }
