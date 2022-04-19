@@ -2,8 +2,6 @@ package com.theobfuscatorinator.insertcode;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
@@ -74,23 +72,6 @@ public class InsertCode {
     	return allDummyCode;
     }
     
-    /**
-     * Edits the java file to include the dummy code
-     * @param file File to have dummy code inserted into
-     * @param code String that represents all of the code 
-     */
-    public static void modifyFile(File file, String code) {
-        //Modify File
-        FileWriter writer;
-        try {
-            writer = new FileWriter(file, false);
-            writer.write(code);
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Injects dummy strings throughout an inputted java file and modifies the file
      * @param file Java file to have dummy strings inserted to

@@ -5,9 +5,6 @@ import com.theobfuscatorinator.insertcode.InsertCode;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertTrue;
 
@@ -22,14 +19,8 @@ public class InsertCodeTest {
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
-                Path filePath = Paths.get("./src/test/res/individual-files/TestClassIdentifying.java");
-                FileChannel fileSize = FileChannel.open(filePath);
-                Long originalSize = fileSize.size();
                 t = new CodeStructure(f);
-                String code = InsertCode.insertClass(t);
-                InsertCode.modifyFile(f, code);
-                Long newSize = fileSize.size();
-                assertTrue(null, newSize > originalSize);
+                InsertCode.insertClass(t);
             }catch(IOException e){
                 assertTrue("IOException Thrown in constructor", false);
             }
@@ -42,14 +33,8 @@ public class InsertCodeTest {
     	if (f.exists()) {
     		CodeStructure t = null;
     		try{
-                Path filePath = Paths.get("./src/test/res/individual-files/TestClassIdentifying.java");
-                FileChannel fileSize = FileChannel.open(filePath);
-                Long originalSize = fileSize.size();
                 t = new CodeStructure(f);
-                String code = InsertCode.insertStrings(t);
-                InsertCode.modifyFile(f, code);
-                Long newSize = fileSize.size();
-                assertTrue(null, newSize > originalSize);
+                InsertCode.insertStrings(t);
             }catch(IOException e){
                 assertTrue("IOException Thrown in constructor", false);
             }
