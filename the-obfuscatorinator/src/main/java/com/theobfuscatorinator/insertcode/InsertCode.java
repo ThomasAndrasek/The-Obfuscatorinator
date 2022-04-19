@@ -49,16 +49,17 @@ public class InsertCode {
      */
 
     public static String generateDummyClass() {
-    	String className = "DummyClass";
+    	String className = getRandomString();
+        String varName = getRandomString();
     	String startClassCode = "public static class " + className + " {";
     	String dummyPrint = "";
-    	String dummyLine = "\t\t\t" + "int dummyVar = 0;\n";
+    	String dummyLine = "\t\t\t" + String.format("int %s = 0;\n", varName);
     	String tempLine = "";
     	int maxLines = 30;
     	for (int i = 1; i <= maxLines; i++) {
     		dummyPrint = String.format("System.out.println(\"%s\");", getRandomString());
     		dummyLine += "\t\t\t" + dummyPrint + "\n";
-    		tempLine = String.format("dummyVar = %d;", i);
+    		tempLine = String.format("%s = %d;", varName, i);
     		dummyLine += "\t\t\t" + tempLine + "\n";
     	}
     	
@@ -97,13 +98,17 @@ public class InsertCode {
         //Inserting dummy strings throughout the code
         String[] codeByLines = code.split("\n");
         for (int i = 0; i < codeByLines.length; i++) {
-            if (codeByLines[i].endsWith("}")){
+            if (codeByLines[i].endsWith("}") || codeByLines[i].endsWith("}\n")) {
+                // System.out.print("right ");
+                // System.out.println(codeByLines[i]);
                 continue;
             }
-            if (codeByLines[i].contains("public") && codeByLines[i].contains("{") && codeByLines[i].indexOf("public") != 0) {
+            if (codeByLines[i].contains("public") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("public") != 0) {
+                // System.out.print("wrong ");
+                // System.out.println(codeByLines[i]);
                 codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("public") + 4) + generateDummyString();
             }
-            if (codeByLines[i].contains("private") && codeByLines[i].contains("{") && codeByLines[i].indexOf("private") != 0) {
+            if (codeByLines[i].contains("private") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("private") != 0) {
                 codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("private") + 4) + generateDummyString();
             }
         }
