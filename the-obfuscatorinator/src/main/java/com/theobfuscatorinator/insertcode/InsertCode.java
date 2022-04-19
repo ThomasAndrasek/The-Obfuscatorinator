@@ -21,12 +21,15 @@ public class InsertCode {
      */
     
     public static String getRandomString() {
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        String alphabetNumbers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder str = new StringBuilder();
         Random rnd = new Random();
+        int index = (int) (rnd.nextFloat() * alphabet.length());
+        str.append(alphabet.charAt(index));
         while (str.length() < 50) {
-            int index = (int) (rnd.nextFloat() * alphabet.length());
-            str.append(alphabet.charAt(index));
+            index = (int) (rnd.nextFloat() * alphabetNumbers.length());
+            str.append(alphabetNumbers.charAt(index));
         }
         String randomString = str.toString();
         return randomString;
@@ -99,13 +102,9 @@ public class InsertCode {
         String[] codeByLines = code.split("\n");
         for (int i = 0; i < codeByLines.length; i++) {
             if (codeByLines[i].endsWith("}") || codeByLines[i].endsWith("}\n")) {
-                // System.out.print("right ");
-                // System.out.println(codeByLines[i]);
                 continue;
             }
             if (codeByLines[i].contains("public") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("public") != 0) {
-                // System.out.print("wrong ");
-                // System.out.println(codeByLines[i]);
                 codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("public") + 4) + generateDummyString();
             }
             if (codeByLines[i].contains("private") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("private") != 0) {
