@@ -393,7 +393,7 @@ public class CodeStructure {
      * @param <K> Type of the first element in the pair
      * @param <V> Type of the second element in the pair
      */
-    static class Pair<K,V>{
+    public static class Pair<K,V>{
         public K first;
         public V second;
 
