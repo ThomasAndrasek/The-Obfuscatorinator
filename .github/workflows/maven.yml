@@ -23,6 +23,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: 
+      run: |
         cd ./the-obfuscatorinator/
         mvn -B package --file pom.xml
