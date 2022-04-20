@@ -3,7 +3,8 @@ package com.theobfuscatorinator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
@@ -47,8 +48,27 @@ public class FileManager {
      throws IOException {
         if (source.isDirectory()) {
             File destination = new File(destinationDirectory + "/" +  source.getName());
-            if (destination.exists()) destination.delete();
-            destination.mkdir();
+            if (destination.exists()) {
+                Path directory = destination.toPath();
+                Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        Files.delete(file);
+                        return FileVisitResult.CONTINUE;
+                    }
+
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+                destination.delete();
+            }
+            System.out.println("Creating Directory: " + destination.getPath());
+            if(!destination.mkdir()){
+                throw new IOException("Directory " + destination.getAbsolutePath() + " could not be created.");
+            }
             for (File child : source.listFiles()) copyDirectory(child, destination.toString());
         } else copyFile(source, destinationDirectory);
     }
