@@ -1,5 +1,6 @@
 package com.theobfuscatorinator.codeInterpreter;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,14 +35,14 @@ public class ClassStructure {
      * @param templates List of template arguments passed into this class. This may be empty.
      */
     protected ClassStructure(String code, String name, String filename,
-     ArrayList<ClassStructure> containerClasses, ArrayList<String> templates, boolean implement){
+     ArrayList<ClassStructure> containerClasses, ArrayList<String> templates, boolean implement, String[] implementedClasses){
         sourceCode = code;
         className = name;
         sourceFile = filename;
         containers = containerClasses;
         classes = identifyClasses();
         templateClasses = templates;
-        if (implement) {
+        if (!implement) {
             methods = identifyMethods();
         } else {
             methods = new ArrayList<MethodStructure>();
@@ -98,9 +99,15 @@ public class ClassStructure {
             }
             className = className.substring(0, classEnd);
             className = className.replaceAll("\\s+", "");
-            boolean implement = full.matches("(\\simplements\\s)");
+            boolean implement = full.indexOf("implements") != -1;
+            String[] implementedClassesArray = new String[0];
+            if (implement) {
+                String implementedClasses = full.substring(full.indexOf("implements") + 10);
+                implementedClasses.trim();
+                implementedClassesArray = implementedClasses.split(",");
+            }
             classes.add(new ClassStructure(currentClass.first, className, sourceFile, 
-                                           newContainerList, templates, implement));
+                                           newContainerList, templates, implement, implementedClassesArray));
             index = currentClass.second;
         }
 

@@ -273,9 +273,15 @@ public class CodeStructure {
             }
             className = className.substring(0, classEnd);
             className = className.replaceAll("\\s+", "");
-            boolean implement = full.matches("(\\simplements\\s)");
+            boolean implement = full.indexOf("implements") != -1;
+            String[] implementedClassesArray = new String[0];
+            if (implement) {
+                String implementedClasses = full.substring(full.indexOf("implements") + 10);
+                implementedClasses.trim();
+                implementedClassesArray = implementedClasses.split(",");
+            }
             classes.add(new ClassStructure(currentClass.first, className, fileName,
-                                           new ArrayList<ClassStructure>(), templates, implement));
+                                           new ArrayList<ClassStructure>(), templates, implement, implementedClassesArray));
             
             index = currentClass.second;
         }
