@@ -48,7 +48,10 @@ public class FileManager {
         if (source.isDirectory()) {
             File destination = new File(destinationDirectory + "/" +  source.getName());
             if (destination.exists()) destination.delete();
-            destination.mkdir();
+            System.out.println("Creating Directory: " + destination.getPath());
+            if(!destination.mkdir()){
+                throw new IOException("Directory " + destination.getAbsolutePath() + " could not be created.");
+            }
             for (File child : source.listFiles()) copyDirectory(child, destination.toString());
         } else copyFile(source, destinationDirectory);
     }
