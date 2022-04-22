@@ -44,7 +44,6 @@ public class CodeStructure {
             
             classes = identifyClasses(unCommentedCode);
             
-
             unCommentedCode = StringEncryption.encryptStrings(this);
         }
         else throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
