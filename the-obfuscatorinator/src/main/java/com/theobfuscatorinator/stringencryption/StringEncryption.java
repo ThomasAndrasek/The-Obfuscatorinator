@@ -63,7 +63,7 @@ public class StringEncryption {
      * All strings in the code are replaced by an array of integers, each one representing a
      * character from the string. To convert the character to an integer, the character is
      * converted to its byte value, then the byte is converted to an integer. The integer is then
-     * multiplied by 42 and increaded by 27000. Then a random number is genereated between 1 and
+     * multiplied by 42 and increased by 27000. Then a random number is generated between 1 and
      * 100. The integer value is then multiplied by the randomly generated number, if the result
      * is not divisible by 100. The product of the integer and the random number then has the
      * random number added to it.   

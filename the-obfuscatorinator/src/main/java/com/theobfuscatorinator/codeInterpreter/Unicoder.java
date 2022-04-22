@@ -26,7 +26,7 @@ public class Unicoder {
      * 
      * @param codeStructures Code structures to obfuscate and swap.
      */
-    public static void swapForUnicode(ArrayList<CodeStructure> codeStructures) {
+    public static void swapForUnicode(ArrayList<CodeStructure> codeStructures, int percentToReplace) {
         String valid =
          "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789{}[]()<>.,;:+-*/%&|^!~?_";
         Random rand = new Random();
@@ -35,8 +35,8 @@ public class Unicoder {
             String code = struct.getUnCommentedCode();
             int i = 0;
             while (i < code.length()) {
-                int randInt = rand.nextInt(20);
-                if (randInt == 0) {
+                int randInt = rand.nextInt(100);
+                if (randInt < percentToReplace) {
                     char c = code.charAt(i);
                     if (valid.indexOf(c) == -1) {
                         i++;

@@ -25,11 +25,23 @@ public class App
             Vector<String> inputFiles = new Vector<String>();
 
             //Argument Handling
+            boolean renameClasses = true, renameMethods = true, insertCode = true,
+                    addDecryption = true, unicode = true;
+            int percentUnicode = 5;
             for(int i = 0; i < args.length; i++){
                 if(args[i].equals("--target")){
                     i++;
                     if(i >= args.length) throw new IllegalArgumentException("Target Missing");
                     copyPath = args[i];
+                }
+                else if(args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
+                else if(args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
+                else if(args[i].equalsIgnoreCase("--nounicode")) unicode = false;
+                else if(args[i].equalsIgnoreCase("--unicodeFreq")){
+                    i++;
+                    if(i >= args.length)
+                        throw new IllegalArgumentException("Unicode Char Frequency Missing");
+                    percentUnicode = Integer.parseInt(args[i]);
                 }
                 else{
                     if(!(new File(args[i])).exists())
@@ -52,21 +64,26 @@ public class App
                 }
             }
 
-            System.out.println("Renaming Classes...");
-            Renamer.renameClasses(codeStructures);
-
-            System.out.println("Renaming Methods...");
-            Renamer.renameMethods(codeStructures);
-
-            System.out.println("Inserting Dummy Code...");
-            InsertCode.insertCode(codeStructures);
-
-            System.out.println("Adding Decryption Methods...");
-            StringEncryption.addDecryptionMethod(codeStructures);
-
-            System.out.println("Swapping in Unicode...");
-            Unicoder.swapForUnicode(codeStructures);
-
+            if(renameClasses){
+                System.out.println("Renaming Classes...");
+                Renamer.renameClasses(codeStructures);
+            }
+            if(renameMethods) {
+                System.out.println("Renaming Methods...");
+                Renamer.renameMethods(codeStructures);
+            }
+            if(insertCode){
+                System.out.println("Inserting Dummy Code...");
+                InsertCode.insertCode(codeStructures);
+            }
+            if(addDecryption){
+                System.out.println("Adding Decryption Methods...");
+                StringEncryption.addDecryptionMethod(codeStructures);
+            }
+            if(unicode) {
+                System.out.println("Swapping in Unicode...");
+                Unicoder.swapForUnicode(codeStructures, percentUnicode);
+            }
             System.out.println("Writing Files...");
             FileManager.writeToFiles(codeStructures);
 
