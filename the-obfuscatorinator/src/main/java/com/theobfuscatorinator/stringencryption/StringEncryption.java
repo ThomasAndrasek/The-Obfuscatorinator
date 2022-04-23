@@ -33,7 +33,7 @@ public class StringEncryption {
      */
     private static ArrayList<Pair<String, Integer>> findStrings(CodeStructure codeStructure) {
         ArrayList<Pair<String, Integer>> strings = new ArrayList<Pair<String, Integer>>();
-        String code = codeStructure.getUnCommentedCode().substring(0);
+        String code = codeStructure.getOriginalCode().substring(0);
 
         // Find all strings in the code
         int i = 0;
@@ -42,13 +42,20 @@ public class StringEncryption {
                 int j = i + 1;
                 while (j < code.length()) {
                     // Make sure it is not an escaped quote.
-                    if (code.charAt(j) == '"' && code.charAt(j - 1) != '\\') {
+                    if (code.charAt(j) == '"') {
+                        if (j - 1 > i && code.charAt(j - 1) == '\\') {
+                            if (j - 2 > i && code.charAt(j - 2) == '\\') {
+                                break;
+                            }
+                            j++;
+                            continue;
+                        }
                         break;
                     }
                     j++;
                 }
                 strings.add(new Pair<String, Integer>(code.substring(i, j+1), i));
-                i = j + 1;
+                i = j;
             }
             i++;
         }
@@ -79,7 +86,7 @@ public class StringEncryption {
     public static String encryptStrings(CodeStructure codeStructure, String decryptionMethodName) {
         
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
-        String code = codeStructure.getUnCommentedCode().substring(0);
+        String code = codeStructure.getOriginalCode().substring(0);
 
         Random random = new Random();
         

@@ -172,7 +172,7 @@ public class Renamer {
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
                     String before = String.valueOf(charBefore);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z!@#$%\\^&*0-9]{1}");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$0-9]{1}");
                     Matcher matcher = methodFinder.matcher(before);
                     if (matcher.matches()) {
                         validBefore = true;
