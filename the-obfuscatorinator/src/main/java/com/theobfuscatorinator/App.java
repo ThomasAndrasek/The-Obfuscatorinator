@@ -72,6 +72,10 @@ public class App
                 System.out.println("Renaming Methods...");
                 Renamer.renameMethods(codeStructures);
             }
+
+            System.out.println("Renaming Variables...");
+            Renamer.renameVariables(codeStructures);
+
             if(insertCode){
                 System.out.println("Inserting Dummy Code...");
                 InsertCode.insertCode(codeStructures);
