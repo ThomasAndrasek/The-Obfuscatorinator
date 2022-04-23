@@ -40,17 +40,27 @@ public class CodeStructure {
             codeFile = input;
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
-            unCommentedCode = removeComments(originalCode);
 
-            classes = identifyClasses(unCommentedCode);
+            classes = identifyClasses(originalCode);
 
             this.decryptionMethodName = Renamer.generateClassName();
             
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
+
+            unCommentedCode = removeComments(unCommentedCode);
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
         } 
+    }
+
+    /**
+     * Get the original code.
+     * 
+     * @return The original code.
+     */
+    public String getOriginalCode() {
+        return originalCode;
     }
 
     /**
@@ -95,21 +105,21 @@ public class CodeStructure {
                 boolean foundEnd = false;
 
                 // Loop until we find the end of the string literal.
-                while (!foundEnd) {
+                while (!foundEnd && i >= 0) {
                     // If we find a double quote, then we have found the end of the string literal.
                     // Only if we find a double quote that is not escaped by a backslash.
                     if (copy.charAt(i) == '"') {
-                        if (i > 0 && copy.charAt(i-1) != '\\') {
-                            foundEnd = true;
-                        }
-                        else {
+                        if (i - 1 >= 0 && copy.charAt(i - 1) == '\\') {
                             i--;
                         }
-                    } else {
+                        else {
+                            foundEnd = true;
+                        }
+                    }
+                    else {
                         i--;
                     }
                 }
-                
                 // Remove the string literal from the code.
                 output = output.substring(0, i) + output.substring(j + 1);
 
@@ -180,6 +190,7 @@ public class CodeStructure {
     private ArrayList<ClassStructure> identifyClasses(String code) {
         ArrayList<ClassStructure> classes = new ArrayList<>();
         String removedStringsCode = removeStrings(code);
+        removedStringsCode = removeComments(removedStringsCode);
         Pattern classFinder = Pattern.compile("\\s+class\\s+");
         Matcher classMatcher = classFinder.matcher(removedStringsCode);
         int index = 0;
