@@ -66,7 +66,7 @@ public class CodeInterpreterTest {
         String oc = new String(Files.readAllBytes(f.toPath()));
         String hold = t.getNoSpaceCode();
         //makes sure there is more spaces in the original than the new
-        assertTrue((hold.length()-(hold.length() - hold.replaceAll(" ", "").length())) < (oc.length()-(oc.length() - oc.replaceAll(" ", "").length())));
+        assertTrue((hold.length() - hold.replaceAll(" ", "").length()) < ((oc.length() - oc.replaceAll(" ", "").length())));
     }
     
     @Test
