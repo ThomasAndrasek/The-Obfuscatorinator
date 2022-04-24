@@ -64,7 +64,7 @@ public class CodeInterpreterTest {
         File f = new File("./src/test/res/individual-files/TestClassIdentifying.javajava");
         CodeStructure t = new CodeStructure(f);
         String oc = new String(Files.readAllBytes(f.toPath()));
-        String hold = t.getNoStringCode();
+        String hold = t.getNoSpaceCode();
         //makes sure there is more spaces in the original than the new
         assertTrue((hold.length()-(hold.length() - hold.replaceAll(" ", "").length())) < (oc.length()-(oc.length() - oc.replaceAll(" ", "").length())));
     }
@@ -75,7 +75,7 @@ public class CodeInterpreterTest {
         CodeStructure t = new CodeStructure(f);
         String hold = t.getNewCommentCode();
         //checks that comments are added
-        assertFalse(hold.contains("//"));
+        assertTrue(hold.contains("//"));
     }
     
 
