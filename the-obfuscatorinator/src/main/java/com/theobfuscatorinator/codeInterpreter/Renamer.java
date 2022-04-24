@@ -89,7 +89,7 @@ public class Renamer {
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
                     String before = String.valueOf(charBefore);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]*");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]{1}");
                     Matcher matcher = methodFinder.matcher(before);
                     if (matcher.matches()) {
                         validBefore = true;
@@ -101,7 +101,7 @@ public class Renamer {
                 if (index + og.length() < codeToUpdate.length()) {
                     char charAfter = codeToUpdate.charAt(index + og.length());
                     String after = String.valueOf(charAfter);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$^0-9]*");
+                    Pattern methodFinder = Pattern.compile("[\\s]*[\\{]{1}");
                     Matcher matcher = methodFinder.matcher(after);
                     if (matcher.matches()) {
                         validAfter = true;
