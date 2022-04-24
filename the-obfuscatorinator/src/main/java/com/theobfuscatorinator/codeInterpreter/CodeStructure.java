@@ -40,13 +40,6 @@ public class CodeStructure {
             codeFile = input;
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
-<<<<<<< HEAD
-            unCommentedCode = removeComments(originalCode);
-            
-            classes = identifyClasses(unCommentedCode);
-            
-            unCommentedCode = StringEncryption.encryptStrings(this);
-=======
 
             classes = identifyClasses(originalCode);
 
@@ -55,7 +48,6 @@ public class CodeStructure {
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
 
             unCommentedCode = removeComments(unCommentedCode);
->>>>>>> refs/heads/main
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
@@ -193,67 +185,6 @@ public class CodeStructure {
         return output;
     }
     
-<<<<<<< HEAD
-    /**
-     * Takes some java code and changes all variables in it
-     * 
-     * @order MUST take place after extra spaces, comments and string literals are removed
-     * @param code Code the will have its variables changed
-     * @return Copy of code with changed variables
-     */
-    public static String changeVar(String code) {
-        String copy = code.substring(0);
-        int j = 0;
-        int start = 0;
-        ArrayList<String> variables = new ArrayList<String>();
-        boolean check = false;
-        // Loop through the code until a space is found
-        while (j < copy.length()) {
-        	if (copy.charAt(j) == ' ') {
-            	start = j+1;
-            	check = true;
-        	}
-        	// Loop until a equals sign is found and collect the word at that point
-        	if (copy.charAt(j) == '=' && check){
-        		variables.add(copy.substring(start,j));
-        		check = false;
-        	}
-        	// sort the variables ArrayList by length
-        	variables.sort((var1,var2) -> Integer.compare(var1.length(),var2.length()));
-        	//replace all instances of those variables in the code with a random value
-        	for (int x = 0; x < variables.size(); x++) {
-        		copy = copy.replaceAll(variables.get(variables.size()-x-1), replacement(variables.get(variables.size()-x-1)));
-        	}
-        	j++;
-        }
-        
-        return copy;
-    }
-    
-    /**
-     * Creates a random string of characters
-     * 
-     * @param String name
-     * @return random string of characters
-     */
-    private static String replacement(String name) {
-    	//counts bytes
-        byte[] creation = new byte[7];
-        //changes the bytes randomly
-        new Random().nextBytes(creation);
-        //creates a string
-        String who = new String(creation, Charset.forName("UTF-8"));
-        //increases string length to increase chance of strange variables
-        if (name.length() > who.length()) {
-        	new Random().nextBytes(creation);
-            who = who + new String(creation, Charset.forName("UTF-8"));
-        }
-        //removes problematic characters
-        who = who.replace("?", "");
-        who = who.replace("\\", "");
-        return who;
-    }
-    
     /**
      * Adds comments to java code in string format
      * 
@@ -380,8 +311,6 @@ public class CodeStructure {
         int r_num = num.nextInt(17); 
         return comments.get(r_num)+"\n";
     }
-=======
->>>>>>> refs/heads/main
 
     /**
      * Takes some java code as a string and identifies all of the classes that are in the
