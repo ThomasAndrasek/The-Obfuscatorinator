@@ -61,7 +61,7 @@ public class CodeInterpreterTest {
     
     @Test
     public void testRemoveSpaces() throws IllegalArgumentException, IOException {
-        File f = new File("./src/test/res/individual-files/TestClassIdentifying.javajava");
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
         CodeStructure t = new CodeStructure(f);
         String oc = new String(Files.readAllBytes(f.toPath()));
         String hold = t.getNoSpaceCode();
