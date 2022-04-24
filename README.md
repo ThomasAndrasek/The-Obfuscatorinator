@@ -17,6 +17,11 @@ The Obfuscatorinator is a Java Obfuscator that reads in a Java project, copies i
 This project is written in Java and will use JUnit testing.
 
 ## Build and Running
+
+### Minimum Requirements
+- Java 11+
+- Maven 3.8+
+
 First change to the route directory.
 
     cd the-obfuscatorinator

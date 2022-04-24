@@ -100,7 +100,7 @@ public class TestClassIdentifying<G,HK,L> {
             }
 
             @Override
-            public <T, V> boolean equals(Object o) {
+            public boolean equals(Object o) {
                 if (this == o) return true;
                 if (o == null || getClass() != o.getClass()) return false;
                 DeepInnerClass that = (DeepInnerClass) o;
