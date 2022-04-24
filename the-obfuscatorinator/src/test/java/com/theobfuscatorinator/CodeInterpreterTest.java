@@ -17,65 +17,67 @@ public class CodeInterpreterTest {
 
     @Test
     public void testCodeStructure() {
-        File f = new File("test.java");
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
         if(f.exists()){
             CodeStructure t = null;
             try{
                 t = new CodeStructure(f);
+                assertTrue(true);
             }catch(Exception e){
                 e.printStackTrace();
-                //assertTrue("IOException Thrown in constructor", false);
+                assertTrue("IOException Thrown in constructor", false);
             }
         }
     }
     
     @Test
     public void testGetOriginalCode() throws IllegalArgumentException, IOException {
-        File f = new File("test.java");
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
         CodeStructure t = new CodeStructure(f);
         String oc = new String(Files.readAllBytes(f.toPath()));
         String hold = t.getOriginalCode();
+        //checks that the code is original
         assertEquals(oc, hold);
     }
     
     @Test
     public void testRemoveComments() throws IllegalArgumentException, IOException {
-        File f = new File("test.java");
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
         CodeStructure t = new CodeStructure(f);
-        //oc equals test without comments
-        String oc = "";
         String hold = t.getUnCommentedCode();
-        assertEquals(oc, hold);
+        //checks that there are no comments
+        assertFalse(hold.contains("//"));
     }
     
     
-    //not finished
     @Test
     public void testRemoveStrings() throws IllegalArgumentException, IOException {
-        File f = new File("test.java");
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
         CodeStructure t = new CodeStructure(f);
-        //oc equals test without comments
-        String oc = "";
-        String hold = t.getUnCommentedCode();
-        assertEquals(oc, hold);
+        String hold = t.getNoStringCode();
+        //checks that there String literals
+        assertFalse(hold.contains("\""));
     }
     
-    
-    
-    //update
     @Test
-    public void testStructure() {
-        File f = new File("test.java");
-        if(f.exists()){
-            CodeStructure t = null;
-            try{
-                t = new CodeStructure(f);
-            }catch(Exception e){
-                e.printStackTrace();
-                //assertTrue("IOException Thrown in constructor", false);
-            }
-        }
+    public void testRemoveSpaces() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.javajava");
+        CodeStructure t = new CodeStructure(f);
+        String oc = new String(Files.readAllBytes(f.toPath()));
+        String hold = t.getNoStringCode();
+        //makes sure there is more spaces in the original than the new
+        assertTrue((hold.length()-(hold.length() - hold.replaceAll(" ", "").length())) < (oc.length()-(oc.length() - oc.replaceAll(" ", "").length())));
     }
+    
+    @Test
+    public void testAddComments() throws IllegalArgumentException, IOException {
+        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
+        CodeStructure t = new CodeStructure(f);
+        String hold = t.getNewCommentCode();
+        //checks that comments are added
+        assertFalse(hold.contains("//"));
+    }
+    
 
     @Test
     public void testClassIdentifying() {

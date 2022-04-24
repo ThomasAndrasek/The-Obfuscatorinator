@@ -24,7 +24,10 @@ public class CodeStructure {
     private String fileName;
     private String originalCode;
     private String unCommentedCode;
-
+    private String noStringCode;
+    
+    private String noSpaceCode;
+    private String newCommentCode;
     private ArrayList<ClassStructure> classes;
 
     private String decryptionMethodName;
@@ -48,6 +51,10 @@ public class CodeStructure {
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
 
             unCommentedCode = removeComments(unCommentedCode);
+            //removing the Strings is skipped in most cases as otherwise they would be lost
+            noStringCode = removeStrings(unCommentedCode);
+            noSpaceCode = removeSpaces(unCommentedCode);
+            newCommentCode = addComments(noSpaceCode);
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
@@ -142,7 +149,7 @@ public class CodeStructure {
      * @param code Code to have the spaces removed from
      * @return Copy of code without any extra spaces and newlines
      */
-    public static String removeSpaces(String code) {
+    private String removeSpaces(String code) {
         String copy = code.substring(0).replace("\n", "");
         String output = "";
         
@@ -192,7 +199,7 @@ public class CodeStructure {
      * @param code Code to have the comments removed from
      * @return Copy of code with new comments
      */
-    public static String addComments(String code) {
+    private String addComments(String code) {
         //copies the given code
         String copy = code.substring(0);
         int j = 0;
@@ -202,6 +209,12 @@ public class CodeStructure {
         while (j < copy.length()) {
             Random num = new Random();
             int r_num = num.nextInt(4); 
+            //ignores comments
+        	if (copy.charAt(j) == '"') {
+            	while (copy.charAt(j) != '"') {
+            		j++;
+            	}
+            }
             //if these specific requirements are met add a fake comment
             if (copy.charAt(j) == ';' && r_num == 4 && next == false) {
                 //moves it past the found end of line
@@ -248,7 +261,7 @@ public class CodeStructure {
      * @param int representing the space the comment will be placed
      * @return a string representing an encrypted comment
      */
-    private static String createEComments(int pos) {
+    private String createEComments(int pos) {
         //sets parameters for the function
         Random num = new Random();
         int r_num = num.nextInt(40); 
@@ -287,7 +300,7 @@ public class CodeStructure {
      * @param int representing the space the comment will be placed
      * @return a string representing a fake comment
      */
-    private static String createFComments(int pos) {
+    private String createFComments(int pos) {
         //creates a bunch of fake strings
         ArrayList<String> comments = new ArrayList<String>();
         comments.add("//int x represents the newline that will be placed");
@@ -463,6 +476,18 @@ public class CodeStructure {
 
     public String getUnCommentedCode(){
         return unCommentedCode;
+    }
+    
+    public String getNoStringCode(){
+        return noStringCode;
+    }
+    
+    public String getNoSpaceCode(){
+        return noSpaceCode;
+    }
+    
+    public String getNewCommentCode(){
+        return newCommentCode;
     }
 
     public String getCodeFileName(){
