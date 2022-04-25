@@ -11,6 +11,7 @@ import com.theobfuscatorinator.codeInterpreter.Unicoder;
 import com.theobfuscatorinator.codeInterpreter.WhitespaceHandler;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 import com.theobfuscatorinator.insertcode.InsertCode;
+import com.theobfuscatorinator.codegraph.CodeGraph;
 
 /**
  * Hello world!
@@ -73,6 +74,7 @@ public class App
                     codeStructures.add(new CodeStructure(f));
                 }
             }
+            CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
             if(renameClasses){
                 System.out.println("Renaming Classes...");
@@ -102,7 +104,11 @@ public class App
             }
             System.out.println("Writing Files...");
             FileManager.writeToFiles(codeStructures);
-
+            if(main != null){
+                System.out.println("Main Method can be found in class " +
+                        main.getClassStructures().get(0).getName());
+            }
+            else System.out.println("This project has no main method.");
             System.out.println("Done!");
         }
         catch(Exception e){
