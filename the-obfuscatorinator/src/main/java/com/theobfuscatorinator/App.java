@@ -97,6 +97,9 @@ public class App
             if(removeNewlines){
                 WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
             }
+            if(removeSpaces){
+                WhitespaceHandler.removeSpaces(codeStructures);
+            }
             System.out.println("Writing Files...");
             FileManager.writeToFiles(codeStructures);
 
