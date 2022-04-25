@@ -28,7 +28,8 @@ public class App
 
             //Argument Handling
             boolean renameClasses = true, renameMethods = true, insertCode = true,
-                    addDecryption = true, unicode = true, removeSpaces = true, removeNewlines = true;
+                    addDecryption = true, unicode = true, renameVariables = true,
+                    removeSpaces = true, removeNewlines = true;
             int percentUnicode = 5;
             int numNewlines = 0;
             for(int i = 0; i < args.length; i++){
@@ -40,6 +41,7 @@ public class App
                 else if(args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
                 else if(args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
                 else if(args[i].equalsIgnoreCase("--nounicode")) unicode = false;
+                else if(args[i].equalsIgnoreCase("--novariablerenames")) renameVariables = false;
                 else if(args[i].equalsIgnoreCase("--keepSpaces")) removeSpaces = false;
                 else if(args[i].equalsIgnoreCase("--keepNewlines")) removeNewlines = false;
                 else if(args[i].equalsIgnoreCase("--unicodeFreq")){
@@ -84,6 +86,12 @@ public class App
                 System.out.println("Renaming Methods...");
                 Renamer.renameMethods(codeStructures);
             }
+
+            if (renameVariables) {
+                System.out.println("Renaming Variables...");
+                Renamer.renameVariables(codeStructures);
+            }
+
             if(insertCode){
                 System.out.println("Inserting Dummy Code...");
                 InsertCode.insertCode(codeStructures);
