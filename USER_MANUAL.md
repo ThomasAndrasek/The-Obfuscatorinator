@@ -1,5 +1,16 @@
 # User Manual
 
+## What exactly is an Obfuscator?
+
+An obfuscator is a tool that developers use to complicate their code while maintaining functionality.
+Developers use an obfuscator because they want to protect their code from getting maliciously hacked or hijacked, which is done so by deeply burying the important code into a lot of scrambled code.
+It should convert very straightforward source code into another file that still works the same way, but looks different.
+In the end, the obfuscated code should be extremely hard to comprehend and figure out its purpose.
+
+## Overview of The Obfuscatorinator
+
+This project is a Java Obfuscator. 
+
 ## Installation Pre-Requirements 
 
 The Obfuscatorinator is written in Java and is strictly for Java projects. Therefore, Java must be installed in order to run The Obfuscatorinator.
