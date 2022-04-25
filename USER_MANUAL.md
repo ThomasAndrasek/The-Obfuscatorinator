@@ -1,6 +1,6 @@
 # User Manual
 
-## What exactly is an Obfuscator?
+## What Exactly is an Obfuscator?
 
 An obfuscator is a tool that developers use to complicate their code while maintaining functionality.
 Developers use an obfuscator because they want to protect their code from getting maliciously hacked or hijacked, which is done so by deeply burying the important code into a lot of scrambled code.
@@ -15,6 +15,9 @@ The Obfuscatorinator goes through the following steps to obfuscate:
 - Renames methods
 - Inserts dummy code
 - Adds decryption methods 
+- Replace characters with unicode literals
+- Remove whitespace
+- Remove newlines
 
 ## Installation Pre-Requirements 
 
