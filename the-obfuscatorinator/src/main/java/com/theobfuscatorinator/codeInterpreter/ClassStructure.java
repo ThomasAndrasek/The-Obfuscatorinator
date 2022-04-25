@@ -254,7 +254,7 @@ public class ClassStructure {
             if(c.containsMainMethod()) return true;
         }
         for(MethodStructure m : methods){
-            if(m.methodName.equals("main") && m.returnType.equals("void")) return true;
+            if(m.methodName.equals("main")) return true;
         }
         return false;
     }
