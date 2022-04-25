@@ -8,6 +8,7 @@ import java.util.Vector;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codeInterpreter.Unicoder;
+import com.theobfuscatorinator.codeInterpreter.WhitespaceHandler;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 import com.theobfuscatorinator.insertcode.InsertCode;
 
@@ -26,8 +27,9 @@ public class App
 
             //Argument Handling
             boolean renameClasses = true, renameMethods = true, insertCode = true,
-                    addDecryption = true, unicode = true;
+                    addDecryption = true, unicode = true, removeSpaces = true, removeNewlines = true;
             int percentUnicode = 5;
+            int numNewlines = 0;
             for(int i = 0; i < args.length; i++){
                 if(args[i].equals("--target")){
                     i++;
@@ -37,11 +39,19 @@ public class App
                 else if(args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
                 else if(args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
                 else if(args[i].equalsIgnoreCase("--nounicode")) unicode = false;
+                else if(args[i].equalsIgnoreCase("--keepSpaces")) removeSpaces = false;
+                else if(args[i].equalsIgnoreCase("--keepNewlines")) removeNewlines = false;
                 else if(args[i].equalsIgnoreCase("--unicodeFreq")){
                     i++;
                     if(i >= args.length)
                         throw new IllegalArgumentException("Unicode Char Frequency Missing");
                     percentUnicode = Integer.parseInt(args[i]);
+                }
+                else if(args[i].equalsIgnoreCase("--filelinecount")){
+                    i++;
+                    if(i >= args.length)
+                        throw new IllegalArgumentException("Number of lines per file argument missing");
+                    numNewlines = Integer.parseInt(args[i]);
                 }
                 else{
                     if(!(new File(args[i])).exists())
@@ -83,6 +93,9 @@ public class App
             if(unicode) {
                 System.out.println("Swapping in Unicode...");
                 Unicoder.swapForUnicode(codeStructures, percentUnicode);
+            }
+            if(removeNewlines){
+                WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
             }
             System.out.println("Writing Files...");
             FileManager.writeToFiles(codeStructures);
