@@ -24,7 +24,10 @@ public class CodeStructure {
     private String fileName;
     private String originalCode;
     private String unCommentedCode;
-
+    private String noStringCode;
+    
+    private String noSpaceCode;
+    private String newCommentCode;
     private ArrayList<ClassStructure> classes;
 
     private String decryptionMethodName;
@@ -48,6 +51,10 @@ public class CodeStructure {
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
 
             unCommentedCode = removeComments(unCommentedCode);
+            //removing the Strings is skipped in most cases as otherwise they would be lost
+            noStringCode = removeStrings(unCommentedCode);
+            noSpaceCode = removeSpaces(unCommentedCode);
+            newCommentCode = addComments(noSpaceCode);
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
@@ -138,11 +145,11 @@ public class CodeStructure {
     /**
      * Takes some java code as a string and removes all the spaces that need to be removed
      * 
-     * @order MUST take place after comments and string literals are removed
+     * @order MUST take place after comments are removed
      * @param code Code to have the spaces removed from
      * @return Copy of code without any extra spaces and newlines
      */
-    public static String removeSpaces(String code) {
+    private String removeSpaces(String code) {
         String copy = code.substring(0).replace("\n", "");
         String output = "";
         
@@ -150,6 +157,12 @@ public class CodeStructure {
         Boolean equ = false;
         // Loop through the code and delete any space that isn't required for the code to run
         while (j < copy.length()) {
+        	//ignores comments
+        	if (copy.charAt(j) == '"') {
+            	while (copy.charAt(j) != '"') {
+            		j++;
+            	}
+            }
             //checks if there is an equals sign and ignores the next space based on that
             if (copy.charAt(j) == '=') {
                 equ = true;
@@ -179,6 +192,138 @@ public class CodeStructure {
         return output;
     }
     
+    /**
+     * Adds comments to java code in string format
+     * 
+     * @order should take place after code is encrypted
+     * @param code Code to have the comments removed from
+     * @return Copy of code with new comments
+     */
+    private String addComments(String code) {
+        //copies the given code
+        String copy = code.substring(0);
+        int j = 0;
+        boolean next = true;
+        String add = "";
+        //loops through the code adding comments
+        while (j < copy.length()) {
+            Random num = new Random();
+            int r_num = num.nextInt(4); 
+            //ignores comments
+        	if (copy.charAt(j) == '"') {
+            	while (copy.charAt(j) != '"') {
+            		j++;
+            	}
+            }
+            //if these specific requirements are met add a fake comment
+            if (copy.charAt(j) == ';' && r_num == 4 && next == false) {
+                //moves it past the found end of line
+                j++;
+                add = createFComments(j);
+                //places the newly generated comment in the String
+                String begin = copy.substring(0, j);
+                String end = copy.substring(j);
+                copy = begin + add + end;
+                //moves the counter to the end of the string
+                j = j + add.length();
+                //sets up for next comment
+                next = true;
+            //checks and adds an encrypted comment if these conditions are met
+            }else if (next == true && copy.charAt(j) == ';') {
+                //moves marker past the found end of line
+                j++;
+                //generates comment
+                add = createEComments(j);
+                //places the newly generated comment in the String
+                String begin = copy.substring(0, j);
+                String end = copy.substring(j);
+                copy = begin + add + end;
+                //moves the counter to the end of the string
+                j = j + add.length();
+                //sets up for next comment
+                next = false;
+            }else {
+                //another way to set up for an encrypted comment
+                if (j%1000 == 0) {
+                    next = true;
+                }
+                j++;
+            }
+            
+        }
+        
+        return copy;
+    }
+    
+    /**
+     * Create a new encrypted dummy comment 
+     * 
+     * @param int representing the space the comment will be placed
+     * @return a string representing an encrypted comment
+     */
+    private String createEComments(int pos) {
+        //sets parameters for the function
+        Random num = new Random();
+        int r_num = num.nextInt(40); 
+        int begin = 48;
+        int end = 122;
+        Random gen = new Random();
+        //generates a new random string of length 40
+        String encrypted = gen.ints(begin, end + 1)
+          .filter(x -> (x <= 57 || x >= 65) && (x <= 90 || x >= 97))
+          .limit(r_num)
+          .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+          .toString();
+        int count = 0;
+        for (int x = 0; x < encrypted.length(); x++) {
+            //adds spaces into comments at random positions
+            Random num2 = new Random();
+            int r_num2 = num2.nextInt(10); 
+            r_num2 = r_num2 + 5;
+            if (count == r_num2) {
+                String start = encrypted.substring(0, x);
+                String finish = encrypted.substring(x);
+                encrypted = start + " " + finish;
+                x++;
+                count = 0;
+            }
+            count++;
+        }
+        //returns new string
+        encrypted = "//" + encrypted + "\n";
+        return encrypted;
+    }
+    
+    /**
+     * Picks a new fake dummy comment from a list
+     * 
+     * @param int representing the space the comment will be placed
+     * @return a string representing a fake comment
+     */
+    private String createFComments(int pos) {
+        //creates a bunch of fake strings
+        ArrayList<String> comments = new ArrayList<String>();
+        comments.add("//int x represents the newline that will be placed");
+        comments.add("//generates new function");
+        comments.add("//sets boolean greant to true");
+        comments.add("//loops until x is found");
+        comments.add("//creates a new arraylist to hold the variables");
+        comments.add("//adds the values together");
+        comments.add("//handles template arguments");
+        comments.add("//checks for potential exceptions");
+        comments.add("//creates the encryption");
+        comments.add("//holds the value for the new function");
+        comments.add("//ignore this line");
+        comments.add("//update this");
+        comments.add("//more work is required to make this function correctly");
+        comments.add("//uses the code on the line previous to generate new colors");
+        comments.add("//I think this is causing the error");
+        comments.add("//sets parameters for the function");
+        //picks and returns a random comment
+        Random num = new Random();
+        int r_num = num.nextInt(17); 
+        return comments.get(r_num)+"\n";
+    }
 
     /**
      * Takes some java code as a string and identifies all of the classes that are in the
@@ -331,6 +476,18 @@ public class CodeStructure {
 
     public String getUnCommentedCode(){
         return unCommentedCode;
+    }
+    
+    public String getNoStringCode(){
+        return noStringCode;
+    }
+    
+    public String getNoSpaceCode(){
+        return noSpaceCode;
+    }
+    
+    public String getNewCommentCode(){
+        return newCommentCode;
     }
 
     public String getCodeFileName(){
