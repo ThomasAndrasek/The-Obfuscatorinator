@@ -9,7 +9,12 @@ In the end, the obfuscated code should be extremely hard to comprehend and figur
 
 ## Overview of The Obfuscatorinator
 
-This project is a Java Obfuscator. 
+This project is an obfuscator specifically for java projects. It reads in a Java project, copies it, constructs a relevant graph, and obfuscates it.
+The Obfuscatorinator goes through the following steps to obfuscate:
+- Renames classes
+- Renames methods
+- Inserts dummy code
+- Adds decryption methods 
 
 ## Installation Pre-Requirements 
 
