@@ -125,7 +125,7 @@ public class WhitespaceHandler {
      * @return The string with the added character
      */
     private static String insertChar(String s, char c, int index){
-        if(index >= s.length() || index < 0)
+        if(index > s.length() || index < 0)
             throw new StringIndexOutOfBoundsException("Index out of bounds for string");
         String tmp = s.substring(0, index);
         tmp += c;
