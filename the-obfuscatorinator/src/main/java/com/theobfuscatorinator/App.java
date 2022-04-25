@@ -8,8 +8,10 @@ import java.util.Vector;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codeInterpreter.Unicoder;
+import com.theobfuscatorinator.codeInterpreter.WhitespaceHandler;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 import com.theobfuscatorinator.insertcode.InsertCode;
+import com.theobfuscatorinator.codegraph.CodeGraph;
 
 /**
  * Hello world!
@@ -26,8 +28,10 @@ public class App
 
             //Argument Handling
             boolean renameClasses = true, renameMethods = true, insertCode = true,
-                    addDecryption = true, unicode = true;
+                    addDecryption = true, unicode = true, renameVariables = true,
+                    removeSpaces = true, removeNewlines = true;
             int percentUnicode = 5;
+            int numNewlines = 0;
             for(int i = 0; i < args.length; i++){
                 if(args[i].equals("--target")){
                     i++;
@@ -37,11 +41,20 @@ public class App
                 else if(args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
                 else if(args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
                 else if(args[i].equalsIgnoreCase("--nounicode")) unicode = false;
+                else if(args[i].equalsIgnoreCase("--novariablerenames")) renameVariables = false;
+                else if(args[i].equalsIgnoreCase("--keepSpaces")) removeSpaces = false;
+                else if(args[i].equalsIgnoreCase("--keepNewlines")) removeNewlines = false;
                 else if(args[i].equalsIgnoreCase("--unicodeFreq")){
                     i++;
                     if(i >= args.length)
                         throw new IllegalArgumentException("Unicode Char Frequency Missing");
                     percentUnicode = Integer.parseInt(args[i]);
+                }
+                else if(args[i].equalsIgnoreCase("--filelinecount")){
+                    i++;
+                    if(i >= args.length)
+                        throw new IllegalArgumentException("Number of lines per file argument missing");
+                    numNewlines = Integer.parseInt(args[i]);
                 }
                 else{
                     if(!(new File(args[i])).exists())
@@ -63,6 +76,7 @@ public class App
                     codeStructures.add(new CodeStructure(f));
                 }
             }
+            CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
             if(renameClasses){
                 System.out.println("Renaming Classes...");
@@ -72,6 +86,12 @@ public class App
                 System.out.println("Renaming Methods...");
                 Renamer.renameMethods(codeStructures);
             }
+
+            if (renameVariables) {
+                System.out.println("Renaming Variables...");
+                Renamer.renameVariables(codeStructures);
+            }
+
             if(insertCode){
                 System.out.println("Inserting Dummy Code...");
                 InsertCode.insertCode(codeStructures);
@@ -84,9 +104,19 @@ public class App
                 System.out.println("Swapping in Unicode...");
                 Unicoder.swapForUnicode(codeStructures, percentUnicode);
             }
+            if(removeNewlines){
+                WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
+            }
+            if(removeSpaces){
+                WhitespaceHandler.removeSpaces(codeStructures);
+            }
             System.out.println("Writing Files...");
             FileManager.writeToFiles(codeStructures);
-
+            if(main != null){
+                System.out.println("Main Method can be found in class " +
+                        main.getClassStructures().get(0).getName());
+            }
+            else System.out.println("This project has no main method.");
             System.out.println("Done!");
         }
         catch(Exception e){

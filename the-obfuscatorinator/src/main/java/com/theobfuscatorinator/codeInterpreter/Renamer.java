@@ -1,6 +1,8 @@
 package com.theobfuscatorinator.codeInterpreter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,7 +91,7 @@ public class Renamer {
                 if (index - 1 >= 0) {
                     char charBefore = codeToUpdate.charAt(index - 1);
                     String before = String.valueOf(charBefore);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]*");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]{1}");
                     Matcher matcher = methodFinder.matcher(before);
                     if (matcher.matches()) {
                         validBefore = true;
@@ -101,7 +103,7 @@ public class Renamer {
                 if (index + og.length() < codeToUpdate.length()) {
                     char charAfter = codeToUpdate.charAt(index + og.length());
                     String after = String.valueOf(charAfter);
-                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$^0-9]*");
+                    Pattern methodFinder = Pattern.compile("[^a-zA-Z@#$\\^0-9]{1}");
                     Matcher matcher = methodFinder.matcher(after);
                     if (matcher.matches()) {
                         validAfter = true;
@@ -237,58 +239,69 @@ public class Renamer {
      *  the new.
      */
     public static void renameVariables(ArrayList<CodeStructure> codeStructures) {
+        // Find all variables in all code structures.
+        // Only keep unique variable names.
+        Set<String> variables = new HashSet<String>();
         for (CodeStructure codeStructure : codeStructures) {
             String code = codeStructure.getUnCommentedCode();
-            // Find all the variables.
-            Pattern varFinder = Pattern.compile("([a-zA-Z\\d])+[\\s]*[=]{1}[^=]");
+            // Find all the variables in the file.
+            Pattern varFinder = Pattern.compile("([a-zA-Z\\d]+)[\\s]*[=]{1}[^=]{1}");
             Matcher matcher = varFinder.matcher(code);
             while (matcher.find()) {
-                // Get the variable name.
-                String og = matcher.group();
-                // Generate new random variable name.
-                String newName = generateName();
-                // Replace all instances of the old variable name with the new.
-                for (CodeStructure struct : codeStructures) {
-                    String tempCode = struct.getUnCommentedCode();
-                    // Get the index of the first instance of the old variable name.
-                    int index = tempCode.indexOf(og);
-                    while (index != -1) {
-                        String codeToUpdate = struct.getUnCommentedCode();
-                        // Check if the index is valid before the variable name.
-                        boolean validBefore = false;
-                        if (index - 1 >= 0) {
-                            char charBefore = codeToUpdate.charAt(index - 1);
-                            String before = String.valueOf(charBefore);
-                            Pattern methodFinder2 = Pattern.compile("[^a-zA-Z!@#$%\\^&*0-9]*");
-                            Matcher matcher2 = methodFinder2.matcher(before);
-                            if (matcher2.matches()) {
-                                validBefore = true;
-                            }
+                String var = matcher.group(1);
+                variables.add(var);
+            }
+        }
+        // Rename all variables.
+        for (String var : variables) {
+            // Do not attempt to rename the 'this' keyword.
+            if (var.equals("this")) {
+                continue;
+            }
+            String og = var;
+            // Generate new random variable name.
+            String newName = generateName();
+            // Replace all instances of the old variable name with the new.
+            for (CodeStructure struct : codeStructures) {
+                String tempCode = struct.getUnCommentedCode();
+                // Get the index of the first instance of the old variable name.
+                int index = tempCode.indexOf(og);
+                while (index != -1) {
+                    String codeToUpdate = struct.getUnCommentedCode();
+                    // Check if the index is valid before the variable name.
+                    boolean validBefore = false;
+                    if (index - 1 >= 0) {
+                        char charBefore = codeToUpdate.charAt(index - 1);
+                        String before = String.valueOf(charBefore);
+                        Pattern methodFinder2 = Pattern.compile("[\\s\\.\\{\\(\\+\\-\\*\\/\\&\\^\\%\\!\\?\\;\\=\\,\\[\\<\\>]{1}");
+                        Matcher matcher2 = methodFinder2.matcher(before);
+                        if (matcher2.matches()) {
+                            validBefore = true;
                         }
-
-                        // Check if the index is valid after the variable name.
-                        boolean validAfter = false;
-                        if (index + og.length() < codeToUpdate.length()) {
-                            char charAfter = codeToUpdate.charAt(index + og.length());
-                            String after = String.valueOf(charAfter);
-                            Pattern methodFinder2 = Pattern.compile("[^a-zA-Z!@#$%^&*0-9]*");
-                            Matcher matcher2 = methodFinder2.matcher(after);
-                            if (matcher2.matches()) {
-                                validAfter = true;
-                            }
-                        }
-
-                        // If the index is valid before and after the variable name, replace the
-                        // variable name.
-                        if (validBefore && validAfter) {
-                            String updated = codeToUpdate.substring(0, index) + newName +
-                                                 codeToUpdate.substring(index + og.length());
-                            struct.setUnCommentedCode(updated);
-                        }
-
-                        // Find the next instance of the variable name.
-                        index = struct.getUnCommentedCode().indexOf(og, index + og.length());
                     }
+
+                    // Check if the index is valid after the variable name.
+                    boolean validAfter = false;
+                    if (index + og.length() < codeToUpdate.length()) {
+                        char charAfter = codeToUpdate.charAt(index + og.length());
+                        String after = String.valueOf(charAfter);
+                        Pattern methodFinder2 = Pattern.compile("[\\s\\)\\+\\-\\*\\/\\%\\;\\!\\=\\^\\?\\|\\.\\,\\}\\]\\[\\<\\>]{1}");
+                        Matcher matcher2 = methodFinder2.matcher(after);
+                        if (matcher2.matches()) {
+                            validAfter = true;
+                        }
+                    }
+
+                    // If the index is valid before and after the variable name, replace the
+                    // variable name.
+                    if (validBefore && validAfter) {
+                        String updated = codeToUpdate.substring(0, index) + newName +
+                                                codeToUpdate.substring(index + og.length());
+                        struct.setUnCommentedCode(updated);
+                    }
+
+                    // Find the next instance of the variable name.
+                    index = struct.getUnCommentedCode().indexOf(og, index + og.length());
                 }
             }
         }

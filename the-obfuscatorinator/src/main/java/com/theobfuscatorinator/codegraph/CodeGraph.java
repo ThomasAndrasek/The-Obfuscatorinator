@@ -19,7 +19,7 @@ import java.util.Set;
 public class CodeGraph {
     private String mainMethodFilePath;
     private CodeStructure mainMethodFileCodeStructure;
-    private Set<CodeStructure> codeStructures;
+    private ArrayList<CodeStructure> codeStructures;
 
     private Graph graph;
 
@@ -28,7 +28,7 @@ public class CodeGraph {
      * 
      * The start of the graph will be from the first file found with a main method.
      */
-    public CodeGraph(String sourceDirectory, HashSet<CodeStructure> projectStructure) {
+    public CodeGraph(String sourceDirectory, ArrayList<CodeStructure> projectStructure) {
         this.mainMethodFilePath = findMainMethodFileLocation(sourceDirectory);
         this.mainMethodFileCodeStructure = findMainMethod(projectStructure);
         this.codeStructures = projectStructure;
@@ -102,7 +102,7 @@ public class CodeGraph {
      * @param code Set of codestructures that represents a project's source code
      * @return The CodeStructure object in the HashSet that contains the main method. Null if no main method exists.
      */
-    private CodeStructure findMainMethod(HashSet<CodeStructure> code){
+    public static CodeStructure findMainMethod(ArrayList<CodeStructure> code){
         for(CodeStructure file : code){
             if(file.containsMainMethod()) return file;
         }
