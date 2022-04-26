@@ -59,15 +59,6 @@ public class CodeInterpreterTest {
         assertFalse(hold.contains("\""));
     }
     
-    @Test
-    public void testRemoveSpaces() throws IllegalArgumentException, IOException {
-        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
-        CodeStructure t = new CodeStructure(f);
-        String oc = new String(Files.readAllBytes(f.toPath()));
-        String hold = t.getNoSpaceCode();
-        //makes sure there is more spaces in the original than the new
-        assertTrue((hold.length() - hold.replaceAll(" ", "").length()) < ((oc.length() - oc.replaceAll(" ", "").length())));
-    }
     
     @Test
     public void testAddComments() throws IllegalArgumentException, IOException {
