@@ -53,8 +53,7 @@ public class CodeStructure {
             unCommentedCode = removeComments(unCommentedCode);
             //removing the Strings is skipped in most cases as otherwise they would be lost
             noStringCode = removeStrings(unCommentedCode);
-            noSpaceCode = removeSpaces(unCommentedCode);
-            newCommentCode = addComments(noSpaceCode);
+            newCommentCode = addComments(unCommentedCode);
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
@@ -142,55 +141,6 @@ public class CodeStructure {
         return output;
     }
     
-    /**
-     * Takes some java code as a string and removes all the spaces that need to be removed
-     * 
-     * @order MUST take place after comments are removed
-     * @param code Code to have the spaces removed from
-     * @return Copy of code without any extra spaces and newlines
-     */
-    private String removeSpaces(String code) {
-        String copy = code.substring(0).replace("\n", "");
-        String output = "";
-        
-        int j = 0;
-        Boolean equ = false;
-        // Loop through the code and delete any space that isn't required for the code to run
-        while (j < copy.length()) {
-        	//ignores comments
-        	if (copy.charAt(j) == '"') {
-            	while (copy.charAt(j) != '"') {
-            		j++;
-            	}
-            }
-            //checks if there is an equals sign and ignores the next space based on that
-            if (copy.charAt(j) == '=') {
-                equ = true;
-            }
-            // If a space is found check if the next character is another word if it's not remove
-            // the space
-            if (copy.charAt(j) == ' ') {
-            	j++;
-                if (equ == true){
-                    equ = false;
-                    continue;
-                }
-                //copies the next character into the new string
-            	if (Character.isLetter(copy.charAt(j))) {
-            		j--;
-            		output += copy.charAt(j);
-            		j++;
-                }
-            //copies the character into the new string
-            }else {
-            	output += copy.charAt(j);
-                j++;
-            }
-            
-        }
-
-        return output;
-    }
     
     /**
      * Adds comments to java code in string format
