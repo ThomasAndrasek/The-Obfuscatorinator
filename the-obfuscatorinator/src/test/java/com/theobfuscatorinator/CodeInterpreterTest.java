@@ -66,7 +66,7 @@ public class CodeInterpreterTest {
         CodeStructure t = new CodeStructure(f);
         String hold = t.getNewCommentCode();
         //checks that comments are added
-        assertTrue(hold.contains("//"));
+        assertTrue(hold.contains("/*"));
     }
     
 
