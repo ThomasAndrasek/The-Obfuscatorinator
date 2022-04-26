@@ -240,7 +240,7 @@ public class CodeStructure {
             count++;
         }
         //returns new string
-        encrypted = "//" + encrypted + "\n";
+        encrypted = "/*" + encrypted + "*/";
         return encrypted;
     }
     
@@ -253,26 +253,26 @@ public class CodeStructure {
     private String createFComments(int pos) {
         //creates a bunch of fake strings
         ArrayList<String> comments = new ArrayList<String>();
-        comments.add("//int x represents the newline that will be placed");
-        comments.add("//generates new function");
-        comments.add("//sets boolean greant to true");
-        comments.add("//loops until x is found");
-        comments.add("//creates a new arraylist to hold the variables");
-        comments.add("//adds the values together");
-        comments.add("//handles template arguments");
-        comments.add("//checks for potential exceptions");
-        comments.add("//creates the encryption");
-        comments.add("//holds the value for the new function");
-        comments.add("//ignore this line");
-        comments.add("//update this");
-        comments.add("//more work is required to make this function correctly");
-        comments.add("//uses the code on the line previous to generate new colors");
-        comments.add("//I think this is causing the error");
-        comments.add("//sets parameters for the function");
+        comments.add("int x represents the newline that will be placed");
+        comments.add("generates new function");
+        comments.add("sets boolean greant to true");
+        comments.add("loops until x is found");
+        comments.add("creates a new arraylist to hold the variables");
+        comments.add("adds the values together");
+        comments.add("handles template arguments");
+        comments.add("checks for potential exceptions");
+        comments.add("creates the encryption");
+        comments.add("holds the value for the new function");
+        comments.add("ignore this line");
+        comments.add("update this");
+        comments.add("more work is required to make this function correctly");
+        comments.add("uses the code on the line previous to generate new colors");
+        comments.add("I think this is causing the error");
+        comments.add("sets parameters for the function");
         //picks and returns a random comment
         Random num = new Random();
         int r_num = num.nextInt(17); 
-        return comments.get(r_num)+"\n";
+        return "/*" + comments.get(r_num)+"*/";
     }
 
     /**
