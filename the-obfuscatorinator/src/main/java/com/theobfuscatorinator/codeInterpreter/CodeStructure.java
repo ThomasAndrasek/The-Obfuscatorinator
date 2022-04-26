@@ -53,8 +53,7 @@ public class CodeStructure {
             unCommentedCode = removeComments(unCommentedCode);
             //removing the Strings is skipped in most cases as otherwise they would be lost
             noStringCode = removeStrings(unCommentedCode);
-            noSpaceCode = removeSpaces(unCommentedCode);
-            newCommentCode = addComments(noSpaceCode);
+            newCommentCode = addComments(unCommentedCode);
         }
         else {
             throw new IllegalArgumentException("Cannot make a code structure out of a directory.");
