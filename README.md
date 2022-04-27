@@ -4,6 +4,8 @@
 
 The Obfuscatorinator is a Java Obfuscator that reads in a Java project, copies it, constructs a relevant graph, and obfuscates it. Ultimately, it will remove any unused code, comments, and whitespace and will add dummy comments and dummy code. All methods, class names, and variables shall be replaced and strings and variables shall be encrypted. The code will be reordered and spaghettified and opaque predicates will be inserted. 
 
+Learn more at our website: https://theobfuscatorinator.wordpress.com/
+
 ## Team
 | **Name** | **GitHub Handle** | **Email** |
 |:------:|:-------:|:------:|
