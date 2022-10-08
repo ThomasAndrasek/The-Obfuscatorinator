@@ -67,9 +67,12 @@ public class Node<T> {
             if (n.id == this.id) {
                 return true;
             }
-            else {
-                return false;
+            
+            if (n.value == this.value) {
+                return true;
             }
+
+            return false;
         }
     }
 }

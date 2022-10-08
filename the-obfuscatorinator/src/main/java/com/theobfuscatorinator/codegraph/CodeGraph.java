@@ -7,13 +7,7 @@ import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
 import com.theobfuscatorinator.graph.Node;
 
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class represents a directed graph of the file structure of a java project.
@@ -22,6 +16,7 @@ import java.util.Set;
  */
 public class CodeGraph {
     public static final int CLASS_OWN_METHOD = 0;
+    public static final int CLASS_OWN_CLASS = 1;
 
     private Graph graph;
 
@@ -34,19 +29,26 @@ public class CodeGraph {
         this.graph = new Graph();
 
         for (CodeStructure codeStruct : code) {
-            ArrayList<ClassStructure> classStructures = new ArrayList<>();
-            classStructures.addAll(codeStruct.getClasses());
-            while (classStructures.size() > 0) {
-                ClassStructure classStruct = classStructures.remove(0);
-                classStructures.addAll(classStruct.getClasses());
-                Node<ClassStructure> classNode = new Node<>(classStruct);
-                this.graph.addNode(classNode);
+            ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
+            for (ClassStructure classStruct : codeStruct.getClasses()) {
+                classStructureNodes.add(new Node<ClassStructure>(classStruct));
+            }
+            while (classStructureNodes.size() > 0) {
+                Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
 
-                for (MethodStructure methodStruct : classStruct.getMethods()) {
+                this.graph.addNode(classStructNode);
+
+                for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
+                    Node<ClassStructure> n = new Node<>(classStruct);
+                    classStructureNodes.add(n);
+                    this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
+                }
+
+                for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
                     Node<MethodStructure> methodNode = new Node<>(methodStruct);
 
                     this.graph.addNode(methodNode);
-                    this.graph.addEdge(classNode, methodNode, CLASS_OWN_METHOD);
+                    this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
                 }
             }
         }
@@ -61,8 +63,15 @@ public class CodeGraph {
             System.out.println(classStruct.getClassName());
 
             for (Edge edge : node.getEdges()) {
-                MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
-                System.out.println("\t" + methodStruct.getMethodName());
+                if (edge.getEnd().getValue() instanceof MethodStructure) {
+                    MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
+                    System.out.println("\t" + methodStruct.getMethodName());
+                }
+                else {
+                    ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
+                    System.out.println("\t" + innerClassStruct.getClassName());
+                }
+                
                 System.out.println("\t" + edge.getType());
             }
         }
