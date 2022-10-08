@@ -76,48 +76,50 @@ public class App
                     codeStructures.add(new CodeStructure(f));
                 }
             }
-            CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
-            if(renameClasses){
-                System.out.println("Renaming Classes...");
-                Renamer.renameClasses(codeStructures);
-            }
-            if(renameMethods) {
-                System.out.println("Renaming Methods...");
-                Renamer.renameMethods(codeStructures);
-            }
+            CodeGraph codeGraph = new CodeGraph(codeStructures);
+            // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
-            if (renameVariables) {
-                System.out.println("Renaming Variables...");
-                Renamer.renameVariables(codeStructures);
-            }
+            // if(renameClasses){
+            //     System.out.println("Renaming Classes...");
+            //     Renamer.renameClasses(codeStructures);
+            // }
+            // if(renameMethods) {
+            //     System.out.println("Renaming Methods...");
+            //     Renamer.renameMethods(codeStructures);
+            // }
 
-            if(insertCode){
-                System.out.println("Inserting Dummy Code...");
-                InsertCode.insertCode(codeStructures);
-            }
-            if(addDecryption){
-                System.out.println("Adding Decryption Methods...");
-                StringEncryption.addDecryptionMethod(codeStructures);
-            }
-            if(unicode) {
-                System.out.println("Swapping in Unicode...");
-                Unicoder.swapForUnicode(codeStructures, percentUnicode);
-            }
-            if(removeNewlines){
-                WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
-            }
-            if(removeSpaces){
-                WhitespaceHandler.removeSpaces(codeStructures);
-            }
-            System.out.println("Writing Files...");
-            FileManager.writeToFiles(codeStructures);
-            if(main != null){
-                System.out.println("Main Method can be found in class " +
-                        main.getClassStructures().get(0).getName());
-            }
-            else System.out.println("This project has no main method.");
-            System.out.println("Done!");
+            // if (renameVariables) {
+            //     System.out.println("Renaming Variables...");
+            //     Renamer.renameVariables(codeStructures);
+            // }
+
+            // if(insertCode){
+            //     System.out.println("Inserting Dummy Code...");
+            //     InsertCode.insertCode(codeStructures);
+            // }
+            // if(addDecryption){
+            //     System.out.println("Adding Decryption Methods...");
+            //     StringEncryption.addDecryptionMethod(codeStructures);
+            // }
+            // if(unicode) {
+            //     System.out.println("Swapping in Unicode...");
+            //     Unicoder.swapForUnicode(codeStructures, percentUnicode);
+            // }
+            // if(removeNewlines){
+            //     WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
+            // }
+            // if(removeSpaces){
+            //     WhitespaceHandler.removeSpaces(codeStructures);
+            // }
+            // System.out.println("Writing Files...");
+            // FileManager.writeToFiles(codeStructures);
+            // if(main != null){
+            //     System.out.println("Main Method can be found in class " +
+            //             main.getClasses().get(0).getName());
+            // }
+            // else System.out.println("This project has no main method.");
+            // System.out.println("Done!");
         }
         catch(Exception e){
             System.err.println("Exception thrown: " + e.getMessage());

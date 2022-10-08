@@ -7,18 +7,22 @@ import java.util.ArrayList;
  * 
  * @author Thomas Andrasek
  */
-public class Node {
-    
-    private String name;
+public class Node<T> {
+    private long id;
+    private T value;
     private ArrayList<Edge> edges;
+
+    private static long currentId = 0;
 
     /**
      * Create a node with the given name.
      * 
      * @param name The name of the node.
      */
-    public Node(String name) {
-        this.name = name;
+    public Node(T value) {
+        currentId++;
+        this.id = currentId;
+        this.value = value;
         this.edges = new ArrayList<Edge>();
     }
 
@@ -27,21 +31,12 @@ public class Node {
      * 
      * @return
      */
-    public String getName() {
-        return this.name;
+    public T getValue() {
+        return this.value;
     }
 
     /**
-     * Set the name of the node.
-     * 
-     * @param name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Get the edges of the node.
+     * Get the things owned by the Node
      * 
      * @return
      */
@@ -49,66 +44,32 @@ public class Node {
         return this.edges;
     }
 
-    private boolean containsEdge(Edge edge) {
-        int low = 0;
-        int high = this.edges.size();
-        while (low < high) {
-            int mid = (low + high) / 2;
-            Edge e = this.edges.get(mid);
-            int dif = edge.getTo().getName().compareTo(e.getTo().getName());
-            if (dif < 0) {
-                high = mid;
-            } else if (dif > 0) {
-                low = mid + 1;
-            } else {
-                break;
-            }
-        }
-
-        if (low < high) {
-            int mid = (low + high) / 2;
-
-            int i  = mid;
-            while (i < this.edges.size() &&
-             this.edges.get(i).getTo().getName().equals(edge.getTo().getName())) {
-                if (this.edges.get(i).getValue().equals(edge.getValue())) {
-                    return true;
-                }
-                i++;
-            }
-        }
-
-        return false;
-    }
-
     /**
-     * Add an edge to the node.
+     * Add an owned entity to the node.
      * 
-     * @param edge
+     * @param entity
      */
-    public void addEdge(Edge edge) {
-        if (this.containsEdge(edge)) {
-            return;
-        }
-
-        int low = 0;
-        int high = this.edges.size();
-        while (low < high) {
-            int mid = (low + high) / 2;
-            Edge e = this.edges.get(mid);
-            int dif = edge.getFrom().getName().compareTo(e.getFrom().getName());
-            if (dif == 0) {
-                dif = edge.getTo().getName().compareTo(e.getTo().getName());
-            }
-            if (dif < 0) {
-                high = mid;
-            } else if (dif > 0) {
-                low = mid + 1;
-            } else {
-                break;
-            }
-        }
-        this.edges.add(low, edge);
+    public void addEdge(int type, Node<?> node) {
+        this.edges.add(new Edge(type, node));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Node)) {
+            return false;
+        }
+        else {
+            Node<?> n = (Node<?>) o;
+
+            if (n.id == this.id) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }
 }

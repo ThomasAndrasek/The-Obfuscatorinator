@@ -147,12 +147,12 @@ public class FileManager {
      */
     public static void writeToFiles(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
-            if (codeStructure.getClassStructures().size() == 0) {
+            if (codeStructure.getClasses().size() == 0) {
                 continue;
             }
             
             File file = new File(codeStructure.getCodeFile().getParent() + "/" +
-                                 codeStructure.getClassStructures().get(0).getName() + ".java");
+                                 codeStructure.getClasses().get(0).getName() + ".java");
 
             FileWriter fw = null;
             try {

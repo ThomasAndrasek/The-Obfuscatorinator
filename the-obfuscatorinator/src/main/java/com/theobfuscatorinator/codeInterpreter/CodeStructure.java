@@ -468,10 +468,6 @@ public class CodeStructure {
         }
     }
 
-    public ArrayList<ClassStructure> getClassStructures() {
-        return classes;
-    }
-
     public void setUnCommentedCode(String newCode) {
         unCommentedCode = newCode;
     }

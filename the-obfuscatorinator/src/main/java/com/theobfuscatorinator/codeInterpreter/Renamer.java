@@ -136,7 +136,7 @@ public class Renamer {
      */
     public static void renameClasses(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
-            for (ClassStructure classStructure : codeStructure.getClassStructures()) {
+            for (ClassStructure classStructure : codeStructure.getClasses()) {
                 renameClass(classStructure, codeStructures);
             }
         }
@@ -220,8 +220,8 @@ public class Renamer {
      */ 
     public static void renameMethods(ArrayList<CodeStructure> codeStructures) {
         for (CodeStructure codeStructure : codeStructures) {
-            for (ClassStructure classStructure : codeStructure.getClassStructures()) {
-                for (MethodStructure methodStructure : classStructure.getMethodStructures()) {
+            for (ClassStructure classStructure : codeStructure.getClasses()) {
+                for (MethodStructure methodStructure : classStructure.getMethods()) {
                     renameMethod(methodStructure, codeStructures);
                 }
             }
@@ -322,7 +322,7 @@ public class Renamer {
      */
     private static void renameParametersFromClass(ClassStructure classStructure,
                                                       CodeStructure codeStructure) {
-        for (MethodStructure methodStructure : classStructure.getMethodStructures()) {
+        for (MethodStructure methodStructure : classStructure.getMethods()) {
             ArrayList<String> args = methodStructure.getArguments();
 
             if (args.size() == 0) {

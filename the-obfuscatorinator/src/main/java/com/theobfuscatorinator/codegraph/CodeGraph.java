@@ -1,7 +1,11 @@
 package com.theobfuscatorinator.codegraph;
 
+import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+import com.theobfuscatorinator.codeInterpreter.MethodStructure;
+import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
+import com.theobfuscatorinator.graph.Node;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -17,9 +21,7 @@ import java.util.Set;
  * @author Thomas Andrasek
  */
 public class CodeGraph {
-    private String mainMethodFilePath;
-    private CodeStructure mainMethodFileCodeStructure;
-    private ArrayList<CodeStructure> codeStructures;
+    public static final int CLASS_OWN_METHOD = 0;
 
     private Graph graph;
 
@@ -28,73 +30,42 @@ public class CodeGraph {
      * 
      * The start of the graph will be from the first file found with a main method.
      */
-    public CodeGraph(String sourceDirectory, ArrayList<CodeStructure> projectStructure) {
-        this.mainMethodFilePath = findMainMethodFileLocation(sourceDirectory);
-        this.mainMethodFileCodeStructure = findMainMethod(projectStructure);
-        this.codeStructures = projectStructure;
-    }
+    public CodeGraph(ArrayList<CodeStructure> code) {
+        this.graph = new Graph();
 
-    /**
-     * Read the content of the file at the given path.
-     */
-    private String readFile(Path path) throws IOException {
-        return new String(Files.readAllBytes(path));
-    }
+        for (CodeStructure codeStruct : code) {
+            ArrayList<ClassStructure> classStructures = new ArrayList<>();
+            classStructures.addAll(codeStruct.getClasses());
+            while (classStructures.size() > 0) {
+                ClassStructure classStruct = classStructures.remove(0);
+                classStructures.addAll(classStruct.getClasses());
+                Node<ClassStructure> classNode = new Node<>(classStruct);
+                this.graph.addNode(classNode);
 
-    /**
-     * Find the location of the file with a main method.
-     * 
-     * @param sourceDirectory The directory to search in.
-     * 
-     * @return The path of the file with a main method.
-     */
-    private String findMainMethodFileLocation(String sourceDirectory) {
-        // Path to the directory to search in.
-        Path path = Path.of(sourceDirectory);
+                for (MethodStructure methodStruct : classStruct.getMethods()) {
+                    Node<MethodStructure> methodNode = new Node<>(methodStruct);
 
-        // List of directories to search in.
-        ArrayList<Path> paths = new ArrayList<>();
-        paths.add(path);
-
-        // The found file with a main method.
-        boolean foundMainMethod = false;
-        String mainMethodFileLocation = null;
-
-        // Search for the file with a main method.
-        // Search until a file with a main method is found or the search is complete.
-        // The search is complete when there are no more directories to search in.
-        while (!foundMainMethod && !paths.isEmpty()) {
-            // Get the next directory to search in.
-            Path currentPath = paths.remove(0);
-
-            // Get the files in the current directory.
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(currentPath)) {
-                for (Path entry : stream) {
-                    // If the entry is a directory, add it to the list of directories to search in.
-                    if (Files.isDirectory(entry)) {
-                        paths.add(entry);
-                    } else {
-                        // If the entry is a java file, read it.
-                        if (entry.toString().endsWith(".java")) {
-                            // Read the file.
-                            String fileContents = readFile(entry);
-                            // If the file contains a main method, set the foundMainMethod flag to 
-                            // true.
-                            // Also set the mainMethodFileLocation to the path of the file.
-                            if (fileContents.contains("public static void main")) {
-                                mainMethodFileLocation = entry.toString();
-
-                                foundMainMethod = true;
-                            }
-                        }
-                    }
+                    this.graph.addNode(methodNode);
+                    this.graph.addEdge(classNode, methodNode, CLASS_OWN_METHOD);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
-        return mainMethodFileLocation;
+
+        for (Node<?> node : this.graph.getNodes()) {
+            if (!(node.getValue() instanceof ClassStructure)) {
+                continue;
+            }
+
+            ClassStructure classStruct = (ClassStructure) node.getValue();
+            System.out.println(classStruct.getClassName());
+
+            for (Edge edge : node.getEdges()) {
+                MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
+                System.out.println("\t" + methodStruct.getMethodName());
+                System.out.println("\t" + edge.getType());
+            }
+        }
     }
 
     /**

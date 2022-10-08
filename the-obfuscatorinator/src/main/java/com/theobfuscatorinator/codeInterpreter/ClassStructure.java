@@ -267,7 +267,11 @@ public class ClassStructure {
         return className;
     }
 
-    public ArrayList<MethodStructure> getMethodStructures() {
+    public ArrayList<MethodStructure> getMethods() {
         return methods;
+    }
+
+    public ArrayList<ClassStructure> getClasses() {
+        return classes;
     }
 }
