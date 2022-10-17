@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Vector;
 
+import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.Renamer;
 import com.theobfuscatorinator.codeInterpreter.Unicoder;
+import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 import com.theobfuscatorinator.codeInterpreter.WhitespaceHandler;
 import com.theobfuscatorinator.stringencryption.StringEncryption;
 import com.theobfuscatorinator.insertcode.InsertCode;
@@ -78,6 +80,15 @@ public class App
             }
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
+            for (CodeStructure structure : codeStructures) {
+                for (ClassStructure classStructure : structure.getClasses()) {
+                    ArrayList<VariableStructure> variables = VariableStructure.identifyVariables(classStructure);
+                    System.out.println(classStructure.getClassName());
+                    for (VariableStructure variableStructure : variables) {
+                        System.out.println("\t" + variableStructure);
+                    }
+                }
+            }
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
             // if(renameClasses){

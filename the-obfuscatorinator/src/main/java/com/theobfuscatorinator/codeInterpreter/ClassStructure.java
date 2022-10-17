@@ -274,4 +274,8 @@ public class ClassStructure {
     public ArrayList<ClassStructure> getClasses() {
         return classes;
     }
+
+    public String getCode() {
+        return sourceCode;
+    }
 }

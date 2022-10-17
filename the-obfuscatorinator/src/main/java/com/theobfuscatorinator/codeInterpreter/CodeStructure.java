@@ -317,6 +317,7 @@ public class CodeStructure {
             if (classEnd == -1) {
                 classEnd = className.length();
             }
+
             className = className.substring(0, classEnd);
             className = className.replaceAll("\\s+", "");
             boolean implement = full.indexOf("implements") != -1;
