@@ -42,12 +42,17 @@ public class VariableStructure {
             foundVariables.add(var);
         }
 
+        code = CodeStructure.removeInnerCode(code);
+
         for (String potentialVar : foundVariables) {
             if (potentialVar.equals("this")) {
                 continue;
             }
 
             potentialVar = potentialVar.trim();
+            if (potentialVar.startsWith("this.")) {
+                potentialVar = potentialVar.substring(5);
+            }
             String varToUse = "";
             for (int i = 0; i < potentialVar.length(); i++) {
                 if (potentialVar.charAt(i) == ']' || potentialVar.charAt(i) == '[') {
@@ -56,18 +61,23 @@ public class VariableStructure {
                     varToUse += potentialVar.charAt(i);
                 }
             }
-            // System.out.println(varToUse + " " + varToUse.length());
 
-            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([a-zA-Z0-9]+[\\s]+){1}(" + varToUse + "[\\s]*){1}[^;]*");
+            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[\\s]*){1}[^;]*");
             Matcher varMatcher = findVar.matcher(code);
+            VariableStructure structure = null;
+            int maxGroupCount = 0;
             while (varMatcher.find()) {
-                String var = varMatcher.group(0).trim();
-                // System.out.println(var);
+                if (varMatcher.groupCount() <= maxGroupCount) {
+                    continue;
+                }
+
                 String scope = "";
                 boolean isStatic = false;
                 boolean isFinal = false;
                 String type = "";
                 String name = "";
+
+                boolean valid = true;
 
                 if (varMatcher.group(1) != null) {
                     scope = varMatcher.group(1).trim();
@@ -83,13 +93,26 @@ public class VariableStructure {
 
                 if (varMatcher.group(4) != null) {
                     type = varMatcher.group(4).trim();
+                    switch (type) {
+                        case "private":
+                        case "public":
+                        case "protected":
+                            valid = false;
+                    }
                 }
 
                 if (varMatcher.group(5) != null) {
                     name = varMatcher.group(5).trim();
                 }
 
-                variables.add(new VariableStructure(scope, isStatic, isFinal, type, name, isFinal));
+                if (valid) {
+                    structure = new VariableStructure(scope, isStatic, isFinal, type, name, isFinal);
+                    maxGroupCount = varMatcher.groupCount();
+                }
+            }
+
+            if (structure != null) {
+                variables.add(structure);
             }
         }
 

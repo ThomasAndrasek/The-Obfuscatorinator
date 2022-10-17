@@ -3,6 +3,7 @@ package com.theobfuscatorinator.codegraph;
 import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
+import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
 import com.theobfuscatorinator.graph.Node;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class CodeGraph {
     public static final int CLASS_OWN_METHOD = 0;
     public static final int CLASS_OWN_CLASS = 1;
+    public static final int CLASS_OWN_VARIABLE = 2;
 
     private Graph graph;
 
@@ -50,6 +52,13 @@ public class CodeGraph {
                     this.graph.addNode(methodNode);
                     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
                 }
+
+                for (VariableStructure variableStruct : VariableStructure.identifyVariables(classStructNode.getValue())) {
+                    Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
+
+                    this.graph.addNode(variableNode);
+                    this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
+                }
             }
         }
 
@@ -67,9 +76,12 @@ public class CodeGraph {
                     MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
                     System.out.println("\t" + methodStruct.getMethodName());
                 }
-                else {
+                else if (edge.getEnd().getValue() instanceof ClassStructure) {
                     ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
                     System.out.println("\t" + innerClassStruct.getClassName());
+                } else {
+                    VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                    System.out.println("\t" + variableStructure);
                 }
                 
                 System.out.println("\t" + edge.getType());

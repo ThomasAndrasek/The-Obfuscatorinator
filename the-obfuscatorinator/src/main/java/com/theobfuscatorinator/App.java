@@ -80,15 +80,6 @@ public class App
             }
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
-            for (CodeStructure structure : codeStructures) {
-                for (ClassStructure classStructure : structure.getClasses()) {
-                    ArrayList<VariableStructure> variables = VariableStructure.identifyVariables(classStructure);
-                    System.out.println(classStructure.getClassName());
-                    for (VariableStructure variableStructure : variables) {
-                        System.out.println("\t" + variableStructure);
-                    }
-                }
-            }
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
             // if(renameClasses){
