@@ -119,6 +119,36 @@ public class VariableStructure {
         return variables;
     }
 
+    public static ArrayList<VariableStructure> identifyParameters(ArrayList<String> parameters) {
+        ArrayList<VariableStructure> identifiedParameters = new ArrayList<>();
+
+        for (String param : parameters) {
+            Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\s]+[\\s]+){1}([^\\s]+[\\s]*){1}");
+            Matcher varMatcher = findVar.matcher(param);
+            while (varMatcher.find()) {
+                boolean isFinal = false;
+                String type = "";
+                String name = "";
+
+                if (varMatcher.group(1) != null) {
+                    isFinal = true;
+                }
+
+                if (varMatcher.group(2) != null) {
+                    type = varMatcher.group(2).trim();
+                }
+
+                if (varMatcher.group(3) != null) {
+                    name = varMatcher.group(3).trim();
+                }
+
+                identifiedParameters.add(new VariableStructure("", true, isFinal, type, name, false));
+            }
+        }
+
+        return identifiedParameters;
+    }
+
     @Override
     public String toString() {
         String var = "";

@@ -8,6 +8,7 @@ import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
 import com.theobfuscatorinator.graph.Node;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +20,7 @@ public class CodeGraph {
     public static final int CLASS_OWN_METHOD = 0;
     public static final int CLASS_OWN_CLASS = 1;
     public static final int CLASS_OWN_VARIABLE = 2;
+    public static final int METHOD_OWN_PARAMETER = 3;
 
     private Graph graph;
 
@@ -35,6 +37,8 @@ public class CodeGraph {
             for (ClassStructure classStruct : codeStruct.getClasses()) {
                 classStructureNodes.add(new Node<ClassStructure>(classStruct));
             }
+            ArrayList<Node<MethodStructure>> methodStructureNodes = new ArrayList<>();
+
             while (classStructureNodes.size() > 0) {
                 Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
 
@@ -48,6 +52,7 @@ public class CodeGraph {
 
                 for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
                     Node<MethodStructure> methodNode = new Node<>(methodStruct);
+                    methodStructureNodes.add(methodNode);
 
                     this.graph.addNode(methodNode);
                     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
@@ -60,31 +65,53 @@ public class CodeGraph {
                     this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
                 }
             }
+
+            for (Node<MethodStructure> methodNode : methodStructureNodes) {
+                ArrayList<VariableStructure> parameters = VariableStructure.identifyParameters(methodNode.getValue().getArguments());
+
+                for (VariableStructure parameter : parameters) {
+                    Node<VariableStructure> parameterNode = new Node<VariableStructure>(parameter);
+
+                    this.graph.addNode(parameterNode);
+                    this.graph.addEdge(methodNode, parameterNode, METHOD_OWN_PARAMETER);
+                }
+            }
         }
 
 
         for (Node<?> node : this.graph.getNodes()) {
-            if (!(node.getValue() instanceof ClassStructure)) {
-                continue;
+            if (node.getValue() instanceof ClassStructure) {
+                ClassStructure classStruct = (ClassStructure) node.getValue();
+                System.out.println(classStruct.getClassName());
+
+                for (Edge edge : node.getEdges()) {
+                    if (edge.getEnd().getValue() instanceof MethodStructure) {
+                        MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + methodStruct.getMethodName());
+                    }
+                    else if (edge.getEnd().getValue() instanceof ClassStructure) {
+                        ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + innerClassStruct.getClassName());
+                    } else {
+                        VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + variableStructure);
+                    }
+                    
+                    System.out.println("\t" + edge.getType());
+                }
             }
-
-            ClassStructure classStruct = (ClassStructure) node.getValue();
-            System.out.println(classStruct.getClassName());
-
-            for (Edge edge : node.getEdges()) {
-                if (edge.getEnd().getValue() instanceof MethodStructure) {
-                    MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
-                    System.out.println("\t" + methodStruct.getMethodName());
-                }
-                else if (edge.getEnd().getValue() instanceof ClassStructure) {
-                    ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
-                    System.out.println("\t" + innerClassStruct.getClassName());
-                } else {
-                    VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
-                    System.out.println("\t" + variableStructure);
-                }
+            else if (node.getValue() instanceof MethodStructure) {
+                MethodStructure methodStruct = (MethodStructure) node.getValue();
+                System.out.println(methodStruct.getMethodName());
                 
-                System.out.println("\t" + edge.getType());
+                for (Edge edge : node.getEdges()) {
+                    if (edge.getEnd().getValue() instanceof VariableStructure) {
+                        VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + variableStructure);
+                    }
+
+                    System.out.println("\t" + edge.getType());
+                }
             }
         }
     }
