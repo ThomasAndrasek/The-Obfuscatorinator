@@ -1,0 +1,21 @@
+Uppercase are nonterminals
+Lowercase are terminals
+
+S -> PACKAGE IMPORT CLASS
+
+PACKAGE -> package PACKAGE_PATH | epsilon
+PACKAGE_PATH -> id; | id.PACKAGE_PATH
+
+IMPORT -> import IMPORT_PATH | epsilon
+IMPORT_PATH -> IMPORT_PATH_END | id.IMPORT_PATH
+IMPORT_PATH_END -> id; | id.*;
+
+CLASS -> CLASS_SCOPE class class_id  { CLASS_CODE }
+CLASS_SCOPE -> public | abstract | final | epsilon
+
+CLASS_CODE -> METHOD CLASS_CODE | epsilon
+
+METHOD -> METHOD_SCOPE STATIC TYPE method_id ( PARAMETERS ) { METHOD_CODE }
+METHOD_SCOPE -> public | private | protected | epsilon
+
+STATIC -> static | epsilon
