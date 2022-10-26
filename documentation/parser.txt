@@ -15,7 +15,15 @@ CLASS_SCOPE -> public | abstract | final | epsilon
 
 CLASS_CODE -> METHOD CLASS_CODE | epsilon
 
-METHOD -> METHOD_SCOPE STATIC TYPE method_id ( PARAMETERS ) { METHOD_CODE }
+METHOD -> METHOD_SCOPE STATIC TYPE ARRAY method_id ( PARAMETERS ) { METHOD_CODE }
 METHOD_SCOPE -> public | private | protected | epsilon
 
 STATIC -> static | epsilon
+
+ARRAY -> [] | epsilon
+
+TYPE -> PRIMITIVE | void | OBJECT
+
+PRIMITIVE -> int | char | byte | double | float | boolean | short | long
+
+PARAMETERS -> epsilon
