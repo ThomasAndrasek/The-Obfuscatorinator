@@ -154,19 +154,17 @@ public class StringEncryption {
         String completed = Renamer.generateClassName();
         // Build decryption method body.
         StringBuilder builder = new StringBuilder();
-        builder.append(param + ") { ");
-        builder.append("String " + decrypted + " = \"\"; ");
-        builder.append("for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { ");
-        builder.append(String.format("int %s = %s[%s] %% %d; ", first, param, iVar, CONST_MOD);
-        builder.append("int " + second + " = " + param + "[" + iVar + "] - " + first + ";");
-        builder.append(second + " /= 100; ");
-        builder.append(second + " /= " + first + "; ");
+        builder.append(String.format("%s) { ", param));
+        builder.append(String.format("String %s = \"\"; ", decrypted));
+        builder.append(String.format("for (int %s = 0; %s < %s.length; %s++) { ", iVar, iVar, param, iVar));
+        builder.append(String.format("int %s = %s[%s] %% %d; ", first, param, iVar, CONST_MOD));
+        builder.append(String.format("int %s = %s[%s] - %s; ", second, param, iVar, first));
+        builder.append(String.format("%s /= 100; ", second));
+        builder.append(String.format("%s /= %s; ", second, first));
         builder.append(String.format("int %s = %s - %d; ", completed, second, CONST_OFFSET);
         builder.append(String.format("%s /= %d; ", completed, CONST_MULT));
-        builder.append(decrypted + " += (char) " + completed + "; ");
-        builder.append("} ");
-        builder.append("return " + decrypted + "; ");
-        builder.append("}");
+        builder.append(String.format("%s += (char) %s; ", decrypted, completed));
+        builder.append(String.format("} return %s; }", decrypted));
         String decryptMethodBody = builder.toString();
 
 
