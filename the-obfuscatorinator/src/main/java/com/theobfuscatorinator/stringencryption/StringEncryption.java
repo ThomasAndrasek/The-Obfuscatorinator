@@ -9,6 +9,13 @@ import com.theobfuscatorinator.codeInterpreter.Renamer;
 public class StringEncryption {
 
     /**
+     * Constants - TODO: Need better names
+    */
+    private static final int CONST_MULT = 42;
+    private static final int CONST_OFFSET = 27000;
+    private static final int CONST_MOD = 100;
+    
+    /**
      * Templated custom pair class, because there does not seem to be a reasonable way to do this 
      * with this version of the JDK.
      * @param <K> Type of the first element in the pair
@@ -84,7 +91,6 @@ public class StringEncryption {
      * @return The encrypted code.
      */
     public static String encryptStrings(CodeStructure codeStructure, String decryptionMethodName) {
-        
         ArrayList<Pair<String, Integer>> strings = findStrings(codeStructure);
         String code = codeStructure.getOriginalCode().substring(0);
 
@@ -95,26 +101,27 @@ public class StringEncryption {
             int index = strings.get(i).second;
 
             byte[] byteArrray = string.getBytes();
-            String byteString = "";
+            StringBuilder byteStringBuilder = new StringBuilder();
             for (byte b : byteArrray) {
-                int num = b * 42 + 27000;
+                int num = b * CONST_MULT + CONST_OFFSET;
 
                 // Generate random number until it is not divisible by 100.
                 int attached = random.nextInt(100) + 1;
-                while ((num * attached + attached) % 100 == 0) {
+                while ((num * attached + attached) % CONST_MOD == 0) {
                     attached = random.nextInt(100) + 1;
                 }
                 num *= attached;
-                num *= 100;
+                num *= CONST_MOD;
                 num += attached;
 
-                byteString += num + ", ";
+                byteStringBuilder.append(num + ", ");
             }
+            String byteString = byteStringBuilder.toString();
+            
             // Replace the string with the encrypted value.
             if (byteString.length() != 0) {
                 byteString = byteString.substring(0, byteString.length() - 2);
-                String encrypted = decryptionMethodName + "(new int[]{" + byteString + "})";
-
+                String encrypted = String.format("%s(new int[]{%s})", decryptionMethodName, byteString);
                 code = code.substring(0, index) + encrypted + code.substring(index + string.length() + 2);
             }
         }
@@ -150,13 +157,13 @@ public class StringEncryption {
         builder.append(param + ") { ");
         builder.append("String " + decrypted + " = \"\"; ");
         builder.append("for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { ");
-        builder.append("int " + first + " = " + param + "[" + iVar + "] % 100; ");
+        builder.append(String.format("int %s = %s[%s] %% %d; ", first, param, iVar, CONST_MOD);
         builder.append("int " + second + " = " + param + "[" + iVar + "] - " + first + ";");
-        builder.append("" + second + " /= 100; ");
-        builder.append("" + second + " /= " + first + "; ");
-        builder.append("int " + completed + " = " + second + " - 27000; ");
-        builder.append("" + completed + " /= 42; ");
-        builder.append("" + decrypted + " += (char) " + completed + "; ");
+        builder.append(second + " /= 100; ");
+        builder.append(second + " /= " + first + "; ");
+        builder.append(String.format("int %s = %s - %d; ", completed, second, CONST_OFFSET);
+        builder.append(String.format("%s /= %d; ", completed, CONST_MULT));
+        builder.append(decrypted + " += (char) " + completed + "; ");
         builder.append("} ");
         builder.append("return " + decrypted + "; ");
         builder.append("}");
