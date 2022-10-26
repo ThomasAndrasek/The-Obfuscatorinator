@@ -146,19 +146,21 @@ public class StringEncryption {
         String first = Renamer.generateClassName();
         String completed = Renamer.generateClassName();
         // Build decryption method body.
-        String decryptMethodBody = param + ") { " +
-            "String " + decrypted + " = \"\"; " +
-            "for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { " +
-            "int " + first + " = " + param + "[" + iVar + "] % 100; " +
-            "int " + second + " = " + param + "[" + iVar + "] - " + first + ";" +
-            "" + second + " /= 100; " +
-            "" + second + " /= " + first + "; " +
-            "int " + completed + " = " + second + " - 27000; " +
-            "" + completed + " /= 42; " +
-            "" + decrypted + " += (char) " + completed + "; " +
-            "} " +
-            "return " + decrypted + "; " +
-            "}";
+        StringBuilder builder = new StringBuilder();
+        builder.append(param + ") { ");
+        builder.append("String " + decrypted + " = \"\"; ");
+        builder.append("for (int " + iVar + " = 0; " + iVar + " < " + param + ".length; " + iVar + "++) { ");
+        builder.append("int " + first + " = " + param + "[" + iVar + "] % 100; ");
+        builder.append("int " + second + " = " + param + "[" + iVar + "] - " + first + ";");
+        builder.append("" + second + " /= 100; ");
+        builder.append("" + second + " /= " + first + "; ");
+        builder.append("int " + completed + " = " + second + " - 27000; ");
+        builder.append("" + completed + " /= 42; ");
+        builder.append("" + decrypted + " += (char) " + completed + "; ");
+        builder.append("} ");
+        builder.append("return " + decrypted + "; ");
+        builder.append("}");
+        String decryptMethodBody = builder.toString();
 
 
         // Insert decryption method into each code structure.
