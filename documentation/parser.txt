@@ -15,20 +15,31 @@ CLASS_SCOPE -> public | abstract | final | epsilon
 
 CLASS_CODE -> CLASS_VARIABLE CLASS_CODE | METHOD CLASS_CODE | epsilon
 
-CLASS_VARIABLE -> CLASS_VARIABLE_SCOPE STATIC TYPE variable_id; | CLASS_VARIABLE_SCOPE STATIC TYPE variable_id = INSTANTIATION;
+CLASS_VARIABLE -> CLASS_VARIABLE_SCOPE STATIC TYPE variable_id ARRAY; | CLASS_VARIABLE_SCOPE STATIC TYPE variable_id ARRAY = INSTANTIATION;
 
 CLASS_VARIABLE_SCOPE -> public | private | protected | epsilon
 
 METHOD -> METHOD_SCOPE STATIC TYPE ARRAY method_id ( PARAMETERS ) { METHOD_CODE }
-METHOD -> METHOD_SCOPE STATIC void method_id ( PARAMETERS ) { METHOD_CODE }
 METHOD_SCOPE -> public | private | protected | epsilon
 
 STATIC -> static | epsilon
 
-ARRAY -> [] | epsilon
+ARRAY -> [] ARRAY | epsilons
 
-TYPE -> PRIMITIVE | OBJECT
+TYPE -> PRIMITIVE | OBJECT | void
 
 PRIMITIVE -> int | char | byte | double | float | boolean | short | long
 
 PARAMETERS -> epsilon
+
+OBJECT -> OBJECT_ID ARRAY | OBJECT_ID <OBJECT> ARRAY
+
+OBJECT_ID -> object_id | GENERIC_ID
+
+GENERIC_ID -> generic_id | ?
+
+// note will have to figure out a solution for generic wildcard as the generic wildcard cannot
+// always be inserted for all GENERIC_IDs
+
+// will have to consider implementing an attribute grammar to check, or will have to
+// make less broad rules
