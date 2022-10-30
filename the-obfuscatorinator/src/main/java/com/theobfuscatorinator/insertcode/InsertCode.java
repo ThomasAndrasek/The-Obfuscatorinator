@@ -2,7 +2,6 @@ package com.theobfuscatorinator.insertcode;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.io.IOException;
 
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 

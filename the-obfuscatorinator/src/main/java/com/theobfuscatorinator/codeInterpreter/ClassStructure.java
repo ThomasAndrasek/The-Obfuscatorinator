@@ -1,6 +1,5 @@
 package com.theobfuscatorinator.codeInterpreter;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
