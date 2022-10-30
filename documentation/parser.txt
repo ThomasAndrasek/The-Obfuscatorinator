@@ -15,22 +15,30 @@ CLASS_SCOPE -> public | abstract | final | epsilon
 
 CLASS_CODE -> CLASS_VARIABLE CLASS_CODE | METHOD CLASS_CODE | epsilon
 
-CLASS_VARIABLE -> CLASS_VARIABLE_SCOPE STATIC TYPE variable_id ARRAY; | CLASS_VARIABLE_SCOPE STATIC TYPE variable_id ARRAY = INSTANTIATION;
+CLASS_VARIABLE -> CLASS_VARIABLE_SCOPE STATIC FINAL TYPE variable_id ARRAY; | CLASS_VARIABLE_SCOPE STATIC TYPE variable_id ARRAY = INSTANTIATION;
 
 CLASS_VARIABLE_SCOPE -> public | private | protected | epsilon
 
-METHOD -> METHOD_SCOPE STATIC TYPE ARRAY method_id ( PARAMETERS ) { METHOD_CODE }
+METHOD -> METHOD_SCOPE STATIC METHOD_TYPE ARRAY method_id ( PARAMETERS ) { METHOD_CODE }
 METHOD_SCOPE -> public | private | protected | epsilon
 
 STATIC -> static | epsilon
 
-ARRAY -> [] ARRAY | epsilons
+ARRAY -> [] ARRAY | epsilon
 
-TYPE -> PRIMITIVE | OBJECT | void
+FINAL -> final | epsilon
+
+METHOD_TYPE -> PRIMITIVE | OBJECT | void
 
 PRIMITIVE -> int | char | byte | double | float | boolean | short | long
 
-PARAMETERS -> epsilon
+PARAMETERS -> PARAMETER | epsilon
+
+PARAMETER -> FINAL PARAMETER_TYPE ARRAY parameter_id COMMA PARAMETERS
+
+PARAMETER_TYPE -> PRIMITIVE | OBJECT
+
+COMMA -> , | epsilon
 
 OBJECT -> OBJECT_ID ARRAY | OBJECT_ID <OBJECT> ARRAY
 
