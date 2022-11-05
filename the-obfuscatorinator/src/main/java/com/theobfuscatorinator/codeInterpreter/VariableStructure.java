@@ -13,10 +13,11 @@ public class VariableStructure {
     private String type;
     private String name;
     private boolean isArray;
-    
+
+    private boolean isParameter;
 
     public VariableStructure(String scope, boolean isStatic, boolean isFinal, 
-                             String type, String name, boolean isArray) {
+                             String type, String name, boolean isArray, boolean isParameter) {
 
         this.scope = scope;
         this.isStatic = isStatic;
@@ -25,6 +26,7 @@ public class VariableStructure {
         this.name = name;
         this.isArray = isArray;
 
+        this.isParameter = isParameter;
     }
 
 
@@ -106,7 +108,7 @@ public class VariableStructure {
                 }
 
                 if (valid) {
-                    structure = new VariableStructure(scope, isStatic, isFinal, type, name, isFinal);
+                    structure = new VariableStructure(scope, isStatic, isFinal, type, name, false, false);
                     maxGroupCount = varMatcher.groupCount();
                 }
             }
@@ -142,7 +144,7 @@ public class VariableStructure {
                     name = varMatcher.group(3).trim();
                 }
 
-                identifiedParameters.add(new VariableStructure("", true, isFinal, type, name, false));
+                identifiedParameters.add(new VariableStructure("", false, isFinal, type, name, false, true));
             }
         }
 
