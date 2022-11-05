@@ -213,7 +213,7 @@ public class ClassStructure {
             if (!returnType.equals("") && valid) {
                 output.add(
                     new MethodStructure(name, scope, staticStatus, template, arguments, 
-                                        returnType, code, containers, sourceFile));
+                                        returnType, detectBody.first, containers, sourceFile));
             } 
         }
 
