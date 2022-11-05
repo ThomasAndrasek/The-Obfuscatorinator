@@ -17,10 +17,11 @@ import java.util.ArrayList;
  * @author Thomas Andrasek
  */
 public class CodeGraph {
-    public static final int CLASS_OWN_METHOD = 0;
-    public static final int CLASS_OWN_CLASS = 1;
-    public static final int CLASS_OWN_VARIABLE = 2;
-    public static final int METHOD_OWN_PARAMETER = 3;
+    public static final int FILE_OWN_CLASS = 0;
+    public static final int CLASS_OWN_METHOD = 1;
+    public static final int CLASS_OWN_CLASS = 2;
+    public static final int CLASS_OWN_VARIABLE = 3;
+    public static final int METHOD_OWN_PARAMETER = 4;
 
     private Graph graph;
 
@@ -39,10 +40,15 @@ public class CodeGraph {
             }
             ArrayList<Node<MethodStructure>> methodStructureNodes = new ArrayList<>();
 
+            Node<CodeStructure> codeStructureNode = new Node<CodeStructure>(codeStruct);
+            this.graph.addNode(codeStructureNode);
+
             while (classStructureNodes.size() > 0) {
                 Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
 
                 this.graph.addNode(classStructNode);
+
+                this.graph.addEdge(codeStructureNode, classStructNode, FILE_OWN_CLASS);
 
                 for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
                     Node<ClassStructure> n = new Node<>(classStruct);
@@ -108,6 +114,19 @@ public class CodeGraph {
                     if (edge.getEnd().getValue() instanceof VariableStructure) {
                         VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
                         System.out.println("\t" + variableStructure);
+                    }
+
+                    System.out.println("\t" + edge.getType());
+                }
+            }
+            else if (node.getValue() instanceof CodeStructure) {
+                CodeStructure codeStructure = (CodeStructure) node.getValue();
+                System.out.println(codeStructure.getCodeFile().getName());
+
+                for (Edge edge : node.getEdges()) {
+                    if (edge.getEnd().getValue() instanceof ClassStructure) {
+                        ClassStructure classStructure = (ClassStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + classStructure.getClassName());
                     }
 
                     System.out.println("\t" + edge.getType());
