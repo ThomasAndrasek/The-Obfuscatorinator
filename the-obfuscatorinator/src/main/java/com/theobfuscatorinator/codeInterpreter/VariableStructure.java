@@ -171,4 +171,32 @@ public class VariableStructure {
 
         return var;
     }
+
+    public String getScope() {
+        return this.scope;
+    }
+
+    public boolean isStatic() {
+        return this.isStatic;
+    }
+
+    public boolean isFinal() {
+        return this.isFinal;
+    }
+
+    public boolean isParameter() {
+        return this.isParameter;
+    }
+
+    public boolean isArray() {
+        return this.isArray;
+    }
+
+    public String getType() {
+        return this.type;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 }
