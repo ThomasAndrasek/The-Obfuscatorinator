@@ -30,7 +30,7 @@ public class VariableStructure {
     }
 
 
-    public static ArrayList<VariableStructure> identifyVariables(ClassStructure classStructure) {
+    public static ArrayList<VariableStructure> identifyClassVariables(ClassStructure classStructure) {
         ArrayList<VariableStructure> variables = new ArrayList<>();
 
 

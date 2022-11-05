@@ -64,7 +64,7 @@ public class CodeGraph {
                     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
                 }
 
-                for (VariableStructure variableStruct : VariableStructure.identifyVariables(classStructNode.getValue())) {
+                for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
                     Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
 
                     this.graph.addNode(variableNode);
