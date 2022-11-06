@@ -22,6 +22,7 @@ public class CodeGraph {
     public static final int CLASS_OWN_CLASS = 2;
     public static final int CLASS_OWN_VARIABLE = 3;
     public static final int METHOD_OWN_PARAMETER = 4;
+    public static final int METHOD_OWN_VARIABLE = 5;
 
     private Graph graph;
 
@@ -80,6 +81,15 @@ public class CodeGraph {
 
                     this.graph.addNode(parameterNode);
                     this.graph.addEdge(methodNode, parameterNode, METHOD_OWN_PARAMETER);
+                }
+
+                ArrayList<VariableStructure> variables = VariableStructure.identifyMethodVariables(methodNode.getValue());
+
+                for (VariableStructure variable : variables) {
+                    Node<VariableStructure> variableNode = new Node<VariableStructure>(variable);
+
+                    this.graph.addNode(variableNode);
+                    this.graph.addEdge(methodNode, variableNode, METHOD_OWN_VARIABLE);
                 }
             }
         }

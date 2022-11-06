@@ -121,6 +121,83 @@ public class VariableStructure {
         return variables;
     }
 
+    public static ArrayList<VariableStructure> identifyMethodVariables(MethodStructure methodStructure) {
+        ArrayList<VariableStructure> variables = new ArrayList<>();
+
+
+        Set<String> foundVariables = new HashSet<String>();
+        String code = methodStructure.getMethodCode();
+        // Find all the variables in the file.
+        Pattern varFinder = Pattern.compile("([^\\s]+)[\\s]*[=]{1}[^=]{1}");
+        Matcher matcher = varFinder.matcher(code);
+        while (matcher.find()) {
+            String var = matcher.group(1);
+            foundVariables.add(var);
+        }
+
+        for (String potentialVar : foundVariables) {
+            if (potentialVar.equals("this")) {
+                continue;
+            }
+
+            potentialVar = potentialVar.trim();
+            if (potentialVar.startsWith("this.")) {
+                potentialVar = potentialVar.substring(5);
+            }
+            String varToUse = "";
+            for (int i = 0; i < potentialVar.length(); i++) {
+                if (potentialVar.charAt(i) == ']' || potentialVar.charAt(i) == '[') {
+                    varToUse += "\\" + potentialVar.charAt(i);
+                } else {
+                    varToUse += potentialVar.charAt(i);
+                }
+            }
+
+            Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
+            Matcher varMatcher = findVar.matcher(code);
+            VariableStructure structure = null;
+            int maxGroupCount = 0;
+            while (varMatcher.find()) {
+                if (varMatcher.groupCount() <= maxGroupCount) {
+                    continue;
+                }
+
+                boolean isFinal = false;
+                boolean isArray = false;
+                String type = "";
+                String name = "";
+
+                boolean valid = true;
+
+                if (varMatcher.group(1) != null) {
+                    isFinal = true;
+                }
+
+                if (varMatcher.group(2) != null) {
+                    type = varMatcher.group(2).trim();
+                }
+
+                if (varMatcher.group(3) != null || varMatcher.group(5) != null) {
+                    isArray = true;
+                }
+
+                if (varMatcher.group(4) != null) {
+                    name = varMatcher.group(4).trim();
+                }
+
+
+                structure = new VariableStructure("", false, isFinal, type, name, isArray, false);
+                maxGroupCount = varMatcher.groupCount();
+            }
+
+            if (structure != null) {
+                variables.add(structure);
+            }
+        }
+
+        return variables;
+    }
+
     public static ArrayList<VariableStructure> identifyParameters(ArrayList<String> parameters) {
         ArrayList<VariableStructure> identifiedParameters = new ArrayList<>();
 
