@@ -11,30 +11,16 @@ the type detected is Test<?> and not Test<String>
 
 Interesting case:
 
-for (int i = 3; i < 6; i++) {
-            if (i % 2 == 0) {
-                int cccc = 2;
-            }
-        }
-
-i is detected as "{ i"
-
-
-
-if (3 > 2) {
-            int aaaa = 3;
-        }
-
-        int aaaa = 2;
-
-        5
-         int aaaa
-        5
-         aaaa =
-
-
 
 int[] hi = {1,2,3};
 
 int hi
         5
+
+
+
+public void repaint(String color) {
+        this.color = color;
+    }
+
+= color

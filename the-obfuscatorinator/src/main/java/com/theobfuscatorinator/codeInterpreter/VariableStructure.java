@@ -37,7 +37,7 @@ public class VariableStructure {
         Set<String> foundVariables = new HashSet<String>();
         String code = classStructure.getCode();
         // Find all the variables in the file.
-        Pattern varFinder = Pattern.compile("([^\\s]+)[\\s]*[=]{1}[^=]{1}");
+        Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
             String var = matcher.group(1);
@@ -64,7 +64,7 @@ public class VariableStructure {
                 }
             }
 
-            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[\\s]*){1}[^;]*");
+            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
@@ -128,7 +128,7 @@ public class VariableStructure {
         Set<String> foundVariables = new HashSet<String>();
         String code = methodStructure.getMethodCode();
         // Find all the variables in the file.
-        Pattern varFinder = Pattern.compile("([^\\s]+)[\\s]*[=]{1}[^=]{1}");
+        Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
             String var = matcher.group(1);
@@ -153,7 +153,7 @@ public class VariableStructure {
                 }
             }
 
-            Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
+            Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
