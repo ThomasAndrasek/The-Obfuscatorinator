@@ -6,6 +6,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Structure to represent a variable in Java.
+ * 
+ * VariableStructure objects are made to represent a variable used in a Java program. A variable is
+ * made up of multiple attributes. The scope of the variable, whether the variable is static or
+ * not, whether the variable is final or not, the type of the variable, the name of the variable,
+ * and whether the variable is an array. A variable can also be separated into the category of
+ * whether or not it is a method parameter.
+ */
 public class VariableStructure {
     private String scope;
     private boolean isStatic;
@@ -16,6 +25,17 @@ public class VariableStructure {
 
     private boolean isParameter;
 
+    /**
+     * Constructs a variable structure of a Java variable.
+     * 
+     * @param scope The scope of the variable.
+     * @param isStatic Whether the variable is static or not.
+     * @param isFinal Whether the variable is final or not.
+     * @param type The type of the variable.
+     * @param name The name of the variable.
+     * @param isArray Whether the variable is an array or not.
+     * @param isParameter Whether the variable is a method parameter or not.
+     */
     public VariableStructure(String scope, boolean isStatic, boolean isFinal, 
                              String type, String name, boolean isArray, boolean isParameter) {
 
@@ -30,13 +50,24 @@ public class VariableStructure {
     }
 
 
+    /**
+     * Identifies all variables of a class structure.
+     * 
+     * Given a class structure that represents a Java class, identify all of the variables that
+     * the class declares and defines within the class. Only varaibles that are instantied within
+     * the class structure will be identified. Only variables that are declared in the outermost
+     * scope of the class will be returned.
+     * 
+     * @param classStructure The class structure to search for variables in.
+     * @return List of found variables declared and instantiated in the class structure.
+     */
     public static ArrayList<VariableStructure> identifyClassVariables(ClassStructure classStructure) {
+        // Hold list of variables found.
         ArrayList<VariableStructure> variables = new ArrayList<>();
 
-
+        // Find all the variable names instantiated within the class structure.
         Set<String> foundVariables = new HashSet<String>();
         String code = classStructure.getCode();
-        // Find all the variables in the file.
         Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
@@ -44,17 +75,21 @@ public class VariableStructure {
             foundVariables.add(var);
         }
 
+        // Remove any inner nested code of the class.
         code = CodeStructure.removeInnerCode(code);
 
         for (String potentialVar : foundVariables) {
+            // Skip variables named 'this'
             if (potentialVar.equals("this")) {
                 continue;
             }
 
+            // Remove 'this.' from the variable name.
             potentialVar = potentialVar.trim();
             if (potentialVar.startsWith("this.")) {
                 potentialVar = potentialVar.substring(5);
             }
+            // Append slashes to the variable if there are brackets for the regex.
             String varToUse = "";
             for (int i = 0; i < potentialVar.length(); i++) {
                 if (potentialVar.charAt(i) == ']' || potentialVar.charAt(i) == '[') {
@@ -64,6 +99,8 @@ public class VariableStructure {
                 }
             }
 
+            // Attempt to match the variable name with a declared variable in the class structure.
+            // Match the longest found groupcount to be the declared variable found.
             Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
@@ -123,7 +160,6 @@ public class VariableStructure {
 
     public static ArrayList<VariableStructure> identifyMethodVariables(MethodStructure methodStructure) {
         ArrayList<VariableStructure> variables = new ArrayList<>();
-
 
         Set<String> foundVariables = new HashSet<String>();
         String code = methodStructure.getMethodCode();
