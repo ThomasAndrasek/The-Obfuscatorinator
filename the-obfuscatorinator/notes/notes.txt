@@ -16,11 +16,3 @@ int[] hi = {1,2,3};
 
 int hi
         5
-
-
-
-public void repaint(String color) {
-        this.color = color;
-    }
-
-= color

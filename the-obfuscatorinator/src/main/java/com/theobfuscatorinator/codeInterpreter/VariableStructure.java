@@ -189,7 +189,7 @@ public class VariableStructure {
                 }
             }
 
-            Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
+            Pattern findVar = Pattern.compile("(final[\\s]+)?([^=\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
