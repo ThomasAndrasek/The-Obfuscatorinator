@@ -2,6 +2,7 @@ package com.theobfuscatorinator.codegraph;
 
 import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
+import com.theobfuscatorinator.codeInterpreter.ImportStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
 import com.theobfuscatorinator.codeInterpreter.PackageStructure;
 import com.theobfuscatorinator.codeInterpreter.VariableStructure;
@@ -9,7 +10,6 @@ import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
 import com.theobfuscatorinator.graph.Node;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -20,19 +20,15 @@ import java.util.ArrayList;
 public class CodeGraph {
     public static final int FILE_OWN_CLASS = 0;
     public static final int FILE_IS_PART_OF_PACKAGE = 1;
-    public static final int CLASS_OWN_METHOD = 2;
-    public static final int CLASS_OWN_CLASS = 3;
-    public static final int CLASS_OWN_VARIABLE = 4;
-    public static final int METHOD_OWN_PARAMETER = 5;
-    public static final int METHOD_OWN_VARIABLE = 6;
+    public static final int FILE_USES_IMPORT = 2;
+    public static final int CLASS_OWN_METHOD = 3;
+    public static final int CLASS_OWN_CLASS = 4;
+    public static final int CLASS_OWN_VARIABLE = 5;
+    public static final int METHOD_OWN_PARAMETER = 6;
+    public static final int METHOD_OWN_VARIABLE = 7;
 
     private Graph graph;
 
-    /**
-     * Construct a new graph from the given file path.
-     * 
-     * The start of the graph will be from the first file found with a main method.
-     */
     public CodeGraph(ArrayList<CodeStructure> code) {
         this.graph = new Graph();
 
@@ -52,6 +48,14 @@ public class CodeGraph {
 
                 this.graph.addNode(packageStructureNode);
                 this.graph.addEdge(codeStructureNode, packageStructureNode, FILE_IS_PART_OF_PACKAGE);
+            }
+
+            ArrayList<ImportStructure> importStructures = ImportStructure.identifyImports(codeStruct);
+            for (ImportStructure importStructure : importStructures) {
+                Node<ImportStructure> importStructureNode = new Node<ImportStructure>(importStructure);
+
+                this.graph.addNode(importStructureNode);
+                this.graph.addEdge(codeStructureNode, importStructureNode, FILE_USES_IMPORT);
             }
 
             while (classStructureNodes.size() > 0) {
@@ -152,6 +156,10 @@ public class CodeGraph {
                     else if (edge.getEnd().getValue() instanceof PackageStructure) {
                         PackageStructure packageStructure = (PackageStructure) edge.getEnd().getValue();
                         System.out.println("\t" + packageStructure.getPackageId());
+                    }
+                    else if (edge.getEnd().getValue() instanceof ImportStructure) {
+                        ImportStructure importStructure = (ImportStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + importStructure);
                     }
 
                     System.out.println("\t" + edge.getType());

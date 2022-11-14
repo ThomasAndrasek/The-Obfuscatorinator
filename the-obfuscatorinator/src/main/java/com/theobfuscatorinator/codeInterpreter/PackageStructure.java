@@ -53,6 +53,6 @@ public class PackageStructure {
      * @return Id of the package.
      */
     public String getPackageId() {
-        return this.packageId.substring(0);
+        return this.packageId;
     }
 }
