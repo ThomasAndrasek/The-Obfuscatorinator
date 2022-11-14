@@ -80,6 +80,7 @@ public class App
             }
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
+            codeGraph.printCodeGraph();
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
             // if(renameClasses){

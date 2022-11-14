@@ -103,8 +103,9 @@ public class CodeGraph {
                 }
             }
         }
+    }
 
-
+    public void printCodeGraph() {
         for (Node<?> node : this.graph.getNodes()) {
             if (node.getValue() instanceof ClassStructure) {
                 ClassStructure classStruct = (ClassStructure) node.getValue();
