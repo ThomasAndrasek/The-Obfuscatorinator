@@ -3,6 +3,7 @@ package com.theobfuscatorinator.codegraph;
 import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
+import com.theobfuscatorinator.codeInterpreter.PackageStructure;
 import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
@@ -18,11 +19,12 @@ import java.util.ArrayList;
  */
 public class CodeGraph {
     public static final int FILE_OWN_CLASS = 0;
-    public static final int CLASS_OWN_METHOD = 1;
-    public static final int CLASS_OWN_CLASS = 2;
-    public static final int CLASS_OWN_VARIABLE = 3;
-    public static final int METHOD_OWN_PARAMETER = 4;
-    public static final int METHOD_OWN_VARIABLE = 5;
+    public static final int FILE_IS_PART_OF_PACKAGE = 1;
+    public static final int CLASS_OWN_METHOD = 2;
+    public static final int CLASS_OWN_CLASS = 3;
+    public static final int CLASS_OWN_VARIABLE = 4;
+    public static final int METHOD_OWN_PARAMETER = 5;
+    public static final int METHOD_OWN_VARIABLE = 6;
 
     private Graph graph;
 
@@ -43,6 +45,14 @@ public class CodeGraph {
 
             Node<CodeStructure> codeStructureNode = new Node<CodeStructure>(codeStruct);
             this.graph.addNode(codeStructureNode);
+
+            PackageStructure packageStructure = PackageStructure.identifyPackage(codeStruct);
+            if (packageStructure != null) {
+                Node<PackageStructure> packageStructureNode = new Node<PackageStructure>(packageStructure);
+
+                this.graph.addNode(packageStructureNode);
+                this.graph.addEdge(codeStructureNode, packageStructureNode, FILE_IS_PART_OF_PACKAGE);
+            }
 
             while (classStructureNodes.size() > 0) {
                 Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
@@ -137,6 +147,10 @@ public class CodeGraph {
                     if (edge.getEnd().getValue() instanceof ClassStructure) {
                         ClassStructure classStructure = (ClassStructure) edge.getEnd().getValue();
                         System.out.println("\t" + classStructure.getClassName());
+                    }
+                    else if (edge.getEnd().getValue() instanceof PackageStructure) {
+                        PackageStructure packageStructure = (PackageStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + packageStructure.getPackageId());
                     }
 
                     System.out.println("\t" + edge.getType());

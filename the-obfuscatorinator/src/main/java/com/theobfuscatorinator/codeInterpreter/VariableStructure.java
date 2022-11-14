@@ -203,8 +203,6 @@ public class VariableStructure {
                 String type = "";
                 String name = "";
 
-                boolean valid = true;
-
                 if (varMatcher.group(1) != null) {
                     isFinal = true;
                 }
