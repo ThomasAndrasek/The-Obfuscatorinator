@@ -28,9 +28,21 @@ public class CodeGraph {
     public static final int METHOD_OWN_VARIABLE = 7;
 
     private Graph graph;
+    private ArrayList<Node<CodeStructure>> codeStructureNodes;
+    private ArrayList<Node<ClassStructure>> classStructureNodes;
+    private ArrayList<Node<VariableStructure>> variableStructureNodes;
+    private ArrayList<Node<MethodStructure>> methodStructureNodes;
+    private ArrayList<Node<ImportStructure>> importStructureNodes;
+    private ArrayList<Node<PackageStructure>> packageStructureNodes;
 
     public CodeGraph(ArrayList<CodeStructure> code) {
         this.graph = new Graph();
+        this.classStructureNodes = new ArrayList<>();
+        this.codeStructureNodes = new ArrayList<>();
+        this.importStructureNodes = new ArrayList<>();
+        this.methodStructureNodes = new ArrayList<>();
+        this.packageStructureNodes = new ArrayList<>();
+        this.variableStructureNodes = new ArrayList<>();
 
         for (CodeStructure codeStruct : code) {
             ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
@@ -41,12 +53,14 @@ public class CodeGraph {
 
             Node<CodeStructure> codeStructureNode = new Node<CodeStructure>(codeStruct);
             this.graph.addNode(codeStructureNode);
+            this.codeStructureNodes.add(codeStructureNode);
 
             PackageStructure packageStructure = PackageStructure.identifyPackage(codeStruct);
             if (packageStructure != null) {
                 Node<PackageStructure> packageStructureNode = new Node<PackageStructure>(packageStructure);
 
                 this.graph.addNode(packageStructureNode);
+                this.packageStructureNodes.add(packageStructureNode);
                 this.graph.addEdge(codeStructureNode, packageStructureNode, FILE_IS_PART_OF_PACKAGE);
             }
 
@@ -55,6 +69,7 @@ public class CodeGraph {
                 Node<ImportStructure> importStructureNode = new Node<ImportStructure>(importStructure);
 
                 this.graph.addNode(importStructureNode);
+                this.importStructureNodes.add(importStructureNode);
                 this.graph.addEdge(codeStructureNode, importStructureNode, FILE_USES_IMPORT);
             }
 
@@ -62,12 +77,13 @@ public class CodeGraph {
                 Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
 
                 this.graph.addNode(classStructNode);
-
+                this.classStructureNodes.add(classStructNode);
                 this.graph.addEdge(codeStructureNode, classStructNode, FILE_OWN_CLASS);
 
                 for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
                     Node<ClassStructure> n = new Node<>(classStruct);
                     classStructureNodes.add(n);
+                    this.classStructureNodes.add(n);
                     this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
                 }
 
@@ -76,6 +92,7 @@ public class CodeGraph {
                     methodStructureNodes.add(methodNode);
 
                     this.graph.addNode(methodNode);
+                    this.methodStructureNodes.add(methodNode);
                     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
                 }
 
@@ -83,6 +100,7 @@ public class CodeGraph {
                     Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
 
                     this.graph.addNode(variableNode);
+                    this.variableStructureNodes.add(variableNode);
                     this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
                 }
             }
@@ -94,6 +112,7 @@ public class CodeGraph {
                     Node<VariableStructure> parameterNode = new Node<VariableStructure>(parameter);
 
                     this.graph.addNode(parameterNode);
+                    this.variableStructureNodes.add(parameterNode);
                     this.graph.addEdge(methodNode, parameterNode, METHOD_OWN_PARAMETER);
                 }
 
@@ -103,6 +122,7 @@ public class CodeGraph {
                     Node<VariableStructure> variableNode = new Node<VariableStructure>(variable);
 
                     this.graph.addNode(variableNode);
+                    this.variableStructureNodes.add(variableNode);
                     this.graph.addEdge(methodNode, variableNode, METHOD_OWN_VARIABLE);
                 }
             }
@@ -177,6 +197,29 @@ public class CodeGraph {
         for(CodeStructure file : code){
             if(file.containsMainMethod()) return file;
         }
+        return null;
+    }
+
+    public ArrayList<?> getNodeList(Class<?> type) {
+        if (type == CodeStructure.class) {
+            return this.codeStructureNodes;
+        }
+        else if (type == ClassStructure.class) {
+            return this.classStructureNodes;
+        }
+        else if (type == VariableStructure.class) {
+            return this.variableStructureNodes;
+        }
+        else if (type == MethodStructure.class) {
+            return this.methodStructureNodes;
+        }
+        else if (type == ImportStructure.class) {
+            return this.importStructureNodes;
+        }
+        else if (type == PackageStructure.class) {
+            return this.packageStructureNodes;
+        }
+
         return null;
     }
 }

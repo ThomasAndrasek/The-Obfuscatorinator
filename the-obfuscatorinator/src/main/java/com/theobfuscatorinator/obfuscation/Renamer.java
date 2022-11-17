@@ -1,5 +1,7 @@
 package com.theobfuscatorinator.obfuscation;
 
+import com.theobfuscatorinator.codeInterpreter.MethodStructure;
+import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 import com.theobfuscatorinator.codegraph.CodeGraph;
 
 public class Renamer {
@@ -29,6 +31,10 @@ public class Renamer {
         }
 
         return className.toString();
+    }
+
+    public static void renamePrivateStaticVariableForMethod(MethodStructure methodStructure, VariableStructure variableStructure) {
+        
     }
 
     public static void renamePrivateStaticVariables(CodeGraph graph) {

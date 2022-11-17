@@ -99,6 +99,10 @@ public class VariableStructure {
                 }
             }
 
+            if (varToUse.equals("+")) {
+                continue;
+            }
+
             // Attempt to match the variable name with a declared variable in the class structure.
             // Match the longest found groupcount to be the declared variable found.
             Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
@@ -187,6 +191,10 @@ public class VariableStructure {
                 } else {
                     varToUse += potentialVar.charAt(i);
                 }
+            }
+
+            if (varToUse.equals("+")) {
+                continue;
             }
 
             Pattern findVar = Pattern.compile("(final[\\s]+)?([^=\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
