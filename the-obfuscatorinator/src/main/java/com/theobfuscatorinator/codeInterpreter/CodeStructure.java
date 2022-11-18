@@ -514,6 +514,39 @@ public class CodeStructure {
 
         return codeToReturn;
     }
+
+    public static String removeInnerCodeOfBraces(String code) {
+        String codeToReturn = code.substring(0);
+
+        int i = 0;
+        int curlyBraceLeft = 0;
+        int curlyBraceRight = 0;
+        while (i < codeToReturn.length()) {
+            if (codeToReturn.charAt(i) == '{') {
+                int j = i;
+                curlyBraceLeft = 1;
+                while (j < codeToReturn.length() && curlyBraceLeft > curlyBraceRight) {
+                    j++;
+
+                    if (codeToReturn.charAt(j) == '{') {
+                        curlyBraceLeft++;
+                    }
+                    else if (codeToReturn.charAt(j) == '}') {
+                        curlyBraceRight++;
+                    }
+                }
+
+                codeToReturn = codeToReturn.substring(0, i) + codeToReturn.substring(j);
+                curlyBraceLeft = 0;
+                curlyBraceRight = 0;
+                i = j+1;
+            }
+
+            i++;
+        }
+
+        return codeToReturn;
+    }
 }
 
     

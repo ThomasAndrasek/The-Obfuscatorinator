@@ -45,6 +45,8 @@ public class CodeGraph {
         this.variableStructureNodes = new ArrayList<>();
 
         for (CodeStructure codeStruct : code) {
+            System.out.println(CodeStructure.removeInnerCodeOfBraces(codeStruct.getUnCommentedCode()));
+            
             ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
             for (ClassStructure classStruct : codeStruct.getClasses()) {
                 classStructureNodes.add(new Node<ClassStructure>(classStruct));
