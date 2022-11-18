@@ -68,9 +68,6 @@ public class Renamer {
             }
 
             if (privateStaticVariables.size() > 0) {
-                // System.out.println(privateStaticVariables.get(0));
-                // System.out.println(privateStaticVariables.size());
-                // System.out.println(classStructNodesToVisit.size());
                 for (int i = 0; i < classStructNodesToVisit.size(); i++) {
                     for (Edge edgeFromClass : classStructNodesToVisit.get(i).getEdges()) {
                         if (edgeFromClass.getEnd().getValue() instanceof ClassStructure && edgeFromClass.getType() == CodeGraph.CLASS_OWN_CLASS) {
