@@ -161,7 +161,7 @@ public class StringEncryption {
         builder.append(String.format("int %s = %s[%s] - %s; ", second, param, iVar, first));
         builder.append(String.format("%s /= 100; ", second));
         builder.append(String.format("%s /= %s; ", second, first));
-        builder.append(String.format("int %s = %s - %d; ", completed, second, CONST_OFFSET);
+        builder.append(String.format("int %s = %s - %d; ", completed, second, CONST_OFFSET));
         builder.append(String.format("%s /= %d; ", completed, CONST_MULT));
         builder.append(String.format("%s += (char) %s; ", decrypted, completed));
         builder.append(String.format("} return %s; }", decrypted));
