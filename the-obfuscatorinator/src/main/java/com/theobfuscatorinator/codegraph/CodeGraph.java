@@ -83,7 +83,6 @@ public class CodeGraph {
                 for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
                     Node<ClassStructure> n = new Node<>(classStruct);
                     classStructureNodes.add(n);
-                    this.classStructureNodes.add(n);
                     this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
                 }
 
@@ -200,26 +199,27 @@ public class CodeGraph {
         return null;
     }
 
-    public ArrayList<?> getNodeList(Class<?> type) {
-        if (type == CodeStructure.class) {
-            return this.codeStructureNodes;
-        }
-        else if (type == ClassStructure.class) {
-            return this.classStructureNodes;
-        }
-        else if (type == VariableStructure.class) {
-            return this.variableStructureNodes;
-        }
-        else if (type == MethodStructure.class) {
-            return this.methodStructureNodes;
-        }
-        else if (type == ImportStructure.class) {
-            return this.importStructureNodes;
-        }
-        else if (type == PackageStructure.class) {
-            return this.packageStructureNodes;
-        }
+    public ArrayList<Node<CodeStructure>> getCodeStructureNodes() {
+        return this.codeStructureNodes;
+    }
 
-        return null;
+    public ArrayList<Node<ClassStructure>> getclassStructureNodes() {
+        return this.classStructureNodes;
+    }
+
+    public ArrayList<Node<MethodStructure>> getMethodStructureNodes() {
+        return this.methodStructureNodes;
+    }
+
+    public ArrayList<Node<VariableStructure>> getVariableStructureNodes() {
+        return this.variableStructureNodes;
+    }
+
+    public ArrayList<Node<ImportStructure>> getImportStructureNodes() {
+        return this.importStructureNodes;
+    }
+
+    public ArrayList<Node<PackageStructure>> getPackageStructureNodes() {
+        return this.packageStructureNodes;
     }
 }
