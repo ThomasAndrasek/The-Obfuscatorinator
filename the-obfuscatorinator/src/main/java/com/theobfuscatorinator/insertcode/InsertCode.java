@@ -51,9 +51,9 @@ public class InsertCode {
     public static String generateDummyClass() {
     	String className = getRandomString();
         String varName = getRandomString();
-    	String startClassCode = "public static class " + className + " {";
+    	String startClassCode = String.format("public static class %s {", className);
     	String dummyPrint = "";
-    	String dummyLine = "\t\t\t" + String.format("int %s = 0;\n", varName);
+    	String dummyLine = String.format("\t\t\tint %s = 0;\n", varName);
     	String tempLine = "";
     	int maxLines = 30;
     	for (int i = 1; i <= maxLines; i++) {
@@ -65,8 +65,7 @@ public class InsertCode {
     	
     	String allDummyCode = "\n\t" + startClassCode + "\n" + "\n";
     	allDummyCode += "\t\tpublic static void main(String[] args) {";
-    	allDummyCode += "\n" + "\n" + dummyLine + "\n" + "\t" + "\t}";
-    	allDummyCode += "\n" + "\t}" + "\n"; 
+    	allDummyCode += String.format("\n\n%s\n\t\t}\n\t}\n", dummyLine);
     	
     	return allDummyCode;
     }
@@ -84,19 +83,19 @@ public class InsertCode {
             if (codeByLines[i].endsWith("}") || codeByLines[i].endsWith("}\n")) {
                 continue;
             }
-            if (codeByLines[i].contains("public") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("public") != 0) {
-                codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("public") + 4) + generateDummyString();
-            }
-            if (codeByLines[i].contains("private") && codeByLines[i].endsWith("{") && codeByLines[i].indexOf("private") != 0) {
-                codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf("private") + 4) + generateDummyString();
-            }
+	    for (String accessor : new String[] {"private", "public"}) {
+	        if (codeByLines[i].contains(accessor) && codeByLines[i].endsWith("{") && codeByLines[i].indexOf(accessor) != 0) {
+                    codeByLines[i] = codeByLines[i] + "\n" + " ".repeat(codeByLines[i].indexOf(accessor) + 4) + generateDummyString();
+                }
+	    }
         }
 
         //Converts the entire code file back into a string
-        String newCode = new String();
-        for (String line:codeByLines) {
-            newCode += line + "\n";
+        StringBuilder newCodeBuilder = new StringBuilder();
+        for (String line : codeByLines) {
+            newCodeBuilder.append(line + "\n");
         }
+	String newCode = newCodeBuilder.toString();
 
         codeStructure.setUnCommentedCode(newCode);
         return newCode;
