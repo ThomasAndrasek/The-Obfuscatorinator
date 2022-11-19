@@ -290,7 +290,7 @@ public class CodeStructure {
         int index = 0;
         while(classMatcher.find(index)){
             int classStart = classMatcher.end();
-            int i = 0;
+            int i = classMatcher.start();
             while (i < removedStringsCode.length() && removedStringsCode.charAt(i) != '{') {
                 i++;
             }

@@ -23,8 +23,10 @@ public class App
 {
     public static void main( String[] args ) {
         /* Try/Catch Block for custom error message.*/
-        try{
-            if(args.length == 0) throw new IllegalArgumentException("Not enough arguments");
+        try {
+            if (args.length == 0) {
+                throw new IllegalArgumentException("Not enough arguments");
+            }
             String copyPath = "output";
             Vector<String> inputFiles = new Vector<String>();
 
@@ -34,46 +36,52 @@ public class App
                     removeSpaces = true, removeNewlines = true;
             int percentUnicode = 5;
             int numNewlines = 0;
-            for(int i = 0; i < args.length; i++){
-                if(args[i].equals("--target")){
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("--target")) {
                     i++;
-                    if(i >= args.length) throw new IllegalArgumentException("Target Missing");
+                    if (i >= args.length) {
+                        throw new IllegalArgumentException("Target Missing");
+                    }
                     copyPath = args[i];
                 }
-                else if(args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
-                else if(args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
-                else if(args[i].equalsIgnoreCase("--nounicode")) unicode = false;
-                else if(args[i].equalsIgnoreCase("--novariablerenames")) renameVariables = false;
-                else if(args[i].equalsIgnoreCase("--keepSpaces")) removeSpaces = false;
-                else if(args[i].equalsIgnoreCase("--keepNewlines")) removeNewlines = false;
-                else if(args[i].equalsIgnoreCase("--unicodeFreq")){
+                else if (args[i].equalsIgnoreCase("--nomethodrenames")) renameMethods = false;
+                else if (args[i].equalsIgnoreCase("--nofakecode")) insertCode = false;
+                else if (args[i].equalsIgnoreCase("--nounicode")) unicode = false;
+                else if (args[i].equalsIgnoreCase("--novariablerenames")) renameVariables = false;
+                else if (args[i].equalsIgnoreCase("--keepSpaces")) removeSpaces = false;
+                else if (args[i].equalsIgnoreCase("--keepNewlines")) removeNewlines = false;
+                else if (args[i].equalsIgnoreCase("--unicodeFreq")) {
                     i++;
-                    if(i >= args.length)
+                    if (i >= args.length) {
                         throw new IllegalArgumentException("Unicode Char Frequency Missing");
+                    }
                     percentUnicode = Integer.parseInt(args[i]);
                 }
-                else if(args[i].equalsIgnoreCase("--filelinecount")){
+                else if (args[i].equalsIgnoreCase("--filelinecount")) {
                     i++;
-                    if(i >= args.length)
+                    if (i >= args.length) {
                         throw new IllegalArgumentException("Number of lines per file argument missing");
+                    }
                     numNewlines = Integer.parseInt(args[i]);
                 }
-                else{
-                    if(!(new File(args[i])).exists())
+                else {
+                    if (!(new File(args[i])).exists()) {
                          throw new IllegalArgumentException("Source File " + args[i] +
                                                              " does not exist.");
+                    }
                     inputFiles.add(args[i]);
                 }
             }
-            if(inputFiles.size() == 0)
+            if (inputFiles.size() == 0) {
                  throw new IllegalArgumentException("No Source Files Provided");
+            }
 
             File targetDirectory = FileManager.copyAndStoreFiles(inputFiles, copyPath);
 
             ArrayList<CodeStructure> codeStructures = new ArrayList<CodeStructure>();
             HashSet<File> fileSet = FileManager.getAllFilesFromDirectory(targetDirectory);
-            for(File f : fileSet){
-                if (f.getName().endsWith(".java")){
+            for (File f : fileSet) {
+                if (f.getName().endsWith(".java")) {
                     System.out.println("Constructing Code Structure for " + f.getName() + " ...");
                     codeStructures.add(new CodeStructure(f));
                 }
@@ -81,9 +89,7 @@ public class App
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
             codeGraph.printCodeGraph();
-
-            com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);
-
+            com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
 
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
@@ -128,7 +134,7 @@ public class App
             // else System.out.println("This project has no main method.");
             // System.out.println("Done!");
         }
-        catch(Exception e){
+        catch (Exception e) {
             System.err.println("Exception thrown: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
