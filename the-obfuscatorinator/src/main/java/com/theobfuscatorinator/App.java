@@ -89,15 +89,15 @@ public class App
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
             codeGraph.printCodeGraph();
-            com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
+            //com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
 
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);
 
-            // if(renameClasses){
+            // if (renameClasses) {
             //     System.out.println("Renaming Classes...");
             //     Renamer.renameClasses(codeStructures);
             // }
-            // if(renameMethods) {
+            // if (renameMethods) {
             //     System.out.println("Renaming Methods...");
             //     Renamer.renameMethods(codeStructures);
             // }
@@ -107,29 +107,34 @@ public class App
             //     Renamer.renameVariables(codeStructures);
             // }
 
-            // if(insertCode){
+            // if (insertCode) {
             //     System.out.println("Inserting Dummy Code...");
             //     InsertCode.insertCode(codeStructures);
             // }
-            // if(addDecryption){
+            
+            // if (addDecryption) {
             //     System.out.println("Adding Decryption Methods...");
             //     StringEncryption.addDecryptionMethod(codeStructures);
             // }
-            // if(unicode) {
+            
+            // if (unicode) {
             //     System.out.println("Swapping in Unicode...");
             //     Unicoder.swapForUnicode(codeStructures, percentUnicode);
             // }
-            // if(removeNewlines){
+            
+            // if (removeNewlines) {
             //     WhitespaceHandler.newlineClearAndInsert(codeStructures, numNewlines);
             // }
-            // if(removeSpaces){
+            
+            // if (removeSpaces) {
             //     WhitespaceHandler.removeSpaces(codeStructures);
             // }
+            
             // System.out.println("Writing Files...");
             // FileManager.writeToFiles(codeStructures);
-            // if(main != null){
+            // if (main != null) {
             //     System.out.println("Main Method can be found in class " +
-            //             main.getClasses().get(0).getName());
+            //             main.getClassStructures().get(0).getName());
             // }
             // else System.out.println("This project has no main method.");
             // System.out.println("Done!");

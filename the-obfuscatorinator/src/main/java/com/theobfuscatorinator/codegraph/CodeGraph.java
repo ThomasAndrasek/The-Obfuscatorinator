@@ -3,6 +3,7 @@ package com.theobfuscatorinator.codegraph;
 import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.CodeStructure;
 import com.theobfuscatorinator.codeInterpreter.ImportStructure;
+import com.theobfuscatorinator.codeInterpreter.InterfaceStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
 import com.theobfuscatorinator.codeInterpreter.PackageStructure;
 import com.theobfuscatorinator.codeInterpreter.VariableStructure;
@@ -19,13 +20,14 @@ import java.util.ArrayList;
  */
 public class CodeGraph {
     public static final int FILE_OWN_CLASS = 0;
-    public static final int FILE_IS_PART_OF_PACKAGE = 1;
-    public static final int FILE_USES_IMPORT = 2;
-    public static final int CLASS_OWN_METHOD = 3;
-    public static final int CLASS_OWN_CLASS = 4;
-    public static final int CLASS_OWN_VARIABLE = 5;
-    public static final int METHOD_OWN_PARAMETER = 6;
-    public static final int METHOD_OWN_VARIABLE = 7;
+    public static final int FILE_OWN_INTERFACE = 1;
+    public static final int FILE_IS_PART_OF_PACKAGE = 2;
+    public static final int FILE_USES_IMPORT = 3;
+    public static final int CLASS_OWN_METHOD = 4;
+    public static final int CLASS_OWN_CLASS = 5;
+    public static final int CLASS_OWN_VARIABLE = 6;
+    public static final int METHOD_OWN_PARAMETER = 7;
+    public static final int METHOD_OWN_VARIABLE = 8;
 
     private Graph graph;
     private ArrayList<Node<CodeStructure>> codeStructureNodes;
@@ -34,6 +36,7 @@ public class CodeGraph {
     private ArrayList<Node<MethodStructure>> methodStructureNodes;
     private ArrayList<Node<ImportStructure>> importStructureNodes;
     private ArrayList<Node<PackageStructure>> packageStructureNodes;
+    private ArrayList<Node<InterfaceStructure>> interfaceStructureNodes;
 
     public CodeGraph(ArrayList<CodeStructure> code) {
         this.graph = new Graph();
@@ -43,6 +46,7 @@ public class CodeGraph {
         this.methodStructureNodes = new ArrayList<>();
         this.packageStructureNodes = new ArrayList<>();
         this.variableStructureNodes = new ArrayList<>();
+        this.interfaceStructureNodes = new ArrayList<>();
 
         for (CodeStructure codeStruct : code) {
             System.out.println(CodeStructure.removeInnerCodeOfBraces(codeStruct.getUnCommentedCode()));
@@ -73,6 +77,14 @@ public class CodeGraph {
                 this.graph.addNode(importStructureNode);
                 this.importStructureNodes.add(importStructureNode);
                 this.graph.addEdge(codeStructureNode, importStructureNode, FILE_USES_IMPORT);
+            }
+
+            ArrayList<InterfaceStructure> interfaceStructures = InterfaceStructure.identifyInterfaceStructures(codeStruct);
+            for (InterfaceStructure interfaceStructure : interfaceStructures) {
+                Node<InterfaceStructure> interfaceStructureNode = new Node<InterfaceStructure>(interfaceStructure);
+                this.graph.addNode(interfaceStructureNode);
+                this.interfaceStructureNodes.add(interfaceStructureNode);
+                this.graph.addEdge(codeStructureNode, interfaceStructureNode, FILE_OWN_INTERFACE);
             }
 
             while (classStructureNodes.size() > 0) {
@@ -182,6 +194,10 @@ public class CodeGraph {
                         ImportStructure importStructure = (ImportStructure) edge.getEnd().getValue();
                         System.out.println("\t" + importStructure);
                     }
+                    else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                        InterfaceStructure interfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + interfaceStructure.getName());
+                    }
 
                     System.out.println("\t" + edge.getType());
                 }
@@ -223,5 +239,9 @@ public class CodeGraph {
 
     public ArrayList<Node<PackageStructure>> getPackageStructureNodes() {
         return this.packageStructureNodes;
+    }
+
+    public ArrayList<Node<InterfaceStructure>> getInterfaceStructureNodes() {
+        return this.interfaceStructureNodes;
     }
 }
