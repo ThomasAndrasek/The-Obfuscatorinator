@@ -478,7 +478,7 @@ public class CodeStructure {
 
 
     public static String removeInnerCode(String code) {
-        String codeToReturn = code.substring(0);
+        String codeToReturn = code;
 
         int i = 0;
         int curlyBraceLeft = 0;
@@ -516,7 +516,7 @@ public class CodeStructure {
     }
 
     public static String removeInnerCodeOfBraces(String code) {
-        String codeToReturn = code.substring(0);
+        String codeToReturn = code;
 
         int i = 0;
         int curlyBraceLeft = 0;
@@ -536,10 +536,9 @@ public class CodeStructure {
                     }
                 }
 
-                codeToReturn = codeToReturn.substring(0, i) + codeToReturn.substring(j);
+                codeToReturn = codeToReturn.substring(0, i+1) + codeToReturn.substring(j);
                 curlyBraceLeft = 0;
                 curlyBraceRight = 0;
-                i = j+1;
             }
 
             i++;
