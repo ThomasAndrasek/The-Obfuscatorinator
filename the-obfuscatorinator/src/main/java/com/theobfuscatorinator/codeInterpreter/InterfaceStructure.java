@@ -45,4 +45,54 @@ public class InterfaceStructure {
 
         return interfaces;
     }
+
+    public static ArrayList<InterfaceStructure> identifyInterfaceStructures(ClassStructure classStructure) {
+        ArrayList<InterfaceStructure> interfaces = new ArrayList<>();
+
+        String code = CodeStructure.removeInnerCodeOfBraces(classStructure.getCode());
+
+        Pattern findInterface = Pattern.compile("interface[\\s]+([^\\s]+){1}");
+        Matcher interfaceMatcher = findInterface.matcher(code);
+
+        while (interfaceMatcher.find()) {
+            Pattern findSpecificInterface = Pattern.compile("interface[\\s]+" + interfaceMatcher.group(1));
+            Matcher specificInterfaceMatcher = findSpecificInterface.matcher(classStructure.getCode());
+
+            while (specificInterfaceMatcher.find()) {
+                int start = specificInterfaceMatcher.end(0);
+                while (classStructure.getCode().charAt(start) != '{') {
+                    start++;
+                }
+                String innerInterfaceCode = CodeStructure.getCodeBetweenBrackets(classStructure.getCode(), start, '{', '}').first;
+                interfaces.add(new InterfaceStructure(interfaceMatcher.group(1), innerInterfaceCode));
+            }
+        }
+
+        return interfaces;
+    }
+
+    public static ArrayList<InterfaceStructure> identifyInterfaceStructures(InterfaceStructure interfaceStructure) {
+        ArrayList<InterfaceStructure> interfaces = new ArrayList<>();
+
+        String code = CodeStructure.removeInnerCodeOfBraces(interfaceStructure.getInnerCode());
+
+        Pattern findInterface = Pattern.compile("interface[\\s]+([^\\s]+){1}");
+        Matcher interfaceMatcher = findInterface.matcher(code);
+
+        while (interfaceMatcher.find()) {
+            Pattern findSpecificInterface = Pattern.compile("interface[\\s]+" + interfaceMatcher.group(1));
+            Matcher specificInterfaceMatcher = findSpecificInterface.matcher(interfaceStructure.getInnerCode());
+
+            while (specificInterfaceMatcher.find()) {
+                int start = specificInterfaceMatcher.end(0);
+                while (interfaceStructure.getInnerCode().charAt(start) != '{') {
+                    start++;
+                }
+                String innerInterfaceCode = CodeStructure.getCodeBetweenBrackets(interfaceStructure.getInnerCode(), start, '{', '}').first;
+                interfaces.add(new InterfaceStructure(interfaceMatcher.group(1), innerInterfaceCode));
+            }
+        }
+
+        return interfaces;
+    }
 }

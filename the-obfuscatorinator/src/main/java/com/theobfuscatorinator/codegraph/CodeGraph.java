@@ -28,6 +28,7 @@ public class CodeGraph {
     public static final int CLASS_OWN_VARIABLE = 6;
     public static final int METHOD_OWN_PARAMETER = 7;
     public static final int METHOD_OWN_VARIABLE = 8;
+    public static final int INTERFACE_OWN_INTERFACE = 9;
 
     private Graph graph;
     private ArrayList<Node<CodeStructure>> codeStructureNodes;
@@ -78,41 +79,56 @@ public class CodeGraph {
             }
 
             ArrayList<InterfaceStructure> interfaceStructures = InterfaceStructure.identifyInterfaceStructures(codeStruct);
+            ArrayList<Node<InterfaceStructure>> interfaceStructureNodes = new ArrayList<>();
             for (InterfaceStructure interfaceStructure : interfaceStructures) {
                 Node<InterfaceStructure> interfaceStructureNode = new Node<InterfaceStructure>(interfaceStructure);
-                this.graph.addNode(interfaceStructureNode);
-                this.interfaceStructureNodes.add(interfaceStructureNode);
-                this.graph.addEdge(codeStructureNode, interfaceStructureNode, FILE_OWN_INTERFACE);
+                interfaceStructureNodes.add(interfaceStructureNode);
             }
 
-            while (classStructureNodes.size() > 0) {
-                Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
+            while (classStructureNodes.size() > 0 || interfaceStructureNodes.size() > 0) {
+                if (classStructureNodes.size() > 0) {
+                    Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
 
-                this.graph.addNode(classStructNode);
-                this.classStructureNodes.add(classStructNode);
-                this.graph.addEdge(codeStructureNode, classStructNode, FILE_OWN_CLASS);
-
-                for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
-                    Node<ClassStructure> n = new Node<>(classStruct);
-                    classStructureNodes.add(n);
-                    this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
+                    this.graph.addNode(classStructNode);
+                    this.classStructureNodes.add(classStructNode);
+                    this.graph.addEdge(codeStructureNode, classStructNode, FILE_OWN_CLASS);
+    
+                    for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
+                        Node<ClassStructure> n = new Node<>(classStruct);
+                        classStructureNodes.add(n);
+                        this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
+                    }
+    
+                    for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
+                        Node<MethodStructure> methodNode = new Node<>(methodStruct);
+                        methodStructureNodes.add(methodNode);
+    
+                        this.graph.addNode(methodNode);
+                        this.methodStructureNodes.add(methodNode);
+                        this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
+                    }
+    
+                    for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
+                        Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
+    
+                        this.graph.addNode(variableNode);
+                        this.variableStructureNodes.add(variableNode);
+                        this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
+                    }
                 }
+                
+                if (interfaceStructureNodes.size() > 0) {
+                    Node<InterfaceStructure> interfaceStructNode = interfaceStructureNodes.remove(0);
 
-                for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
-                    Node<MethodStructure> methodNode = new Node<>(methodStruct);
-                    methodStructureNodes.add(methodNode);
+                    this.graph.addNode(interfaceStructNode);
+                    this.interfaceStructureNodes.add(interfaceStructNode);
+                    this.graph.addEdge(codeStructureNode, interfaceStructNode, FILE_OWN_INTERFACE);
 
-                    this.graph.addNode(methodNode);
-                    this.methodStructureNodes.add(methodNode);
-                    this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
-                }
-
-                for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
-                    Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
-
-                    this.graph.addNode(variableNode);
-                    this.variableStructureNodes.add(variableNode);
-                    this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
+                    for (InterfaceStructure interfaceStruct : InterfaceStructure.identifyInterfaceStructures(interfaceStructNode.getValue())) {
+                        Node <InterfaceStructure> n = new Node<>(interfaceStruct);
+                        interfaceStructureNodes.add(n);
+                        this.graph.addEdge(interfaceStructNode, n, INTERFACE_OWN_INTERFACE);
+                    }
                 }
             }
 
@@ -195,6 +211,19 @@ public class CodeGraph {
                     else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
                         InterfaceStructure interfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
                         System.out.println("\t" + interfaceStructure.getName());
+                    }
+
+                    System.out.println("\t" + edge.getType());
+                }
+            }
+            else if (node.getValue() instanceof InterfaceStructure) {
+                InterfaceStructure interfaceStructure = (InterfaceStructure) node.getValue();
+                System.out.println(interfaceStructure.getName());
+
+                for (Edge edge : node.getEdges()) {
+                    if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                        InterfaceStructure innerInterfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + innerInterfaceStructure.getName());
                     }
 
                     System.out.println("\t" + edge.getType());
