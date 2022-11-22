@@ -26,9 +26,10 @@ public class CodeGraph {
     public static final int CLASS_OWN_METHOD = 4;
     public static final int CLASS_OWN_CLASS = 5;
     public static final int CLASS_OWN_VARIABLE = 6;
-    public static final int METHOD_OWN_PARAMETER = 7;
-    public static final int METHOD_OWN_VARIABLE = 8;
-    public static final int INTERFACE_OWN_INTERFACE = 9;
+    public static final int CLASS_OWN_INTERFACE = 7;
+    public static final int METHOD_OWN_PARAMETER = 8;
+    public static final int METHOD_OWN_VARIABLE = 9;
+    public static final int INTERFACE_OWN_INTERFACE = 10;
 
     private Graph graph;
     private ArrayList<Node<CodeStructure>> codeStructureNodes;
@@ -115,6 +116,12 @@ public class CodeGraph {
                         this.variableStructureNodes.add(variableNode);
                         this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
                     }
+
+                    for (InterfaceStructure interfaceStruct : InterfaceStructure.identifyInterfaceStructures(classStructNode.getValue())) {
+                        Node <InterfaceStructure> n = new Node<>(interfaceStruct);
+                        interfaceStructureNodes.add(n);
+                        this.graph.addEdge(classStructNode, n, CLASS_OWN_INTERFACE);
+                    }
                 }
                 
                 if (interfaceStructureNodes.size() > 0) {
@@ -170,7 +177,12 @@ public class CodeGraph {
                     else if (edge.getEnd().getValue() instanceof ClassStructure) {
                         ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
                         System.out.println("\t" + innerClassStruct.getClassName());
-                    } else {
+                    } 
+                    else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                        InterfaceStructure interfaceStruct = (InterfaceStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + interfaceStruct.getName());
+                    }
+                    else {
                         VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
                         System.out.println("\t" + variableStructure);
                     }
