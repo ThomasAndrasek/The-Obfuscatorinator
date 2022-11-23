@@ -167,7 +167,7 @@ public class CodeGraph {
         for (Node<?> node : this.graph.getNodes()) {
             if (node.getValue() instanceof ClassStructure) {
                 ClassStructure classStruct = (ClassStructure) node.getValue();
-                System.out.println(classStruct.getClassName());
+                System.out.println(classStruct.getName());
 
                 for (Edge edge : node.getEdges()) {
                     if (edge.getEnd().getValue() instanceof MethodStructure) {
@@ -176,7 +176,7 @@ public class CodeGraph {
                     }
                     else if (edge.getEnd().getValue() instanceof ClassStructure) {
                         ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
-                        System.out.println("\t" + innerClassStruct.getClassName());
+                        System.out.println("\t" + innerClassStruct.getName());
                     } 
                     else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
                         InterfaceStructure interfaceStruct = (InterfaceStructure) edge.getEnd().getValue();
@@ -210,7 +210,7 @@ public class CodeGraph {
                 for (Edge edge : node.getEdges()) {
                     if (edge.getEnd().getValue() instanceof ClassStructure) {
                         ClassStructure classStructure = (ClassStructure) edge.getEnd().getValue();
-                        System.out.println("\t" + classStructure.getClassName());
+                        System.out.println("\t" + classStructure.getName());
                     }
                     else if (edge.getEnd().getValue() instanceof PackageStructure) {
                         PackageStructure packageStructure = (PackageStructure) edge.getEnd().getValue();
@@ -250,9 +250,9 @@ public class CodeGraph {
      * @return The CodeStructure object in the HashSet that contains the main method. Null if no main method exists.
      */
     public static CodeStructure findMainMethod(ArrayList<CodeStructure> code){
-        for(CodeStructure file : code){
-            if(file.containsMainMethod()) return file;
-        }
+        // for(CodeStructure file : code){
+        //     if(file.containsMainMethod()) return file;
+        // }
         return null;
     }
 

@@ -87,8 +87,11 @@ public class App
                 }
             }
 
-            CodeGraph codeGraph = new CodeGraph(codeStructures);
-            codeGraph.printCodeGraph();
+            // CodeGraph codeGraph = new CodeGraph(codeStructures);
+            // codeGraph.printCodeGraph();
+            for (CodeStructure codeStructure : codeStructures) {
+                ClassStructure.identifyClasses(codeStructure);
+            }
             //com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
 
             // CodeStructure main = CodeGraph.findMainMethod(codeStructures);

@@ -27,7 +27,6 @@ public class CodeStructure {
     
     private String noSpaceCode;
     private String newCommentCode;
-    private ArrayList<ClassStructure> classes;
 
     private String decryptionMethodName;
 
@@ -43,13 +42,12 @@ public class CodeStructure {
             fileName = codeFile.getName();
             originalCode = new String(Files.readAllBytes(input.toPath()));
 
-            classes = identifyClasses(originalCode);
-
             this.decryptionMethodName = Renamer.generateClassName();
             
             unCommentedCode = StringEncryption.encryptStrings(this, this.decryptionMethodName);
 
             unCommentedCode = removeComments(unCommentedCode);
+
             //removing the Strings is skipped in most cases as otherwise they would be lost
             noStringCode = removeStrings(unCommentedCode);
             newCommentCode = addComments(unCommentedCode);
@@ -275,68 +273,6 @@ public class CodeStructure {
     }
 
     /**
-     * Takes some java code as a string and identifies all of the classes that are in the
-     * code.
-     * 
-     * @param code Code to have the classes identified.
-     * @return ArrayList of all of the classes in the code as ClassStructure objects
-     */
-    private ArrayList<ClassStructure> identifyClasses(String code) {
-        ArrayList<ClassStructure> classes = new ArrayList<>();
-        String removedStringsCode = removeStrings(code);
-        removedStringsCode = removeComments(removedStringsCode);
-        Pattern classFinder = Pattern.compile("\\s+class\\s+");
-        Matcher classMatcher = classFinder.matcher(removedStringsCode);
-        int index = 0;
-        while(classMatcher.find(index)){
-            int classStart = classMatcher.end();
-            int i = classMatcher.start();
-            while (i < removedStringsCode.length() && removedStringsCode.charAt(i) != '{') {
-                i++;
-            }
-            String className = removedStringsCode.substring(classStart, i);
-                                                 
-            String full = className.substring(0);
-            
-            ArrayList<String> templates = new ArrayList<String>();
-            //Handle template arguments
-            if(className.contains("<")){
-                className = removedStringsCode.substring(classStart, removedStringsCode
-                        .indexOf("<", classStart)).trim();
-                Pair<String, Integer> templateContents =
-                     getCodeBetweenBrackets(removedStringsCode, classStart, '<', '>');
-                String arguments = templateContents.first;
-                templates = getCommaSeparatedValues(arguments);
-            }
-            Pair<String, Integer> currentClass = getCodeBetweenBrackets(removedStringsCode,
-                                                                        classStart, '{', '}');
-
-            int classEnd = className.indexOf(" ");
-            
-            if (classEnd == -1) {
-                classEnd = className.length();
-            }
-
-            className = className.substring(0, classEnd);
-            className = className.replaceAll("\\s+", "");
-            boolean implement = full.indexOf("implements") != -1;
-            String[] implementedClassesArray = new String[0];
-            if (implement) {
-                String implementedClasses = full.substring(full.indexOf("implements") + 10);
-                implementedClasses.trim();
-                implementedClassesArray = implementedClasses.split(",");
-            }
-            classes.add(new ClassStructure(currentClass.first, className, fileName,
-                                           new ArrayList<ClassStructure>(), templates, implement, implementedClassesArray));
-            
-            index = currentClass.second;
-        }
-        
-
-        return classes;
-    }
-
-    /**
      * Finds the next set of brackets in a string of code and gets the code that exists between
      * these brackets. This method is static and is intended to be used in other parts of the 
      * CodeStructure class library.
@@ -416,12 +352,12 @@ public class CodeStructure {
      * Returns true if the main method exists anywhere within this code structure.
      * @return True if the main method exists anywhere within this code structure.
      */
-    public boolean containsMainMethod(){
-        for(ClassStructure c : classes){
-            if(c.containsMainMethod()) return true;
-        }
-        return false;
-    }
+    // public boolean containsMainMethod(){
+    //     for(ClassStructure c : classes){
+    //         if(c.containsMainMethod()) return true;
+    //     }
+    //     return false;
+    // }
 
 
     public String getUnCommentedCode(){
@@ -445,7 +381,7 @@ public class CodeStructure {
     }
 
     public ArrayList<ClassStructure> getClasses(){
-        return classes;
+        return null;
     }
 
     public String getDecryptionMethodName() {

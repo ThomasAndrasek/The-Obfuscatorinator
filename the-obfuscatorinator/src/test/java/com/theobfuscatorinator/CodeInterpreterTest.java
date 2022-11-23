@@ -95,7 +95,7 @@ public class CodeInterpreterTest {
 
             int counter = 0;
             for (ClassStructure classobj : classes) {
-                String classStr = classobj.getClassName();
+                String classStr = classobj.getName();
                 assertTrue("Classes should not contain " + classStr, expected.contains(classStr));
                 counter++;
             }

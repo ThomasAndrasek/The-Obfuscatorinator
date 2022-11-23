@@ -42,7 +42,7 @@ public class Renamer {
     public static void renamePrivateStaticVariableForClass(ClassStructure classStructure, VariableStructure variableStructure) {
         String cleanedCode = CodeStructure.removeInnerCode(classStructure.getCode());
         System.out.println(variableStructure);
-        System.out.println(classStructure.getClassName());
+        System.out.println(classStructure.getName());
         System.out.println();
         //System.out.println(cleanedCode);
     }

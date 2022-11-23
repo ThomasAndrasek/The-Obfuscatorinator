@@ -76,7 +76,7 @@ public class Renamer {
     private static void renameClass(ClassStructure classStruct,
                                     ArrayList<CodeStructure> codeStructures) {
         // Original class name.
-        String og = classStruct.getClassName().substring(0);
+        String og = classStruct.getName().substring(0);
         // Generate new random class name.
         classStruct.setName(generateClassName());
         // Replace all instances of the old class name with the new.
