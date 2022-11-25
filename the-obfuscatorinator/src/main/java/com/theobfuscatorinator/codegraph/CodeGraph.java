@@ -102,14 +102,14 @@ public class CodeGraph {
                         this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
                     }
     
-                    // for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
-                    //     Node<MethodStructure> methodNode = new Node<>(methodStruct);
-                    //     methodStructureNodes.add(methodNode);
+                    for (MethodStructure methodStruct : MethodStructure.identifyMethods(classStructNode.getValue())) {
+                        Node<MethodStructure> methodNode = new Node<>(methodStruct);
+                        methodStructureNodes.add(methodNode);
     
-                    //     this.graph.addNode(methodNode);
-                    //     this.methodStructureNodes.add(methodNode);
-                    //     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
-                    // }
+                        this.graph.addNode(methodNode);
+                        this.methodStructureNodes.add(methodNode);
+                        this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
+                    }
     
                     for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
                         Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
