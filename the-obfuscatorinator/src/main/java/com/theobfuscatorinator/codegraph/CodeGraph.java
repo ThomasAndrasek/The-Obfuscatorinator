@@ -51,15 +51,18 @@ public class CodeGraph {
         this.interfaceStructureNodes = new ArrayList<>();
 
         for (CodeStructure codeStruct : code) {
-            ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
-            for (ClassStructure classStruct : codeStruct.getClasses()) {
-                classStructureNodes.add(new Node<ClassStructure>(classStruct));
-            }
             ArrayList<Node<MethodStructure>> methodStructureNodes = new ArrayList<>();
 
             Node<CodeStructure> codeStructureNode = new Node<CodeStructure>(codeStruct);
             this.graph.addNode(codeStructureNode);
             this.codeStructureNodes.add(codeStructureNode);
+
+            ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
+            for (ClassStructure classStruct : ClassStructure.identifyClasses(codeStruct)) {
+                Node<ClassStructure> classStructureNode = new Node<ClassStructure>(classStruct);
+                this.graph.addEdge(codeStructureNode, classStructureNode, FILE_OWN_CLASS);
+                classStructureNodes.add(classStructureNode);
+            }
 
             PackageStructure packageStructure = PackageStructure.identifyPackage(codeStruct);
             if (packageStructure != null) {
@@ -92,22 +95,21 @@ public class CodeGraph {
 
                     this.graph.addNode(classStructNode);
                     this.classStructureNodes.add(classStructNode);
-                    this.graph.addEdge(codeStructureNode, classStructNode, FILE_OWN_CLASS);
     
-                    for (ClassStructure classStruct : classStructNode.getValue().getClasses()) {
+                    for (ClassStructure classStruct : ClassStructure.identifyClasses(classStructNode.getValue())) {
                         Node<ClassStructure> n = new Node<>(classStruct);
                         classStructureNodes.add(n);
                         this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
                     }
     
-                    for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
-                        Node<MethodStructure> methodNode = new Node<>(methodStruct);
-                        methodStructureNodes.add(methodNode);
+                    // for (MethodStructure methodStruct : classStructNode.getValue().getMethods()) {
+                    //     Node<MethodStructure> methodNode = new Node<>(methodStruct);
+                    //     methodStructureNodes.add(methodNode);
     
-                        this.graph.addNode(methodNode);
-                        this.methodStructureNodes.add(methodNode);
-                        this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
-                    }
+                    //     this.graph.addNode(methodNode);
+                    //     this.methodStructureNodes.add(methodNode);
+                    //     this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
+                    // }
     
                     for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
                         Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);

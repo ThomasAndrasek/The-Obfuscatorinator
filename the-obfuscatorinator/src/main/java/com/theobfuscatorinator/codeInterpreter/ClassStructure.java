@@ -123,62 +123,34 @@ public class ClassStructure {
         return classes;
     }
 
-    /**
-     *
-     * @return ArrayList of ClassStructures that represents classes found in the code.
-     */
-    // private ArrayList<ClassStructure> identifyClasses() {
-    //     String code = sourceCode;
-    //     ArrayList<ClassStructure> classes = new ArrayList<>();
-    //     Pattern classFinder = Pattern.compile("\\s+class\\s+");
-    //     Matcher classMatcher = classFinder.matcher(code);
-    //     int index = 0;
-    //     while(classMatcher.find(index)){
-    //         int classStart = classMatcher.end();
-    //         int i = classStart;
-    //         while (i < code.length() && code.charAt(i) != '{') {
-    //             i++;
-    //         }
-    //         String className = code.substring(classStart, i);
+    public static ArrayList<ClassStructure> identifyClasses(ClassStructure classStructure) {
+        ArrayList<ClassStructure> classes = new ArrayList<>();
 
-    //         String full = className.substring(0);
+        Pattern classFinder = Pattern.compile("(public|private|protected)?[\\s]*class[\\s]*([^\\s<]+){1}");
+        String code = CodeStructure.removeInnerCodeOfBraces(CodeStructure.removeInnerCodeOfBraces(classStructure.getInnerCode()));
+        Matcher classMatcher = classFinder.matcher(code);
 
-    //         ArrayList<String> templates = new ArrayList<String>();
-    //         //Handle template arguments
-    //         if(className.contains("<")){
-    //             className = code.substring(classStart, code
-    //                     .indexOf("<", classStart)).trim();
-    //             CodeStructure.Pair<String, Integer> templateContents =
-    //                      CodeStructure.getCodeBetweenBrackets(code, classStart, '<', '>');
-    //             String arguments = templateContents.first;
-    //             templates = CodeStructure.getCommaSeparatedValues(arguments);
-    //         }
-
-    //         CodeStructure.Pair<String, Integer> currentClass =
-    //              CodeStructure.getCodeBetweenBrackets(code, classStart, '{', '}');
-    //         ArrayList<ClassStructure> newContainerList = new ArrayList<ClassStructure>(containers);
-    //         newContainerList.add(this);
-    //         int classEnd = className.indexOf(" ");
+        while (classMatcher.find()) {
+            int start = classMatcher.start(0);
+            int end = start;
+            while (code.charAt(end) != '{') {
+                end++;
+            }
+            String classHeader = code.substring(start, end).trim();
             
-    //         if (classEnd == -1) {
-    //             classEnd = className.length();
-    //         }
-    //         className = className.substring(0, classEnd);
-    //         className = className.replaceAll("\\s+", "");
-    //         boolean implement = full.indexOf("implements") != -1;
-    //         String[] implementedClassesArray = new String[0];
-    //         if (implement) {
-    //             String implementedClasses = full.substring(full.indexOf("implements") + 10);
-    //             implementedClasses.trim();
-    //             implementedClassesArray = implementedClasses.split(",");
-    //         }
-    //         classes.add(new ClassStructure(currentClass.first, className, sourceFile, 
-    //                                        newContainerList, templates, implement, implementedClassesArray));
-    //         index = currentClass.second;
-    //     }
+            Pattern actualClassFinder = Pattern.compile(classHeader);
+            Matcher actualClassMatcher = actualClassFinder.matcher(classStructure.getInnerCode());
 
-    //     return classes;
-    // }
+            while (actualClassMatcher.find()) {
+                int actualEnd = actualClassMatcher.end();
+                String innerCode = classStructure.getInnerCode().substring(actualClassMatcher.start(), CodeStructure.getCodeBetweenBrackets(classStructure.getInnerCode(), actualEnd, '{', '}').second + 1);
+                
+                classes.add(new ClassStructure(classHeader, innerCode));
+            }
+        }
+
+        return classes;
+    }
 
     /**
      * Finds all methods defined in this class. Does not include methods defined in other classes 
@@ -287,30 +259,6 @@ public class ClassStructure {
     // }
 
     /**
-     *
-     * @return Returns a version of this classes source code with all bodies of nested classes 
-     * removed. This is useful for making sure methods and variables that are added to this 
-     * ClassStructure belong to this class scope and not that of a nested class.
-     */
-    // private String ignoreNestedClasses(){
-    //     String out = "";
-    //     Pattern classFinder = Pattern.compile("\\s+class\\s+");
-    //     Matcher classMatcher = classFinder.matcher(sourceCode);
-    //     int index = 0;
-    //     while(classMatcher.find(index)){
-    //         int bodyStart = sourceCode.indexOf('{', classMatcher.end());
-    //         out += sourceCode.substring(index, bodyStart);
-    //         CodeStructure.Pair<String, Integer> currentClass =
-    //              CodeStructure.getCodeBetweenBrackets(sourceCode, classMatcher.end(), '{', '}');
-    //         index = currentClass.second;
-    //         if(index + 1 < sourceCode.length()) index++;
-    //     }
-    //     out += sourceCode.substring(index);
-
-    //     return out;
-    // }
-
-    /**
      * Checks if this class, or any nested classes, contains a main method.
      * @return True if this class contains the main method or contains another class for which this
      *  function returns true.
@@ -339,6 +287,10 @@ public class ClassStructure {
 
     public String getCode() {
         return "";
+    }
+
+    public String getInnerCode() {
+        return CodeStructure.getCodeBetweenBrackets(this.code, this.code.indexOf('{'), '{', '}').first;
     }
 
     @Override
