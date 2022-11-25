@@ -44,7 +44,7 @@ public class ClassStructure {
 
         this.generics = new String[0];
         if (classHeader.indexOf('<') == 0) {
-            String genericList = classHeader.substring(1, classHeader.indexOf('>'));
+            String genericList = classHeader.substring(1, classHeader.indexOf('>')+1);
             ArrayList<String> tempGenericList = new ArrayList<>();
             while (genericList.indexOf(',') != -1 && genericList.indexOf(',') < genericList.indexOf('>')) {
                 String generic = genericList.substring(0, genericList.indexOf(',')).trim();
@@ -54,7 +54,7 @@ public class ClassStructure {
 
             String generic = genericList.substring(0, genericList.indexOf('>'));
             tempGenericList.add(generic.trim());
-            this.generics = (String[]) tempGenericList.toArray();
+            this.generics = (String[]) tempGenericList.toArray(new String[tempGenericList.size()]);
             classHeader = classHeader.substring(classHeader.indexOf('>') + 1);
             classHeader = classHeader.trim();
         }
@@ -82,7 +82,7 @@ public class ClassStructure {
                 classHeader = classHeader.substring(classHeader.indexOf(',') + 1).trim();
             }
             tempImplementList.add(classHeader.trim());
-            this.implemented = (String[]) tempImplementList.toArray();
+            this.implemented = (String[]) tempImplementList.toArray(new String[tempImplementList.size()]);
         }
     }
 
@@ -116,7 +116,7 @@ public class ClassStructure {
                 int actualEnd = actualClassMatcher.end();
                 String innerCode = codeStructure.getUnCommentedCode().substring(actualClassMatcher.start(), CodeStructure.getCodeBetweenBrackets(codeStructure.getUnCommentedCode(), actualEnd, '{', '}').second + 1);
                 
-                classes.add(new ClassStructure(classHeader, code));
+                classes.add(new ClassStructure(classHeader, innerCode));
             }
         }
 
@@ -339,5 +339,43 @@ public class ClassStructure {
 
     public String getCode() {
         return "";
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder header = new StringBuilder();
+
+        if (!scope.equals("")) {
+            header.append(this.scope + " ");
+        }
+
+        header.append("class ");
+        header.append(this.name);
+
+        if (this.generics.length > 0) {
+            header.append("<");
+            header.append(this.generics[0]);
+            for (int i = 1; i < this.generics.length; i++) {
+                header.append(",");
+                header.append(this.generics[i]);
+            }
+            header.append(">");
+        }
+
+        if (!extended.equals("")) {
+            header.append(" extends ");
+            header.append(this.extended);
+        }
+
+        if (this.implemented.length > 0) {
+            header.append(" implements ");
+            header.append(this.implemented[0]);
+            for (int i = 1; i < this.implemented.length; i++) {
+                header.append(", ");
+                header.append(this.implemented[i]);
+            }
+        }
+
+        return header.toString();
     }
 }

@@ -90,7 +90,9 @@ public class App
             // CodeGraph codeGraph = new CodeGraph(codeStructures);
             // codeGraph.printCodeGraph();
             for (CodeStructure codeStructure : codeStructures) {
-                ClassStructure.identifyClasses(codeStructure);
+                for (ClassStructure classStructure : ClassStructure.identifyClasses(codeStructure)) {
+                    System.out.println(classStructure);
+                }
             }
             //com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
 
