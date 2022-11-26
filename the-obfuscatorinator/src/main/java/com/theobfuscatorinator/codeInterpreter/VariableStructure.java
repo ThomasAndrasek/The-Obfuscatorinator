@@ -162,6 +162,107 @@ public class VariableStructure {
         return variables;
     }
 
+    public static ArrayList<VariableStructure> identifyInterfaceVariables(InterfaceStructure interfaceStructure) {
+        // Hold list of variables found.
+        ArrayList<VariableStructure> variables = new ArrayList<>();
+
+        // Find all the variable names instantiated within the class structure.
+        Set<String> foundVariables = new HashSet<String>();
+        String code = interfaceStructure.getInnerCode();
+        Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
+        Matcher matcher = varFinder.matcher(code);
+        while (matcher.find()) {
+            String var = matcher.group(1);
+            foundVariables.add(var);
+        }
+
+        // Remove any inner nested code of the class.
+        code = CodeStructure.removeInnerCodeOfBraces(code);
+
+        for (String potentialVar : foundVariables) {
+            // Skip variables named 'this'
+            if (potentialVar.equals("this")) {
+                continue;
+            }
+
+            // Remove 'this.' from the variable name.
+            potentialVar = potentialVar.trim();
+            if (potentialVar.startsWith("this.")) {
+                potentialVar = potentialVar.substring(5);
+            }
+            // Append slashes to the variable if there are brackets for the regex.
+            String varToUse = "";
+            for (int i = 0; i < potentialVar.length(); i++) {
+                if (potentialVar.charAt(i) == ']' || potentialVar.charAt(i) == '[') {
+                    varToUse += "\\" + potentialVar.charAt(i);
+                } else {
+                    varToUse += potentialVar.charAt(i);
+                }
+            }
+
+            if (varToUse.equals("+")) {
+                continue;
+            }
+
+            // Attempt to match the variable name with a declared variable in the class structure.
+            // Match the longest found groupcount to be the declared variable found.
+            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+            Matcher varMatcher = findVar.matcher(code);
+            VariableStructure structure = null;
+            int maxGroupCount = 0;
+            while (varMatcher.find()) {
+                if (varMatcher.groupCount() <= maxGroupCount) {
+                    continue;
+                }
+
+                String scope = "";
+                boolean isStatic = false;
+                boolean isFinal = false;
+                String type = "";
+                String name = "";
+
+                boolean valid = true;
+
+                if (varMatcher.group(1) != null) {
+                    scope = varMatcher.group(1).trim();
+                }
+
+                if (varMatcher.group(2) != null) {
+                    isStatic = true;
+                }
+
+                if (varMatcher.group(3) != null) {
+                    isFinal = true;
+                }
+
+                if (varMatcher.group(4) != null) {
+                    type = varMatcher.group(4).trim();
+                    switch (type) {
+                        case "private":
+                        case "public":
+                        case "protected":
+                            valid = false;
+                    }
+                }
+
+                if (varMatcher.group(5) != null) {
+                    name = varMatcher.group(5).trim();
+                }
+
+                if (valid) {
+                    structure = new VariableStructure(scope, isStatic, isFinal, type, name, false, false);
+                    maxGroupCount = varMatcher.groupCount();
+                }
+            }
+
+            if (structure != null) {
+                variables.add(structure);
+            }
+        }
+
+        return variables;
+    }
+
     public static ArrayList<VariableStructure> identifyMethodVariables(MethodStructure methodStructure) {
         ArrayList<VariableStructure> variables = new ArrayList<>();
 

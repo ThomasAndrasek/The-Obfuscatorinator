@@ -30,6 +30,7 @@ public class CodeGraph {
     public static final int METHOD_OWN_PARAMETER = 8;
     public static final int METHOD_OWN_VARIABLE = 9;
     public static final int INTERFACE_OWN_INTERFACE = 10;
+    public static final int INTERFACE_OWN_VARIABLE = 11;
 
     private Graph graph;
     private ArrayList<Node<CodeStructure>> codeStructureNodes;
@@ -138,6 +139,14 @@ public class CodeGraph {
                         interfaceStructureNodes.add(n);
                         this.graph.addEdge(interfaceStructNode, n, INTERFACE_OWN_INTERFACE);
                     }
+
+                    for (VariableStructure variableStruct : VariableStructure.identifyInterfaceVariables(interfaceStructNode.getValue())) {
+                        Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
+    
+                        this.graph.addNode(variableNode);
+                        this.variableStructureNodes.add(variableNode);
+                        this.graph.addEdge(interfaceStructNode, variableNode, INTERFACE_OWN_VARIABLE);
+                    }
                 }
             }
 
@@ -238,6 +247,10 @@ public class CodeGraph {
                     if (edge.getEnd().getValue() instanceof InterfaceStructure) {
                         InterfaceStructure innerInterfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
                         System.out.println("\t" + innerInterfaceStructure.getName());
+                    }
+                    else if (edge.getEnd().getValue() instanceof VariableStructure) {
+                        VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                        System.out.println("\t" + variableStructure);
                     }
 
                     System.out.println("\t" + edge.getType());
