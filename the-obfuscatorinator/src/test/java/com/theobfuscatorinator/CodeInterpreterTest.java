@@ -68,39 +68,4 @@ public class CodeInterpreterTest {
         //checks that comments are added
         assertTrue(hold.contains("/*"));
     }
-    
-
-    @Test
-    public void testClassIdentifying() {
-        File f = new File("./src/test/res/individual-files/TestClassIdentifying.java");
-        if(f.exists()){
-            CodeStructure t = null;
-            try{
-                t = new CodeStructure(f);
-            }catch(Exception e){
-                e.printStackTrace();
-                //assertTrue("IOException Thrown in constructor", false);
-            }
-
-            ArrayList<ClassStructure> classes = t.getClasses();
-            assertTrue("Classes should not be empty", classes.size() > 0);
-
-            ArrayList<String> expected = new ArrayList<>();
-            expected.add("TestClassIdentifying");
-//            expected.add("InnerClass");
-//            expected.add("DeepInnerClass");
-//            expected.add("SecondInnerClass");
-//            expected.add("TestFormat");
-//            expected.add("TestFormat2");
-
-            int counter = 0;
-            for (ClassStructure classobj : classes) {
-                String classStr = classobj.getName();
-                assertTrue("Classes should not contain " + classStr, expected.contains(classStr));
-                counter++;
-            }
-
-            assertTrue("Classes should contain " + expected.size() + " classes, got: " + counter, counter == expected.size());
-        }
-    }
 }
