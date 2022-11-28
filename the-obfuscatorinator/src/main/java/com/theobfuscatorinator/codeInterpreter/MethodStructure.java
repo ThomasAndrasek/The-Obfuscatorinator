@@ -198,4 +198,110 @@ public class MethodStructure {
 
         return output;
     }
+
+    /**
+     * Finds all methods defined in this class. Does not include methods defined in other classes 
+     * nested within this class. This will not include constructors.
+     * @return An arraylist of MethodStructures that represents every method that was found.
+     */
+    public static ArrayList<MethodStructure> identifyMethods(InterfaceStructure interfaceStructure){
+        String code = interfaceStructure.getInnerCode();
+        ArrayList<MethodStructure> output = new ArrayList<MethodStructure>();
+        // Regex adopted from: https://stackoverflow.com/a/16118844/5956948
+        Pattern methodFinder = Pattern.compile("(?:(?:public|private|protected|static|final|native|synchronized|abstract|transient)+\\s+)+[$_\\w<>\\[\\]\\s]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?");
+        Matcher methodMatcher = methodFinder.matcher(code);
+        int index = 0;
+        while(methodMatcher.find(index)){
+            String method = "";
+            int i = 0;
+            while (i <= methodMatcher.groupCount() && methodMatcher.group(i) != null){
+                method += methodMatcher.group(i);
+                i++;
+            }
+
+            String fullMethod = method.substring(0);
+
+            method = method.replaceAll("\\s+", " ");
+
+            if (method == "") {
+                break;
+            }
+
+            int indexB = code.indexOf(fullMethod) - 1;
+
+            String inbetween = "";
+            while (indexB >= 0) {
+                char c = code.charAt(indexB);
+                if (c == '{' || c == '}' || c == ';') {
+                    break;
+                }
+                inbetween = c + inbetween;
+                indexB--;
+            }
+
+            boolean valid = true;
+            if (inbetween.toString().contains("@Override")) {
+                valid = false;
+            }
+
+            String scope = "";
+            if (method.startsWith("public")) {
+                scope = "public";
+                method = method.substring(7);
+            } else if (method.startsWith("private")) {
+                scope = "private";
+                method = method.substring(8);
+            } else if (method.startsWith("protected")) {
+                scope = "protected";
+                method = method.substring(9);
+            }
+
+            String staticStatus = "";
+            if (method.startsWith("static")) {
+                staticStatus = "static";
+                method = method.substring(7);
+            }
+
+            String name = "";
+            if (method.contains("(")) {
+                int indexC = method.indexOf("(");
+                int extraSpace = 0;
+                if (method.charAt(indexC - 1) == ' ') {
+                    extraSpace = 1;
+                    indexC -= 2;
+                }
+                while (indexC != -1 && method.charAt(indexC) != ' ') {
+                    indexC--;
+                }
+                name = method.substring(indexC+1, method.indexOf("(") - extraSpace);
+                method = method.substring(0, indexC+1) + method.substring(method.indexOf("("));
+            }
+
+            String arguments = "";
+            if (method.contains("(")) {
+                arguments = method.substring(method.indexOf("(") + 1, method.indexOf(")"));
+                method = method.substring(0, method.indexOf("("));
+            }
+
+            String template = "";
+            if (method.startsWith("<")) {
+                template = method.substring(0, method.indexOf(">") + 1);
+                method = method.substring(method.indexOf(">") + 2);
+            }
+
+            String returnType = method;
+
+            CodeStructure.Pair<String, Integer> detectBody =
+                 CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
+            index = detectBody.second;
+
+            if (!returnType.equals("") && valid) {
+                output.add(
+                    new MethodStructure(name, scope, staticStatus, template, arguments, 
+                                        returnType, detectBody.first));
+            } 
+        }
+
+        return output;
+    }
 }
