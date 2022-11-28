@@ -67,7 +67,7 @@ public class VariableStructure {
 
         // Find all the variable names instantiated within the class structure.
         Set<String> foundVariables = new HashSet<String>();
-        String code = classStructure.getCode();
+        String code = classStructure.getInnerCode();
         Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
@@ -76,7 +76,7 @@ public class VariableStructure {
         }
 
         // Remove any inner nested code of the class.
-        code = CodeStructure.removeInnerCode(code);
+        code = CodeStructure.removeInnerCodeOfBraces(code);
 
         for (String potentialVar : foundVariables) {
             // Skip variables named 'this'
