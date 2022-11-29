@@ -210,8 +210,7 @@ public class MethodStructure {
         // Regex adopted from: https://stackoverflow.com/a/16118844/5956948
         Pattern methodFinder = Pattern.compile("(?:(?:public|private|protected|static|final|native|synchronized|abstract|transient)+\\s+)+[$_\\w<>\\[\\]\\s]*\\s+[\\$_\\w]+\\([^\\)]*\\)?\\s*\\{?[^\\}]*\\}?");
         Matcher methodMatcher = methodFinder.matcher(code);
-        int index = 0;
-        while(methodMatcher.find(index)){
+        while(methodMatcher.find()){
             String method = "";
             int i = 0;
             while (i <= methodMatcher.groupCount() && methodMatcher.group(i) != null){
@@ -291,15 +290,23 @@ public class MethodStructure {
 
             String returnType = method;
 
-            CodeStructure.Pair<String, Integer> detectBody =
-                 CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
-            index = detectBody.second;
+            try {
+                CodeStructure.Pair<String, Integer> detectBody =
+                    CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
 
-            if (!returnType.equals("") && valid) {
-                output.add(
-                    new MethodStructure(name, scope, staticStatus, template, arguments, 
-                                        returnType, detectBody.first));
-            } 
+                if (!returnType.equals("") && valid) {
+                    output.add(
+                        new MethodStructure(name, scope, staticStatus, template, arguments, 
+                                            returnType, detectBody.first));
+                } 
+            }
+            catch (Exception e) {
+                if (!returnType.equals("") && valid) {
+                    output.add(
+                        new MethodStructure(name, scope, staticStatus, template, arguments, 
+                                            returnType, ""));
+                } 
+            }
         }
 
         return output;
