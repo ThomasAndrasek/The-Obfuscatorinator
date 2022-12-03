@@ -17,7 +17,7 @@ public class MethodStructure {
     private ArrayList<String> templateClasses;
     protected String returnType;
     private ArrayList<String> args;
-    private String isStatic;
+    private boolean isStatic;
     private String scope;
     private String template;
     private String code;
@@ -35,7 +35,7 @@ public class MethodStructure {
      * @param containerStack The stack of containers that this method is nested in.
      * @param sourceFile The source file of the method.
      */
-    protected MethodStructure(String methodName, String scope, String isStatic, String template,
+    protected MethodStructure(String methodName, String scope, boolean isStatic, String template,
                               String arguments, String returnType, String code) {
         this.methodName = methodName;
         this.sourceCode = code;
@@ -54,6 +54,15 @@ public class MethodStructure {
             }
             args.add(s.trim());
         }
+    }
+
+    /**
+     * Returns if the method is static.
+     * 
+     * @return Whether the method is static.
+     */
+    public boolean isStatic() {
+        return this.isStatic;
     }
 
     /**
@@ -150,9 +159,9 @@ public class MethodStructure {
                 method = method.substring(9);
             }
 
-            String staticStatus = "";
+            boolean staticStatus = false;
             if (method.startsWith("static")) {
-                staticStatus = "static";
+                staticStatus = true;
                 method = method.substring(7);
             }
 
@@ -255,9 +264,9 @@ public class MethodStructure {
                 method = method.substring(9);
             }
 
-            String staticStatus = "";
+            boolean staticStatus = false;
             if (method.startsWith("static")) {
-                staticStatus = "static";
+                staticStatus = true;
                 method = method.substring(7);
             }
 
