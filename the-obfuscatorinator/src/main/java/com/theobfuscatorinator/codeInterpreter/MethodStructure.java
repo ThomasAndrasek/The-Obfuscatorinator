@@ -14,7 +14,6 @@ public class MethodStructure {
     protected String methodName;
     String sourceCode;
 
-    private ArrayList<String> templateClasses;
     protected String returnType;
     private ArrayList<String> args;
     private boolean isStatic;
@@ -75,6 +74,25 @@ public class MethodStructure {
     }
 
     /**
+     * Gets the template of the method.
+     * 
+     * @return Template of the mehtod.
+     */
+    public String getTemplate() {
+        return this.template;
+    }
+
+
+    /**
+     * Gets the scope of the method.
+     * 
+     * @return Scope of the method.
+     */
+    public String getScope() {
+        return this.scope;
+    }
+
+    /**
      * Set the name of the method.
      */
     public void setMethodName(String methodName) {
@@ -105,6 +123,9 @@ public class MethodStructure {
     /**
      * Finds all methods defined in this class. Does not include methods defined in other classes 
      * nested within this class. This will not include constructors.
+     * 
+     * @param classStructure The class to search for methods in.
+     * 
      * @return An arraylist of MethodStructures that represents every method that was found.
      */
     public static ArrayList<MethodStructure> identifyMethods(ClassStructure classStructure){
@@ -117,15 +138,16 @@ public class MethodStructure {
         while(methodMatcher.find(index)){
             String method = "";
             int i = 0;
+            // Build a String of the method.
             while (i <= methodMatcher.groupCount() && methodMatcher.group(i) != null){
                 method += methodMatcher.group(i);
                 i++;
             }
-
             String fullMethod = method.substring(0);
 
             method = method.replaceAll("\\s+", " ");
 
+            // Ignore empty methods.
             if (method == "") {
                 break;
             }
@@ -147,6 +169,7 @@ public class MethodStructure {
                 valid = false;
             }
 
+            // Check the scope of the method.
             String scope = "";
             if (method.startsWith("public")) {
                 scope = "public";
@@ -159,12 +182,14 @@ public class MethodStructure {
                 method = method.substring(9);
             }
 
+            // Check if the method is sstatic.
             boolean staticStatus = false;
             if (method.startsWith("static")) {
                 staticStatus = true;
                 method = method.substring(7);
             }
 
+            // Get the name of the method.
             String name = "";
             if (method.contains("(")) {
                 int indexC = method.indexOf("(");
@@ -180,24 +205,29 @@ public class MethodStructure {
                 method = method.substring(0, indexC+1) + method.substring(method.indexOf("("));
             }
 
+            // Get the arguments of the method.
             String arguments = "";
             if (method.contains("(")) {
                 arguments = method.substring(method.indexOf("(") + 1, method.indexOf(")"));
                 method = method.substring(0, method.indexOf("("));
             }
 
+            // Get the template of the method.
             String template = "";
             if (method.startsWith("<")) {
                 template = method.substring(0, method.indexOf(">") + 1);
                 method = method.substring(method.indexOf(">") + 2);
             }
 
+            // Return type of the method.
             String returnType = method;
 
+            // Get the body of the method.
             CodeStructure.Pair<String, Integer> detectBody =
                  CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
             index = detectBody.second;
 
+            // Build the MethodStructure.
             if (!returnType.equals("") && valid) {
                 output.add(
                     new MethodStructure(name, scope, staticStatus, template, arguments, 
@@ -209,8 +239,11 @@ public class MethodStructure {
     }
 
     /**
-     * Finds all methods defined in this class. Does not include methods defined in other classes 
-     * nested within this class. This will not include constructors.
+     * Finds all methods defined in this interface.. Does not include methods defined in other classes 
+     * or interfaces nested within this interface. This will not include constructors.
+     * 
+     * @param interfaceStructure The interface to search for methods in.
+     * 
      * @return An arraylist of MethodStructures that represents every method that was found.
      */
     public static ArrayList<MethodStructure> identifyMethods(InterfaceStructure interfaceStructure){
@@ -231,6 +264,7 @@ public class MethodStructure {
 
             method = method.replaceAll("\\s+", " ");
 
+            // Ignore empty methods.
             if (method == "") {
                 break;
             }
@@ -252,6 +286,7 @@ public class MethodStructure {
                 valid = false;
             }
 
+            // Get the scope of the method.
             String scope = "";
             if (method.startsWith("public")) {
                 scope = "public";
@@ -264,12 +299,14 @@ public class MethodStructure {
                 method = method.substring(9);
             }
 
+            // Get if the method is static.
             boolean staticStatus = false;
             if (method.startsWith("static")) {
                 staticStatus = true;
                 method = method.substring(7);
             }
 
+            // Get the name of the method.
             String name = "";
             if (method.contains("(")) {
                 int indexC = method.indexOf("(");
@@ -285,20 +322,25 @@ public class MethodStructure {
                 method = method.substring(0, indexC+1) + method.substring(method.indexOf("("));
             }
 
+            // Get the arguments of the method.
             String arguments = "";
             if (method.contains("(")) {
                 arguments = method.substring(method.indexOf("(") + 1, method.indexOf(")"));
                 method = method.substring(0, method.indexOf("("));
             }
 
+            // Get the tempalte of the method.
             String template = "";
             if (method.startsWith("<")) {
                 template = method.substring(0, method.indexOf(">") + 1);
                 method = method.substring(method.indexOf(">") + 2);
             }
 
+            // Get the return type of the method.
             String returnType = method;
 
+            // Get the inner code of the method.
+            // If the method does not have an inner body ignore trying to get the inner code.
             try {
                 CodeStructure.Pair<String, Integer> detectBody =
                     CodeStructure.getCodeBetweenBrackets(code, methodMatcher.start(), '{','}');
