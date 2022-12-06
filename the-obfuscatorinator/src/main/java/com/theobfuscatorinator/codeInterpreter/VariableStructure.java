@@ -122,18 +122,22 @@ public class VariableStructure {
 
                 boolean valid = true;
 
+                // Get the scope of the variable.
                 if (varMatcher.group(1) != null) {
                     scope = varMatcher.group(1).trim();
                 }
 
+                // Check if the variable is static.
                 if (varMatcher.group(2) != null) {
                     isStatic = true;
                 }
 
+                // Check if the variable is final.
                 if (varMatcher.group(3) != null) {
                     isFinal = true;
                 }
 
+                // Get the type of variable and check if the variable is valid.
                 if (varMatcher.group(4) != null) {
                     type = varMatcher.group(4).trim();
                     switch (type) {
@@ -144,10 +148,12 @@ public class VariableStructure {
                     }
                 }
 
+                // Get the name of the variable.
                 if (varMatcher.group(5) != null) {
                     name = varMatcher.group(5).trim();
                 }
 
+                // If the variable is added construct a new variable structure.
                 if (valid) {
                     structure = new VariableStructure(scope, isStatic, isFinal, type, name, false, false);
                     maxGroupCount = varMatcher.groupCount();
@@ -162,11 +168,18 @@ public class VariableStructure {
         return variables;
     }
 
+    /**
+     * Identify variables within an interface.
+     * 
+     * @param interfaceStructure Structure of the interface to search in.
+     * 
+     * @return ArrayList of variables found in the interface.
+     */
     public static ArrayList<VariableStructure> identifyInterfaceVariables(InterfaceStructure interfaceStructure) {
         // Hold list of variables found.
         ArrayList<VariableStructure> variables = new ArrayList<>();
 
-        // Find all the variable names instantiated within the class structure.
+        // Find all the variable names instantiated within the interface structure.
         Set<String> foundVariables = new HashSet<String>();
         String code = interfaceStructure.getInnerCode();
         Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
@@ -223,18 +236,22 @@ public class VariableStructure {
 
                 boolean valid = true;
 
+                // Get the scope of the variable.
                 if (varMatcher.group(1) != null) {
                     scope = varMatcher.group(1).trim();
                 }
 
+                // Check if the variable is static.
                 if (varMatcher.group(2) != null) {
                     isStatic = true;
                 }
 
+                // Check if the variable is final.
                 if (varMatcher.group(3) != null) {
                     isFinal = true;
                 }
 
+                // Get the type of variable and check if it is valid.
                 if (varMatcher.group(4) != null) {
                     type = varMatcher.group(4).trim();
                     switch (type) {
@@ -245,10 +262,12 @@ public class VariableStructure {
                     }
                 }
 
+                // Get the name of the variable.
                 if (varMatcher.group(5) != null) {
                     name = varMatcher.group(5).trim();
                 }
 
+                // If the variable is valid construct a variable structure.
                 if (valid) {
                     structure = new VariableStructure(scope, isStatic, isFinal, type, name, false, false);
                     maxGroupCount = varMatcher.groupCount();
@@ -263,12 +282,18 @@ public class VariableStructure {
         return variables;
     }
 
+    /**
+     * Identify variables that belong to the given method structure, not including parameters.
+     * 
+     * @param methodStructure The method structure to search in.
+     * @return ArrayList of Variable Structures of the found variables.
+     */
     public static ArrayList<VariableStructure> identifyMethodVariables(MethodStructure methodStructure) {
         ArrayList<VariableStructure> variables = new ArrayList<>();
 
         Set<String> foundVariables = new HashSet<String>();
         String code = methodStructure.getMethodCode();
-        // Find all the variables in the file.
+        // Find all the variables in the method.
         Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
@@ -276,11 +301,14 @@ public class VariableStructure {
             foundVariables.add(var);
         }
 
+        // Check through for each variable instantiation to see if it is a valid variable.
         for (String potentialVar : foundVariables) {
+            // Skip variables starting with 'this'
             if (potentialVar.equals("this")) {
                 continue;
             }
 
+            // Trim and clean up the variable.
             potentialVar = potentialVar.trim();
             if (potentialVar.startsWith("this.")) {
                 potentialVar = potentialVar.substring(5);
@@ -294,10 +322,12 @@ public class VariableStructure {
                 }
             }
 
+            // Skip if variable is just a plus sign.
             if (varToUse.equals("+")) {
                 continue;
             }
 
+            // Identify the exact variable with its name.
             Pattern findVar = Pattern.compile("(final[\\s]+)?([^=\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
@@ -312,23 +342,27 @@ public class VariableStructure {
                 String type = "";
                 String name = "";
 
+                // Check if variable is final.
                 if (varMatcher.group(1) != null) {
                     isFinal = true;
                 }
 
+                // Get the type of the variable.
                 if (varMatcher.group(2) != null) {
                     type = varMatcher.group(2).trim();
                 }
 
+                // Check if the variable is an array.
                 if (varMatcher.group(3) != null || varMatcher.group(5) != null) {
                     isArray = true;
                 }
 
+                // Get the name of the variable.
                 if (varMatcher.group(4) != null) {
                     name = varMatcher.group(4).trim();
                 }
 
-
+                // Construct variable structure of the found variable.
                 structure = new VariableStructure("", false, isFinal, type, name, isArray, false);
                 maxGroupCount = varMatcher.groupCount();
             }
@@ -341,10 +375,17 @@ public class VariableStructure {
         return variables;
     }
 
+    /**
+     * Converts a list of Strings that are paremeterrs to VariableStructures.
+     * 
+     * @param parameters The parameters to convert.
+     * @return The converted list of paremeters as VariableStructures.
+     */
     public static ArrayList<VariableStructure> identifyParameters(ArrayList<String> parameters) {
         ArrayList<VariableStructure> identifiedParameters = new ArrayList<>();
 
         for (String param : parameters) {
+            // Use regex to identify each variable.
             Pattern findVar = Pattern.compile("(final[\\s]+)?([^\\s]+[\\s]+){1}([^\\s]+[\\s]*){1}");
             Matcher varMatcher = findVar.matcher(param);
             while (varMatcher.find()) {
@@ -352,14 +393,17 @@ public class VariableStructure {
                 String type = "";
                 String name = "";
 
+                // Check if the variable is final.
                 if (varMatcher.group(1) != null) {
                     isFinal = true;
                 }
 
+                // Get the type of the variable.
                 if (varMatcher.group(2) != null) {
                     type = varMatcher.group(2).trim();
                 }
 
+                // Get the name of the variable.
                 if (varMatcher.group(3) != null) {
                     name = varMatcher.group(3).trim();
                 }
@@ -392,30 +436,65 @@ public class VariableStructure {
         return var;
     }
 
+    /**
+     * Get the scope of the variable.
+     * 
+     * @return The scope of the variable.
+     */
     public String getScope() {
         return this.scope;
     }
 
+    /**
+     * Checks if the variable is static.
+     * 
+     * @return If the variable is static.
+     */
     public boolean isStatic() {
         return this.isStatic;
     }
 
+    /**
+     * Checks if the variable is final.
+     * 
+     * @return If the variable is final.
+     */
     public boolean isFinal() {
         return this.isFinal;
     }
 
+    /**
+     * Checks if the variable is a method parameter.
+     * 
+     * @return If the variable is a method parameter.
+     */
     public boolean isParameter() {
         return this.isParameter;
     }
 
+    /**
+     * Checks if the variable is an array.
+     * 
+     * @return If the variable is an array.
+     */
     public boolean isArray() {
         return this.isArray;
     }
 
+    /**
+     * Get the type of the variable.
+     * 
+     * @return Type of the variable.
+     */
     public String getType() {
         return this.type;
     }
 
+    /**
+     * Get the name of the variable.
+     * 
+     * @return Name of the variable.
+     */
     public String getName() {
         return this.name;
     }
