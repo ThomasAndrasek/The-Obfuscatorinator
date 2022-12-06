@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 /**
  * Intances of this class will be created by CodeStructure. These instances are used to represent 
  * java classes and contain information about them.
- * @author Carter Del Ciello
+ * @author Carter Del Ciello, Thomas Andrasek
  */
 public class ClassStructure {
 

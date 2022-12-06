@@ -14,7 +14,7 @@ import com.theobfuscatorinator.stringencryption.StringEncryption;
  * This class will take a java code file and will find important characteristics in that file which
  * can be accessed by a user of this class.
  *
- * @author Carter Del Ciello
+ * @author Carter Del Ciello, Thomas Andrasek
  */
 
 public class CodeStructure {
@@ -376,14 +376,25 @@ public class CodeStructure {
         return newCommentCode;
     }
 
+    /**
+     * Get the name of the file of code.
+     * 
+     * @return Name of the code file.
+     */
     public String getCodeFileName(){
         return fileName;
     }
 
+    @Deprecated
     public ArrayList<ClassStructure> getClasses(){
         return null;
     }
 
+    /**
+     * Get the name of the decryption method.
+     * 
+     * @return Name of the decryption method.
+     */
     public String getDecryptionMethodName() {
         return decryptionMethodName;
     }
@@ -404,15 +415,36 @@ public class CodeStructure {
         }
     }
 
+    /**
+     * Sets the uncommented code.
+     * 
+     * @param newCode Code to set uncommented code to.
+     */
     public void setUnCommentedCode(String newCode) {
         unCommentedCode = newCode;
     }
 
+    /**
+     * Returns the file that holds this code.
+     * 
+     * @return The file of code.
+     */
     public File getCodeFile() {
         return this.codeFile;
     }
 
 
+    /**
+     * Removes inner blocks of code from Java Code.
+     * 
+     * Given Java code as input this will return the Java code with any inner block of code
+     * removed. This also removes the header of the inner block of code. Does not account for
+     * Strings or comments.
+     * 
+     * @param code The Java code to remove inner code from.
+     * 
+     * @return Java code with inner blocks of code removed.
+     */
     public static String removeInnerCode(String code) {
         String codeToReturn = code;
 
@@ -451,6 +483,17 @@ public class CodeStructure {
         return codeToReturn;
     }
 
+    /**
+     * Removes inner blocks of code from Java code.
+     * 
+     * Given valid Java code as input this will return a String of the code with any nner blocks of
+     * code removed while keeping the header of the block of code. Does not account for Strings or
+     * comments.
+     * 
+     * @param code The code to remove inner blocks of code from.
+     * 
+     * @return The formatted code.
+     */
     public static String removeInnerCodeOfBraces(String code) {
         String codeToReturn = code;
 
@@ -458,6 +501,8 @@ public class CodeStructure {
         int curlyBraceLeft = 0;
         int curlyBraceRight = 0;
         while (i < codeToReturn.length()) {
+            // Upon reaching a curly brace count opening and closing curly braces until there is
+            // an equal amount of both.
             if (codeToReturn.charAt(i) == '{') {
                 int j = i;
                 curlyBraceLeft = 1;
@@ -472,6 +517,7 @@ public class CodeStructure {
                     }
                 }
 
+                // Remove the content of the code block.
                 codeToReturn = codeToReturn.substring(0, i+1) + codeToReturn.substring(j);
                 curlyBraceLeft = 0;
                 curlyBraceRight = 0;

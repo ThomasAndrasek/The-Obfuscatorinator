@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  * not, whether the variable is final or not, the type of the variable, the name of the variable,
  * and whether the variable is an array. A variable can also be separated into the category of
  * whether or not it is a method parameter.
+ * 
+ * @author Thomas Andrasek
  */
 public class VariableStructure {
     private String scope;
