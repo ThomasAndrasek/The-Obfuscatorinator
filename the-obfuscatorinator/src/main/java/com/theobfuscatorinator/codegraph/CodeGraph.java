@@ -11,6 +11,10 @@ import com.theobfuscatorinator.graph.Edge;
 import com.theobfuscatorinator.graph.Graph;
 import com.theobfuscatorinator.graph.Node;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +23,14 @@ import java.util.ArrayList;
  * @author Thomas Andrasek
  */
 public class CodeGraph {
+    public static final int FILE = 0;
+    public static final int CLASS = 1;
+    public static final int INTERFACE = 2;
+    public static final int METHOD = 3;
+    public static final int VARIABLE = 4;
+    public static final int IMPORT = 5;
+    public static final int PACKAGE = 6;
+
     public static final int FILE_OWN_CLASS = 0;
     public static final int FILE_OWN_INTERFACE = 1;
     public static final int FILE_IS_PART_OF_PACKAGE = 2;
@@ -269,6 +281,117 @@ public class CodeGraph {
                     System.out.println("\t" + edge.getType());
                 }
             }
+        }
+    }
+
+    public void writeCodeGraph(String pathToFile) {
+        File fileToWrite = new File(pathToFile);
+
+        try {
+            Files.createDirectories(fileToWrite.getParentFile().toPath());
+            fileToWrite.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            FileWriter writer = new FileWriter(fileToWrite);
+
+            for (Node<?> node : this.graph.getNodes()) {
+                if (node.getValue() instanceof ClassStructure) {
+                    ClassStructure classStruct = (ClassStructure) node.getValue();
+
+                    for (Edge edge : node.getEdges()) {
+                        StringBuilder lineToWrite = new StringBuilder();
+
+                        if (edge.getEnd().getValue() instanceof MethodStructure) {
+                            MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
+                            lineToWrite.append(classStruct.getName() + "," + CLASS + "," + methodStruct.getMethodName() + "," + METHOD + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof ClassStructure) {
+                            ClassStructure innerClassStruct = (ClassStructure) edge.getEnd().getValue();
+                            lineToWrite.append(classStruct.getName() + "," + CLASS + "," + innerClassStruct.getName() + "," + CLASS + "," + edge.getType());
+                        } 
+                        else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                            InterfaceStructure interfaceStruct = (InterfaceStructure) edge.getEnd().getValue();
+                            lineToWrite.append(classStruct.getName() + "," + CLASS + "," + interfaceStruct.getName() + "," + INTERFACE + "," + edge.getType());
+                        }
+                        else {
+                            VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                            lineToWrite.append(classStruct.getName() + "," + CLASS + "," + variableStructure.getName() + "," + VARIABLE + "," + edge.getType());
+                        }
+
+                        writer.write(lineToWrite.toString() + "\n");
+                    }
+                }
+                else if (node.getValue() instanceof MethodStructure) {
+                    MethodStructure methodStruct = (MethodStructure) node.getValue();
+                    
+                    for (Edge edge : node.getEdges()) {
+                        StringBuilder lineToWrite = new StringBuilder();
+
+                        if (edge.getEnd().getValue() instanceof VariableStructure) {
+                            VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                            lineToWrite.append(methodStruct.getMethodName() + "," + METHOD + "," + variableStructure.getName() + "," + VARIABLE + "," + edge.getType());
+                        }
+
+                        writer.write(lineToWrite.toString() + "\n");
+                    }
+                }
+                else if (node.getValue() instanceof CodeStructure) {
+                    CodeStructure codeStructure = (CodeStructure) node.getValue();
+    
+                    for (Edge edge : node.getEdges()) {
+                        StringBuilder lineToWrite = new StringBuilder();
+
+                        if (edge.getEnd().getValue() instanceof ClassStructure) {
+                            ClassStructure classStructure = (ClassStructure) edge.getEnd().getValue();
+                            lineToWrite.append(codeStructure.getCodeFileName() + "," + FILE + "," + classStructure.getName() + "," + CLASS + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof PackageStructure) {
+                            PackageStructure packageStructure = (PackageStructure) edge.getEnd().getValue();
+                            lineToWrite.append(codeStructure.getCodeFileName() + "," + FILE + "," + packageStructure.getPackageId() + "," + PACKAGE + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof ImportStructure) {
+                            ImportStructure importStructure = (ImportStructure) edge.getEnd().getValue();
+                            lineToWrite.append(codeStructure.getCodeFileName() + "," + FILE + "," + importStructure.toString() + "," + IMPORT + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                            InterfaceStructure interfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
+                            lineToWrite.append(codeStructure.getCodeFileName() + "," + FILE + "," + interfaceStructure.getName() + "," + INTERFACE + "," + edge.getType());
+                        }
+
+                        writer.write(lineToWrite.toString() + "\n");
+                    }
+                }
+                else if (node.getValue() instanceof InterfaceStructure) {
+                    InterfaceStructure interfaceStructure = (InterfaceStructure) node.getValue();
+    
+                    for (Edge edge : node.getEdges()) {
+                        StringBuilder lineToWrite = new StringBuilder();
+
+                        if (edge.getEnd().getValue() instanceof InterfaceStructure) {
+                            InterfaceStructure innerInterfaceStructure = (InterfaceStructure) edge.getEnd().getValue();
+                            lineToWrite.append(interfaceStructure.getName() + "," + INTERFACE + "," + innerInterfaceStructure.getName() + "," + INTERFACE + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof VariableStructure) {
+                            VariableStructure variableStructure = (VariableStructure) edge.getEnd().getValue();
+                            lineToWrite.append(interfaceStructure.getName() + "," + INTERFACE + "," + variableStructure.getName() + "," + VARIABLE + "," + edge.getType());
+                        }
+                        else if (edge.getEnd().getValue() instanceof MethodStructure) {
+                            MethodStructure methodStruct = (MethodStructure) edge.getEnd().getValue();
+                            lineToWrite.append(interfaceStructure.getName() + "," + INTERFACE + "," + methodStruct.getMethodName() + "," + METHOD + "," + edge.getType());
+                        }
+
+                        writer.write(lineToWrite.toString() + "\n");
+                    }
+                }
+            }
+
+            writer.close();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -89,6 +89,7 @@ public class App
 
             CodeGraph codeGraph = new CodeGraph(codeStructures);
             codeGraph.printCodeGraph();
+            codeGraph.writeCodeGraph("./graphoutput/graph.csv");
 
             //com.theobfuscatorinator.obfuscation.Renamer.renamePrivateStaticVariables(codeGraph);        
 
