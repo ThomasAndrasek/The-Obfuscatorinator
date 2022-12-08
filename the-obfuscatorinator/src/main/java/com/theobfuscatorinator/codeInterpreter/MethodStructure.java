@@ -34,7 +34,7 @@ public class MethodStructure {
      * @param containerStack The stack of containers that this method is nested in.
      * @param sourceFile The source file of the method.
      */
-    protected MethodStructure(String methodName, String scope, boolean isStatic, String template,
+    public MethodStructure(String methodName, String scope, boolean isStatic, String template,
                               String arguments, String returnType, String code) {
         this.methodName = methodName;
         this.sourceCode = code;
