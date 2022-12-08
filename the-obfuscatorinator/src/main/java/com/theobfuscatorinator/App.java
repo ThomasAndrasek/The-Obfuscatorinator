@@ -27,7 +27,7 @@ public class App
             if (args.length == 0) {
                 throw new IllegalArgumentException("Not enough arguments");
             }
-            String copyPath = "output";
+            String copyPath = "C:/Users/kille/Desktop/output";
             Vector<String> inputFiles = new Vector<String>();
 
             //Argument Handling
