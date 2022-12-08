@@ -401,14 +401,10 @@ public class VariableStructure {
                 }
 
                 // Get the type of the variable.
-                if (varMatcher.group(2) != null) {
-                    type = varMatcher.group(2).trim();
-                }
+                type = varMatcher.group(2).trim();
 
                 // Get the name of the variable.
-                if (varMatcher.group(3) != null) {
-                    name = varMatcher.group(3).trim();
-                }
+                name = varMatcher.group(3).trim();
 
                 identifiedParameters.add(new VariableStructure("", false, isFinal, type, name, false, true));
             }
@@ -499,5 +495,48 @@ public class VariableStructure {
      */
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof VariableStructure)) {
+            return false;
+        }
+
+        VariableStructure other = (VariableStructure) o;
+
+        if (other.isArray != this.isArray) {
+            return false;
+        }
+
+        if (other.isFinal != this.isFinal) {
+            return false;
+        }
+
+        if (other.isParameter != this.isParameter) {
+            return false;
+        }
+
+        if (other.isStatic != this.isStatic) {
+            return false;
+        }
+
+        if (!other.name.equals(this.name)) {
+            return false;
+        }
+
+        if (!other.scope.equals(this.scope)) {
+            return false;
+        }
+
+        if (!other.type.equals(this.type)) {
+            return false;
+        }
+
+        return true;
     }
 }

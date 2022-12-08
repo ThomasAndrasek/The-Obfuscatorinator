@@ -26,4 +26,21 @@ public class VariableStructureTest {
 
         assertEquals(0, parametersFound.size());
     }
+
+    @Test
+    public void oneParametersMethodTest() {
+        ArrayList<String> zeroParams = new ArrayList<String>();
+        zeroParams.add("int foo");
+
+        ArrayList<VariableStructure> parametersFound = VariableStructure.identifyParameters(zeroParams);
+
+        ArrayList<VariableStructure> actualParameters = new ArrayList<>();
+        actualParameters.add(new VariableStructure("", false, false, "int", "foo", false, true));
+
+        assertEquals(1, parametersFound.size());
+
+        for (int i = 0; i < parametersFound.size(); i++) {
+            assertEquals(actualParameters.get(i), parametersFound.get(i));
+        }
+    }
 }
