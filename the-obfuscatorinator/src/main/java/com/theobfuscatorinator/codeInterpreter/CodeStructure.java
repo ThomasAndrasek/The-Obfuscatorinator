@@ -374,15 +374,17 @@ public class CodeStructure {
         int nestedBrackets = 1;
         while(nestedBrackets > 0){
             char current = code.charAt(index);
-            if(current == beginBracket && (index == 0 | code.charAt(index - 1) != '\'')) {
+            if(current == beginBracket && (index == 0 | code.charAt(index - 1) != '\'') &&
+                             !(index + 1 < code.length() && code.charAt(index + 1) == '\'')) {
                 nestedBrackets++;
             }
-            if(current == endBracket && (index == 0 | code.charAt(index - 1) != '\'')) {
+            if(current == endBracket && (index == 0 | code.charAt(index - 1) != '\'') &&
+                             !(index + 1 < code.length() && code.charAt(index + 1) == '\'')) {
                 nestedBrackets--;
             }
             if(nestedBrackets == 0) break;
             index++;
-            if(index >= code.length()) throw new RuntimeException("Ending Bracket never found");
+            if(index >= code.length()) throw new RuntimeException("Ending Bracket never found\n" + "Start Index: " + startIndex + "\n" + "Starting Bracket = " + beginBracket + "\n" + "Ending Braacket = " + endBracket + "\n" + "First 10: " + code.substring(startIndex, startIndex+10) + "\n" + code + "\n");
         }
         int end = index;
         String output = code.substring(start, end);
