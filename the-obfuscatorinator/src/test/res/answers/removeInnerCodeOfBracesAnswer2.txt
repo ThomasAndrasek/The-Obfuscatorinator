@@ -1,0 +1,12 @@
+private int testVal;
+private String testString;
+
+public HelperFunctions() {}
+
+public int getTestVal() {}
+
+public String getTestString() {}
+
+public void setTestVal(int newVal) {}
+
+public void setTestString(String newString) {}
