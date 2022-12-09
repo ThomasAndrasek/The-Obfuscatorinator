@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.theobfuscatorinator.codeInterpreter.ClassStructure;
+import com.theobfuscatorinator.codeInterpreter.InterfaceStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
 import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 
@@ -19,11 +20,15 @@ public class VariableStructureTest {
 
     private File class1;
 
+    private File interface1;
+
     @Before
     public void setUp() {
         methodBody1 = new File("./src/test/res/testfiles/MethodTests/MethodBody1.txt");
 
         class1 = new File("./src/test/res/testfiles/ClassTests/ClassTest1.txt");
+
+        interface1 = new File("./src/test/res/testfiles/InterfaceTests/InterfaceTest1.txt");
     }
 
     @Test
@@ -64,6 +69,36 @@ public class VariableStructureTest {
             ArrayList<VariableStructure> actualVariables = new ArrayList<>();
             actualVariables.add(new VariableStructure("private", false, false, "int", "testVal", false, false));
             actualVariables.add(new VariableStructure("private", false, false, "String", "testString", false, false));
+
+            assertEquals(actualVariables.size(), variables.size());
+
+            int found = 0;
+            for (int i = 0; i < variables.size(); i++) {
+                for (int j = 0; j < actualVariables.size(); j++) {
+                    if (variables.get(i).equals(actualVariables.get(j))) {
+                        found++;
+                        break;
+                    }
+                }
+            }
+            assertEquals(found, actualVariables.size());
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void identifyInterfaceVariableTest1() {
+        try {
+            String interfaceBody = Files.readString(interface1.toPath());
+
+            InterfaceStructure interfaceStructure = new InterfaceStructure("TestFace", interfaceBody);
+            
+            ArrayList<VariableStructure> variables = VariableStructure.identifyInterfaceVariables(interfaceStructure);
+
+            ArrayList<VariableStructure> actualVariables = new ArrayList<>();
+            actualVariables.add(new VariableStructure("public", true, true, "int", "TEST_VAR", false, false));
 
             assertEquals(actualVariables.size(), variables.size());
 
