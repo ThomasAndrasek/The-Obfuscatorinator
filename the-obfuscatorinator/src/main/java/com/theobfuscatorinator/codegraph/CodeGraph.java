@@ -20,6 +20,13 @@ import java.util.ArrayList;
 /**
  * This class represents a directed graph of the file structure of a java project.
  * 
+ * Nodes in this graph represent different structurs such as Files, Classes, Interfaces, Methods,
+ * Variables, Imports, and Packages.
+ * 
+ * Edges in this graph represent usage or owernship of different structures. For instance File ->
+ * Class represents that the class is in the outermost scope of the File and File has ownership
+ * over the class.
+ * 
  * @author Thomas Andrasek
  */
 public class CodeGraph {
@@ -54,6 +61,11 @@ public class CodeGraph {
     private ArrayList<Node<PackageStructure>> packageStructureNodes;
     private ArrayList<Node<InterfaceStructure>> interfaceStructureNodes;
 
+    /**
+     * Constructs the Code Graph of a Java Project.
+     * 
+     * @param code Code Structures of all of the Java files in a Java Project.
+     */
     public CodeGraph(ArrayList<CodeStructure> code) {
         this.graph = new Graph();
         this.classStructureNodes = new ArrayList<>();
@@ -64,13 +76,16 @@ public class CodeGraph {
         this.variableStructureNodes = new ArrayList<>();
         this.interfaceStructureNodes = new ArrayList<>();
 
+        // Go through each file.
         for (CodeStructure codeStruct : code) {
             ArrayList<Node<MethodStructure>> methodStructureNodes = new ArrayList<>();
 
+            // Add the file to the graph.
             Node<CodeStructure> codeStructureNode = new Node<CodeStructure>(codeStruct);
             this.graph.addNode(codeStructureNode);
             this.codeStructureNodes.add(codeStructureNode);
 
+            // Find the outermost classes in the Java file.
             ArrayList<Node<ClassStructure>> classStructureNodes = new ArrayList<>();
             for (ClassStructure classStruct : ClassStructure.identifyClasses(codeStruct)) {
                 Node<ClassStructure> classStructureNode = new Node<ClassStructure>(classStruct);
@@ -78,6 +93,7 @@ public class CodeGraph {
                 classStructureNodes.add(classStructureNode);
             }
 
+            // If the file is part of a package identify the package and add it to the graph.
             PackageStructure packageStructure = PackageStructure.identifyPackage(codeStruct);
             if (packageStructure != null) {
                 Node<PackageStructure> packageStructureNode = new Node<PackageStructure>(packageStructure);
@@ -87,6 +103,7 @@ public class CodeGraph {
                 this.graph.addEdge(codeStructureNode, packageStructureNode, FILE_IS_PART_OF_PACKAGE);
             }
 
+            // If the file utilizes any imports identify them and add them to the graph.
             ArrayList<ImportStructure> importStructures = ImportStructure.identifyImports(codeStruct);
             for (ImportStructure importStructure : importStructures) {
                 Node<ImportStructure> importStructureNode = new Node<ImportStructure>(importStructure);
@@ -96,6 +113,7 @@ public class CodeGraph {
                 this.graph.addEdge(codeStructureNode, importStructureNode, FILE_USES_IMPORT);
             }
 
+            // Find the outermost interfaces in the Java file.
             ArrayList<InterfaceStructure> interfaceStructures = InterfaceStructure.identifyInterfaceStructures(codeStruct);
             ArrayList<Node<InterfaceStructure>> interfaceStructureNodes = new ArrayList<>();
             for (InterfaceStructure interfaceStructure : interfaceStructures) {
@@ -103,19 +121,24 @@ public class CodeGraph {
                 interfaceStructureNodes.add(interfaceStructureNode);
             }
 
+            // Continue searching through classes and interfaces as inner/nested classes and
+            // interfaces can be found inside of classes or other interfaces.
             while (classStructureNodes.size() > 0 || interfaceStructureNodes.size() > 0) {
+                // If there are still nested classes to explore.
                 if (classStructureNodes.size() > 0) {
+                    // Add the class to the graph.
                     Node<ClassStructure> classStructNode = classStructureNodes.remove(0);
-
                     this.graph.addNode(classStructNode);
                     this.classStructureNodes.add(classStructNode);
     
+                    // Identify nested classes and add them to the graph.
                     for (ClassStructure classStruct : ClassStructure.identifyClasses(classStructNode.getValue())) {
                         Node<ClassStructure> n = new Node<>(classStruct);
                         classStructureNodes.add(n);
                         this.graph.addEdge(classStructNode, n, CLASS_OWN_CLASS);
                     }
     
+                    // Identify nested methods and add them to the graph.
                     for (MethodStructure methodStruct : MethodStructure.identifyMethods(classStructNode.getValue())) {
                         Node<MethodStructure> methodNode = new Node<>(methodStruct);
                         methodStructureNodes.add(methodNode);
@@ -125,6 +148,7 @@ public class CodeGraph {
                         this.graph.addEdge(classStructNode, methodNode, CLASS_OWN_METHOD);
                     }
     
+                    // Identify nested variables and add them to the graph..
                     for (VariableStructure variableStruct : VariableStructure.identifyClassVariables(classStructNode.getValue())) {
                         Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
     
@@ -133,6 +157,7 @@ public class CodeGraph {
                         this.graph.addEdge(classStructNode, variableNode, CLASS_OWN_VARIABLE);
                     }
 
+                    // Identify nested interfaces and add them to the graph.
                     for (InterfaceStructure interfaceStruct : InterfaceStructure.identifyInterfaceStructures(classStructNode.getValue())) {
                         Node <InterfaceStructure> n = new Node<>(interfaceStruct);
                         interfaceStructureNodes.add(n);
@@ -140,19 +165,22 @@ public class CodeGraph {
                     }
                 }
                 
+                // If there are unexplored interfaces explore them.
                 if (interfaceStructureNodes.size() > 0) {
+                    // Add interface to graph.
                     Node<InterfaceStructure> interfaceStructNode = interfaceStructureNodes.remove(0);
-
                     this.graph.addNode(interfaceStructNode);
                     this.interfaceStructureNodes.add(interfaceStructNode);
                     this.graph.addEdge(codeStructureNode, interfaceStructNode, FILE_OWN_INTERFACE);
 
+                    // Identify nested interfaces and add them to the graph.
                     for (InterfaceStructure interfaceStruct : InterfaceStructure.identifyInterfaceStructures(interfaceStructNode.getValue())) {
                         Node <InterfaceStructure> n = new Node<>(interfaceStruct);
                         interfaceStructureNodes.add(n);
                         this.graph.addEdge(interfaceStructNode, n, INTERFACE_OWN_INTERFACE);
                     }
 
+                    // Identify nested variables and add them to the graph.
                     for (VariableStructure variableStruct : VariableStructure.identifyInterfaceVariables(interfaceStructNode.getValue())) {
                         Node<VariableStructure> variableNode = new Node<VariableStructure>(variableStruct);
     
@@ -161,6 +189,7 @@ public class CodeGraph {
                         this.graph.addEdge(interfaceStructNode, variableNode, INTERFACE_OWN_VARIABLE);
                     }
 
+                    // Identify nested methods and add them to the graph.
                     for (MethodStructure methodStruct : MethodStructure.identifyMethods(interfaceStructNode.getValue())) {
                         Node<MethodStructure> methodNode = new Node<MethodStructure>(methodStruct);
 
@@ -171,6 +200,8 @@ public class CodeGraph {
                 }
             }
 
+            // For found methods search them for parameters and variables.
+            // Add those parameters and variables to the graph.
             for (Node<MethodStructure> methodNode : methodStructureNodes) {
                 ArrayList<VariableStructure> parameters = VariableStructure.identifyParameters(methodNode.getValue().getArguments());
 
@@ -195,6 +226,9 @@ public class CodeGraph {
         }
     }
 
+    /**
+     * Prints the graph to the console by node -> node, edge type.
+     */
     public void printCodeGraph() {
         for (Node<?> node : this.graph.getNodes()) {
             if (node.getValue() instanceof ClassStructure) {
@@ -284,6 +318,13 @@ public class CodeGraph {
         }
     }
 
+    /**
+     * Writes graph to external file.
+     * 
+     * @format nodeA,typeA,nodeB,typeB,edgeType
+     * 
+     * @param pathToFile Path to the file.
+     */
     public void writeCodeGraph(String pathToFile) {
         File fileToWrite = new File(pathToFile);
 
