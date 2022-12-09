@@ -31,6 +31,11 @@ public class VariableStructureTest {
         interface1 = new File("./src/test/res/testfiles/InterfaceTests/InterfaceTest1.txt");
     }
 
+    /**
+     * Tests how the program handles finding zero parameters for a method.
+     * 
+     * @expected Finds zero parameters.
+     */
     @Test
     public void zeroParametersMethodTest() {
         ArrayList<String> zeroParams = new ArrayList<String>();
@@ -40,12 +45,17 @@ public class VariableStructureTest {
         assertEquals(0, parametersFound.size());
     }
 
+    /**
+     * Tests how the program handles finding a single parameter.
+     * 
+     * @expected Finds the single parameter 'int foo'
+     */
     @Test
     public void oneParametersMethodTest() {
-        ArrayList<String> zeroParams = new ArrayList<String>();
-        zeroParams.add("int foo");
+        ArrayList<String> oneParams = new ArrayList<String>();
+        oneParams.add("int foo");
 
-        ArrayList<VariableStructure> parametersFound = VariableStructure.identifyParameters(zeroParams);
+        ArrayList<VariableStructure> parametersFound = VariableStructure.identifyParameters(oneParams);
 
         ArrayList<VariableStructure> actualParameters = new ArrayList<>();
         actualParameters.add(new VariableStructure("", false, false, "int", "foo", false, true));
@@ -57,6 +67,11 @@ public class VariableStructureTest {
         }
     }
 
+    /**
+     * Tests the program to see how it handles finding two object variables.
+     * 
+     * @epected Finds the two object variables 'private int testVal; private String testString'
+     */
     @Test
     public void identifyClassVariableTest1() {
         try {
@@ -88,6 +103,11 @@ public class VariableStructureTest {
         }
     }
 
+    /**
+     * Test the program to find variables in an interface.
+     * 
+     * @expected Finds the variable 'public static final int TEST_VAR'
+     */
     @Test
     public void identifyInterfaceVariableTest1() {
         try {
@@ -118,6 +138,11 @@ public class VariableStructureTest {
         }
     }
 
+    /**
+     * Tests the program to find variables in a method.
+     * 
+     * @expected Finds the variables 'int a; int b'
+     */
     @Test
     public void identifyMethodVariableTest1() {
         try {
