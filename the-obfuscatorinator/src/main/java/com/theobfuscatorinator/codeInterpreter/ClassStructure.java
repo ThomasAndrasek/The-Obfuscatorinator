@@ -126,7 +126,7 @@ public class ClassStructure {
     public static ArrayList<ClassStructure> identifyClasses(ClassStructure classStructure) {
         ArrayList<ClassStructure> classes = new ArrayList<>();
 
-        Pattern classFinder = Pattern.compile("(public|private|protected)?[\\s]*class[\\s]*([^\\s<]+){1}");
+        Pattern classFinder = Pattern.compile("(public|private|protected)?[\\s]*class[\\s]+([^\\s<]+){1}");
         String code = CodeStructure.removeInnerCodeOfBraces(CodeStructure.removeInnerCodeOfBraces(classStructure.getInnerCode()));
         Matcher classMatcher = classFinder.matcher(code);
 

@@ -511,6 +511,10 @@ public class CodeStructure {
                 while (j < codeToReturn.length() && curlyBraceLeft > curlyBraceRight) {
                     j++;
 
+                    if (j >= codeToReturn.length()) {
+                        break;
+                    }
+
                     if (codeToReturn.charAt(j) == '{') {
                         curlyBraceLeft++;
                     }

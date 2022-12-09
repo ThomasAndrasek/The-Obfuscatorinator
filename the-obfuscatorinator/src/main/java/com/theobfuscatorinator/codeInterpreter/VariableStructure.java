@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Structure to represent a variable in Java.
@@ -70,7 +71,7 @@ public class VariableStructure {
         // Find all the variable names instantiated within the class structure.
         Set<String> foundVariables = new HashSet<String>();
         String code = classStructure.getInnerCode();
-        Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
+        Pattern varFinder = Pattern.compile("([^\\s=!+\\-\\*\\/%]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
             String var = matcher.group(1);
@@ -91,6 +92,7 @@ public class VariableStructure {
             if (potentialVar.startsWith("this.")) {
                 potentialVar = potentialVar.substring(5);
             }
+
             // Append slashes to the variable if there are brackets for the regex.
             String varToUse = "";
             for (int i = 0; i < potentialVar.length(); i++) {
@@ -101,13 +103,20 @@ public class VariableStructure {
                 }
             }
 
-            if (varToUse.equals("+")) {
+            if (varToUse.equals("+") || varToUse.equals("*") ||
+                varToUse.equals("{'")) {
                 continue;
             }
 
             // Attempt to match the variable name with a declared variable in the class structure.
             // Match the longest found groupcount to be the declared variable found.
-            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+            Pattern findVar = null;
+            try {
+                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+            }
+            catch (PatternSyntaxException e) {
+                continue;
+            }
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
@@ -184,7 +193,7 @@ public class VariableStructure {
         // Find all the variable names instantiated within the interface structure.
         Set<String> foundVariables = new HashSet<String>();
         String code = interfaceStructure.getInnerCode();
-        Pattern varFinder = Pattern.compile("([^\\s=]+)[\\s]*[=]{1}[^=]{1}");
+        Pattern varFinder = Pattern.compile("([^\\s=!+\\-\\*\\/%]+)[\\s]*[=]{1}[^=]{1}");
         Matcher matcher = varFinder.matcher(code);
         while (matcher.find()) {
             String var = matcher.group(1);
@@ -215,13 +224,20 @@ public class VariableStructure {
                 }
             }
 
-            if (varToUse.equals("+")) {
+            if (varToUse.equals("+") || varToUse.equals("*") ||
+                varToUse.equals("{'")) {
                 continue;
             }
 
             // Attempt to match the variable name with a declared variable in the class structure.
             // Match the longest found groupcount to be the declared variable found.
-            Pattern findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+            Pattern findVar = null;
+            try {
+                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+            }
+            catch (PatternSyntaxException e) {
+                continue;
+            }
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
@@ -325,12 +341,19 @@ public class VariableStructure {
             }
 
             // Skip if variable is just a plus sign.
-            if (varToUse.equals("+")) {
+            if (varToUse.equals("+") || varToUse.equals("*") ||
+                varToUse.equals("{'")) {
                 continue;
             }
 
             // Identify the exact variable with its name.
-            Pattern findVar = Pattern.compile("(final[\\s]+)?([^=\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
+            Pattern findVar = null;
+            try {
+                findVar = Pattern.compile("(final[\\s]+)?([^=\\{\\}^;\\(\\)\\s\\[\\]]+){1}[\\s]*([\\[\\]]+)?[\\s]+(" + varToUse + "[\\s]*){1}([\\[\\]]+)?[^;=]*");
+            }
+            catch (PatternSyntaxException e) {
+                continue;
+            }
             Matcher varMatcher = findVar.matcher(code);
             VariableStructure structure = null;
             int maxGroupCount = 0;
