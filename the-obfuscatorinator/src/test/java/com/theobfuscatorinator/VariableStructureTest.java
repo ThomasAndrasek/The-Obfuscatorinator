@@ -111,7 +111,38 @@ public class VariableStructureTest {
                     }
                 }
             }
-            assertEquals(found, actualVariables.size());
+            assertEquals(actualVariables.size(), found);
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void identifyMethodVariableTest1() {
+        try {
+            String methodBody = Files.readString(methodBody1.toPath());
+
+            MethodStructure methodStructure = new MethodStructure("main", "public", true, "", "String[] args", "void", methodBody);
+            
+            ArrayList<VariableStructure> variables = VariableStructure.identifyMethodVariables(methodStructure);
+
+            ArrayList<VariableStructure> actualVariables = new ArrayList<>();
+            actualVariables.add(new VariableStructure("", false, false, "int", "a", false, false));
+            actualVariables.add(new VariableStructure("", false, false, "int", "b", false, false));
+
+            assertEquals(actualVariables.size(), variables.size());
+
+            int found = 0;
+            for (int i = 0; i < variables.size(); i++) {
+                for (int j = 0; j < actualVariables.size(); j++) {
+                    if (variables.get(i).equals(actualVariables.get(j))) {
+                        found++;
+                        break;
+                    }
+                }
+            }
+            assertEquals(actualVariables.size(), found);
         } 
         catch (IOException e) {
             e.printStackTrace();
