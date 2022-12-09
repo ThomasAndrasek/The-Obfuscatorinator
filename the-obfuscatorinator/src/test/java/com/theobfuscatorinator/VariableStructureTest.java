@@ -10,15 +10,20 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.theobfuscatorinator.codeInterpreter.ClassStructure;
 import com.theobfuscatorinator.codeInterpreter.MethodStructure;
 import com.theobfuscatorinator.codeInterpreter.VariableStructure;
 
 public class VariableStructureTest {
     private File methodBody1;
 
+    private File class1;
+
     @Before
     public void setUp() {
         methodBody1 = new File("./src/test/res/testfiles/MethodTests/MethodBody1.txt");
+
+        class1 = new File("./src/test/res/testfiles/ClassTests/ClassTest1.txt");
     }
 
     @Test
@@ -48,23 +53,30 @@ public class VariableStructureTest {
     }
 
     @Test
-    public void identifyMethodVariableTest1() {
+    public void identifyClassVariableTest1() {
         try {
-            String methodBody = Files.readString(methodBody1.toPath());
+            String classBody = Files.readString(class1.toPath());
 
-            MethodStructure method = new MethodStructure("main", "public", true, "", "String[] args", "void", methodBody);
+            ClassStructure classStructure = new ClassStructure("public class HelperFunctions", classBody);
 
-            ArrayList<VariableStructure> variables = VariableStructure.identifyMethodVariables(method);
+            ArrayList<VariableStructure> variables = VariableStructure.identifyClassVariables(classStructure);
 
             ArrayList<VariableStructure> actualVariables = new ArrayList<>();
-            actualVariables.add(new VariableStructure("", false, false, "int", "a", false, false));
-            actualVariables.add(new VariableStructure("", false, false, "int", "b", false, false));
+            actualVariables.add(new VariableStructure("private", false, false, "int", "testVal", false, false));
+            actualVariables.add(new VariableStructure("private", false, false, "String", "testString", false, false));
 
             assertEquals(actualVariables.size(), variables.size());
 
+            int found = 0;
             for (int i = 0; i < variables.size(); i++) {
-                assertEquals(actualVariables.get(i), variables.get(i));
+                for (int j = 0; j < actualVariables.size(); j++) {
+                    if (variables.get(i).equals(actualVariables.get(j))) {
+                        found++;
+                        break;
+                    }
+                }
             }
+            assertEquals(found, actualVariables.size());
         } 
         catch (IOException e) {
             e.printStackTrace();

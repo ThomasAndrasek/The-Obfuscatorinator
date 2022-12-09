@@ -112,7 +112,7 @@ public class VariableStructure {
             // Match the longest found groupcount to be the declared variable found.
             Pattern findVar = null;
             try {
-                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]*){1}[\\s]*[^;]*");
             }
             catch (PatternSyntaxException e) {
                 continue;
@@ -233,7 +233,7 @@ public class VariableStructure {
             // Match the longest found groupcount to be the declared variable found.
             Pattern findVar = null;
             try {
-                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]){1}[\\s]*[^;]*");
+                findVar = Pattern.compile("(public[\\s]+|private[\\s]+|protected[\\s]+)?(static[\\s]+)?(final[\\s]+)?([^\\s]+[\\s]+){1}(" + varToUse + "[^\\S]*){1}[\\s]*[^;]*");
             }
             catch (PatternSyntaxException e) {
                 continue;
