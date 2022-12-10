@@ -57,6 +57,9 @@ public class ImportStructureTest {
         }
     }
 
+    /**
+     * Test to see if toString() works on the 'java.util.ArrayList' import.
+     */
     @Test
     public void toStringTest1() {
         ImportStructure importStructure = new ImportStructure(false, "java.util.ArrayList");
@@ -66,6 +69,9 @@ public class ImportStructureTest {
         assertEquals(actual, importStructure.toString());
     }
 
+    /**
+     * Check to see if toString() works properly with static imports.
+     */
     @Test
     public void toStringTest2() {
         ImportStructure importStructure = new ImportStructure(true, "org.junit.Assert.assertEquals");

@@ -55,4 +55,19 @@ public class PackageStructure {
     public String getPackageId() {
         return this.packageId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof PackageStructure)) {
+            return false;
+        }
+
+        PackageStructure other = (PackageStructure) o;
+
+        return this.packageId.equals(other.packageId);
+    } 
 }
