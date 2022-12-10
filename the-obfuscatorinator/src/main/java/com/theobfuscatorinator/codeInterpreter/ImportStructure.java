@@ -94,7 +94,7 @@ public class ImportStructure {
 
     @Override
     public String toString() {
-        String ret = "";
+        String ret = "import ";
 
         if (this.isStatic) {
             ret += "static ";
@@ -105,6 +105,8 @@ public class ImportStructure {
         }
 
         ret += this.packagePath[this.packagePath.length-1];
+
+        ret += ";";
 
         return ret;
     }

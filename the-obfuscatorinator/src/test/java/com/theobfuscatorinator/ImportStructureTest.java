@@ -56,4 +56,22 @@ public class ImportStructureTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void toStringTest1() {
+        ImportStructure importStructure = new ImportStructure(false, "java.util.ArrayList");
+
+        String actual = "import java.util.ArrayList;";
+
+        assertEquals(actual, importStructure.toString());
+    }
+
+    @Test
+    public void toStringTest2() {
+        ImportStructure importStructure = new ImportStructure(true, "org.junit.Assert.assertEquals");
+
+        String actual = "import static org.junit.Assert.assertEquals;";
+
+        assertEquals(actual, importStructure.toString());
+    }
 }
