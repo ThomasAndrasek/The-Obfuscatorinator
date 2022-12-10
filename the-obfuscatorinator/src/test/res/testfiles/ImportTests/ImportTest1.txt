@@ -1,0 +1,12 @@
+import java.util.ArrayList;
+
+public class ImportTest1 {
+    public static void main(String[] args) {
+        ArrayList<Integer> temp = new ArrayList<>();
+
+        temp.add(5);
+        temp.add(2);
+
+        System.out.println(temp.get(0));
+    }
+}
